@@ -1,25 +1,35 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React from "react";
+import { BrowserRouter as Router, Route } from "react-router-dom";
+import "./App.css";
+import "bootstrap/dist/css/bootstrap.min.css";
+
+import UsersList from "./components/users-list.component";
+import ProductsList from "./components/products-list.component";
+import CreateProduct from "./components/create-product.component";
+import SeeProduct from "./components/seeproduct.component";
+import CreateUser from "./components/create-user.component";
+import EditExercise from "./components/edit-product.component";
+import Index from "./components/index.component";
+import Login from "./components/login.component";
+import EditUser from "./components/edit-user.component";
+import MyCart from "./components/cart-list.component";
+import Chat from "./components/chat.component";
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Router>
+      <Route path="/" exact component={Index} />
+      <Route path="/product/:id" exact component={SeeProduct} />
+      <Route path="/edit/:id" component={EditExercise} />
+      <Route path="/createproduct" component={CreateProduct} />
+      <Route path="/createuser" component={CreateUser} />
+      <Route path="/login" component={Login} />
+      <Route path="/edituser" component={EditUser} />
+      <Route path="/mycart" component={MyCart} />
+      <Route path="/users" component={UsersList} />
+      <Route path="/user/:id" exact component={ProductsList} />
+      <Route path="/chat/:id" exact component={Chat} />
+    </Router>
   );
 }
 
