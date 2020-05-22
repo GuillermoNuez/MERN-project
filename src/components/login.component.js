@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import Navbar from "../components/navbar.component";
 import axios from "axios";
 import { getFromStorage, setInStorage } from "../utils/storage";
+
 const Product = (props) => (
   <div className="ml-2 mr-2 productcard">
     <div className="card-body">
@@ -31,6 +32,88 @@ const Product = (props) => (
     </div>
   </div>
 );
+const Comment1 = (props) => (
+  <div className="review">
+    <div className="col-md-12 d-flex align-items-center pt-3">
+      <img className="review-img" src={"/userpics/" + props.comment.photo}></img>
+      <span>{props.comment.username}</span>
+    </div>
+    <div className="col-md-12 d-flex align-items-center pt-3 mt-3 justify-content-around">
+      <p className="tomato"></p>
+      <p className="tomato"></p>
+    </div>
+    <div className="col-md-12 d-flex align-items-center mt-3">
+      {props.comment.mensaje}
+    </div>
+  </div>
+);
+const Comment2 = (props) => (
+  <div className="review">
+    <div className="col-md-12 d-flex align-items-center pt-3">
+      <img className="review-img" src={"/userpics/" + props.comment.photo}></img>
+      <span>{props.comment.username}</span>
+    </div>
+    <div className="col-md-12 d-flex align-items-center pt-3 mt-3 justify-content-around">
+      <p className="tomato"></p>
+      <p className="tomato"></p>
+    </div>
+    <div className="col-md-12 d-flex align-items-center mt-3">
+      {props.comment.mensaje}
+    </div>
+  </div>
+);
+const Comment3 = (props) => (
+  <div className="review">
+    <div className="col-md-12 d-flex align-items-center pt-3">
+      <img className="review-img" src={"/userpics/" + props.comment.photo}></img>
+      <span>{props.comment.username}</span>
+    </div>
+    <div className="col-md-12 d-flex align-items-center pt-3 mt-3 justify-content-around">
+      <p className="tomato"></p>
+      <p className="tomato"></p>
+      <p className="tomato"></p>
+    </div>
+    <div className="col-md-12 d-flex align-items-center mt-3">
+      {props.comment.mensaje}
+    </div>
+  </div>
+);
+const Comment4 = (props) => (
+  <div className="review">
+    <div className="col-md-12 d-flex align-items-center pt-3">
+      <img className="review-img" src={"/userpics/" + props.comment.photo}></img>
+      <span>{props.comment.username}</span>
+    </div>
+    <div className="col-md-12 d-flex align-items-center pt-3 mt-3 justify-content-around">
+      <p className="tomato"></p>
+      <p className="tomato"></p>
+      <p className="tomato"></p>
+      <p className="tomato"></p>
+    </div>
+    <div className="col-md-12 d-flex align-items-center mt-3">
+      {props.comment.mensaje}
+    </div>
+  </div>
+);
+
+const Comment5 = (props) => (
+  <div className="review">
+    <div className="col-md-12 d-flex align-items-center pt-3">
+      <img className="review-img" src={"/userpics/" + props.comment.photo}></img>
+      <span>{props.comment.username}</span>
+    </div>
+    <div className="col-md-12 d-flex align-items-center pt-3 mt-3 justify-content-around">
+      <p className="tomato"></p>
+      <p className="tomato"></p>
+      <p className="tomato"></p>
+      <p className="tomato"></p>
+      <p className="tomato"></p>
+    </div>
+    <div className="col-md-12 d-flex align-items-center mt-3">
+      {props.comment.mensaje}
+    </div>
+  </div>
+);
 export default class Login extends Component {
   constructor(props) {
     super(props);
@@ -47,6 +130,7 @@ export default class Login extends Component {
       email: "",
       password: "",
       products: [],
+      comments: [],
     };
   }
   deleteproduct(id) {
@@ -60,7 +144,6 @@ export default class Login extends Component {
   }
   productList() {
     return this.state.products.map((currentproduct) => {
-
       return (
         <Product
           product={currentproduct}
@@ -69,6 +152,26 @@ export default class Login extends Component {
           key={currentproduct._id}
         />
       );
+    });
+  }
+
+  commentList() {
+    return this.state.comments.map((currentcomment) => {
+      if (currentcomment.score == 1) {
+        return <Comment1 comment={currentcomment} />;
+      }
+      if (currentcomment.score == 2) {
+        return <Comment2 comment={currentcomment} />;
+      }
+      if (currentcomment.score == 3) {
+        return <Comment3 comment={currentcomment} />;
+      }
+      if (currentcomment.score == 4) {
+        return <Comment4 comment={currentcomment} />;
+      }
+      if (currentcomment.score == 5) {
+        return <Comment5 comment={currentcomment} />;
+      }
     });
   }
 
@@ -82,12 +185,22 @@ export default class Login extends Component {
         isLoading: false,
       });
       // GET PRODUCTS
-;
       axios
         .get("http://localhost:5000/products/getuser/" + cookie._id)
         .then((response) => {
           this.setState({
             products: response.data,
+          });
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+
+      axios
+        .get("http://localhost:5000/Rating/getrating/" + cookie._id)
+        .then((response) => {
+          this.setState({
+            comments: response.data,
           });
         })
         .catch((error) => {
@@ -179,7 +292,7 @@ export default class Login extends Component {
 
                 <label>Password</label>
                 <input
-                  type="text"
+                  type="password"
                   required
                   className="form-control"
                   // placeholder="Password"
@@ -191,7 +304,7 @@ export default class Login extends Component {
               <input type="submit" value="Login" className="btn" />
 
               <Link className="btn btn2 mt-3" to="/createuser">
-                Create User
+                Register
               </Link>
             </form>
           </div>
@@ -205,7 +318,7 @@ export default class Login extends Component {
         //   <div className="container mt-5">
         //     <h3>You are logged in as {cookie.username}</h3>
         //     <h4>Role : {cookie.role}</h4>
-        //    
+        //
         //     <br />
         //     <br />
         //     <Link to="/edituser">Edit User</Link>
@@ -219,7 +332,7 @@ export default class Login extends Component {
           <div className="container mt-5">
             <div className="row myprofile">
               <div className="profile">
-                <div className="profilepic"></div>
+                <img className="profilepic" src={"/userpics/"+this.state.cookie.photo}></img>
                 <div className="profileinfo">
                   <h3>{this.state.cookie.username}</h3>
                   <hr className="profile-hr"></hr>
@@ -269,56 +382,7 @@ export default class Login extends Component {
                 <hr className="profile-hr"></hr>
               </div>
             </div>
-            <div className="row profile-content">
-              <div className="review">
-                <div className="col-md-12 d-flex align-items-center pt-3">
-                  <div className="review-img"></div>
-                  <span>Username</span>
-                </div>
-                <div className="col-md-12 d-flex align-items-center pt-3 mt-3">
-                  Tomatoes
-                </div>
-                <div className="col-md-12 d-flex align-items-center pt-3 mt-3">
-                  "Comentario"
-                </div>
-              </div>
-              <div className="review">
-                <div className="col-md-12 d-flex align-items-center pt-3">
-                  <div className="review-img"></div>
-                  <span>Username</span>
-                </div>
-                <div className="col-md-12 d-flex align-items-center pt-3 mt-3">
-                  Tomatoes
-                </div>
-                <div className="col-md-12 d-flex align-items-center pt-3 mt-3">
-                  "Comentario"
-                </div>
-              </div>
-              <div className="review">
-                <div className="col-md-12 d-flex align-items-center pt-3">
-                  <div className="review-img"></div>
-                  <span>Username</span>
-                </div>
-                <div className="col-md-12 d-flex align-items-center pt-3 mt-3">
-                  Tomatoes
-                </div>
-                <div className="col-md-12 d-flex align-items-center pt-3 mt-3">
-                  "Comentario"
-                </div>
-              </div>
-              <div className="review">
-                <div className="col-md-12 d-flex align-items-center pt-3">
-                  <div className="review-img"></div>
-                  <span>Username</span>
-                </div>
-                <div className="col-md-12 d-flex align-items-center pt-3 mt-3">
-                  Tomatoes
-                </div>
-                <div className="col-md-12 d-flex align-items-center pt-3 mt-3">
-                  "Comentario"
-                </div>
-              </div>
-            </div>
+            <div className="row profile-content">{this.commentList()}</div>
           </div>
         </div>
       );

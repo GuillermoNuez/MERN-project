@@ -12,6 +12,8 @@ export default class EditUser extends Component {
     this.onChangeUsername = this.onChangeUsername.bind(this);
     this.onChangeEmail = this.onChangeEmail.bind(this);
     this.onChangePassword = this.onChangePassword.bind(this);
+    this.onChangeBio = this.onChangeBio.bind(this);
+    this.onChangeLocation = this.onChangeLocation.bind(this);
     this.onChangeRole = this.onChangeRole.bind(this);
     this.onSubmit = this.onSubmit.bind(this);
 
@@ -20,7 +22,10 @@ export default class EditUser extends Component {
       username: "",
       email: "",
       password: "",
+      bio: "",
+      location: "",
       role: "",
+      file: "",
     };
   }
 
@@ -29,12 +34,14 @@ export default class EditUser extends Component {
 
     if (obj && obj.cookie) {
       const { cookie } = obj;
-
+      console.log(cookie);
       this.setState({
         cookie: cookie,
         username: cookie.username,
         email: cookie.email,
         password: cookie.password,
+        bio: cookie.bio,
+        location: cookie.location,
         role: cookie.role,
       });
     }
@@ -58,22 +65,33 @@ export default class EditUser extends Component {
     });
   }
 
+  onChangeBio(e) {
+    this.setState({
+      bio: e.target.value,
+    });
+  }
+
+  onChangeLocation(e) {
+    this.setState({
+      location: e.target.value,
+    });
+  }
+
   onChangeRole(e) {
     this.setState({
       role: e.target.value,
     });
   }
 
+  fileSelectedHandler = (event) => {
+    this.setState({
+      file: event.target.files[0],
+    });
+  };
+
   onSubmit(e) {
     e.preventDefault();
 
-    const user = {
-      username: this.state.username,
-      email: this.state.email,
-      password: this.state.password,
-      role: this.state.role,
-    };
-    console.log(user);
     fetch("http://localhost:5000/users/verify", {
       method: "POST",
       headers: {
@@ -91,14 +109,72 @@ export default class EditUser extends Component {
         if (json.success) {
           console.log("user verified");
 
-          axios
-            .post(
-              "http://localhost:5000/users/update/" + this.state.cookie._id,
-              user
-            )
-            .then((res) => res.json());
-          setInStorage("the_main_app", { cookie: user });
-          window.location = "/login";
+          if (this.state.file) {
+            const fd = new FormData();
+            let aux = this.state.file.name.split(".");
+            fd.append(
+              "files",
+              this.state.file,
+              this.state.cookie._id + "." + aux[1]
+            );
+            axios
+              .post("http://localhost:5000/Upload/upload", fd)
+              .then((res) => {
+                console.log(res);
+              });
+
+            const user = {
+              _id: this.state.cookie._id,
+              username: this.state.username,
+              email: this.state.email,
+              password: this.state.password,
+              location: this.state.location,
+              bio: this.state.bio,
+              role: this.state.role,
+              photo: this.state.cookie._id + "." + aux[1],
+            };
+
+            fetch("http://localhost:5000/users/update/", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify(user),
+            })
+              .then((res) => res.json())
+              .then((json) => {
+                if (json.success) {
+                  setInStorage("the_main_app", { cookie: user });
+                  window.location = "/login";
+                }
+              });
+          } else {
+            const user = {
+              _id: this.state.cookie._id,
+              username: this.state.username,
+              email: this.state.email,
+              password: this.state.password,
+              location: this.state.location,
+              bio: this.state.bio,
+              role: this.state.role,
+              photo:this.state.cookie.photo,
+            };
+
+            fetch("http://localhost:5000/users/update/", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify(user),
+            })
+              .then((res) => res.json())
+              .then((json) => {
+                if (json.success) {
+                  setInStorage("the_main_app", { cookie: user });
+                  window.location = "/login";
+                }
+              });
+          }
         } else {
           console.log("Verification failed");
         }
@@ -120,12 +196,11 @@ export default class EditUser extends Component {
           <Navbar />
           <div className="container mt-5">
             <h3>Edit user</h3>
-            <form onSubmit={this.onSubmit}>
+            <form enctype="multipart/form-data" onSubmit={this.onSubmit}>
               <div className="form-group">
                 <label>Username: </label>
                 <input
                   type="text"
-                  required
                   className="form-control"
                   value={this.state.username}
                   onChange={this.onChangeUsername}
@@ -134,7 +209,6 @@ export default class EditUser extends Component {
                 <label>Email : </label>
                 <input
                   type="email"
-                  required
                   className="form-control"
                   value={this.state.email}
                   onChange={this.onChangeEmail}
@@ -143,16 +217,30 @@ export default class EditUser extends Component {
                 <label>Password: </label>
                 <input
                   type="text"
-                  required
                   className="form-control"
                   value={this.state.password}
                   onChange={this.onChangePassword}
                 />
 
+                <label>Bio: </label>
+                <input
+                  type="text"
+                  className="form-control"
+                  value={this.state.bio}
+                  onChange={this.onChangeBio}
+                />
+
+                <label>location: </label>
+                <input
+                  type="text"
+                  className="form-control"
+                  value={this.state.location}
+                  onChange={this.onChangeLocation}
+                />
+
                 <label>Role: </label>
                 <input
                   type="text"
-                  required
                   className="form-control"
                   value={this.state.role}
                   onChange={this.onChangeRole}
@@ -165,8 +253,12 @@ export default class EditUser extends Component {
                   className="btn btn-primary"
                 />
               </div>
+              <label>image: </label>
+              <input type="file" accept="image/x-png,image/jpeg" onChange={this.fileSelectedHandler} />
             </form>
             <Link to="/login">Go back</Link>
+            <br />
+            <br />
           </div>
         </div>
       );

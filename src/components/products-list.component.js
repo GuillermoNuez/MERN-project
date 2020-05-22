@@ -5,7 +5,7 @@ import "../../src/index.css";
 import Navbar from "./navbar.component";
 import { getFromStorage } from "../utils/storage";
 
-const Exercise = (props) => (
+const Product = (props) => (
   <div className="ml-2 mr-2 productcard">
     <div className="card-body">
       <h5 className="card-title">{props.exercise.product}</h5>
@@ -15,21 +15,6 @@ const Exercise = (props) => (
         <div class="col-md-7">
           <Link to={"/product/" + props.exercise._id}>See more</Link>
         </div>
-        {/* <div class="col-md-3">
-          <Link to={"/edit/" + props.exercise._id}>edit</Link>
-        </div> */}
-        {/* <div class="col-md-3">
-          <a
-            href="#"
-            className="btn btn-primary"
-            onClick={() => {
-              props.deleteExercise(props.exercise._id);
-            }}
-          >
-            delete
-          </a>
-        </div> */}
-
         <div class="col-md-1">
           <a
             href="#"
@@ -46,15 +31,154 @@ const Exercise = (props) => (
   </div>
 );
 
+const Comment1 = (props) => (
+  <div className="review">
+    <div className="col-md-12 d-flex align-items-center pt-3">
+      <img className="review-img" src={"/userpics/" + props.comment.photo}></img>
+      <span>{props.comment.username}</span>
+    </div>
+    <div className="col-md-12 d-flex align-items-center pt-3 mt-3 justify-content-around">
+      <p className="tomato"></p>
+      <p className="tomato"></p>
+    </div>
+    <div className="col-md-12 d-flex align-items-center mt-3">
+      {props.comment.mensaje}
+    </div>
+  </div>
+);
+const Comment2 = (props) => (
+  <div className="review">
+    <div className="col-md-12 d-flex align-items-center pt-3">
+      <img className="review-img" src={"/userpics/" + props.comment.photo}></img>
+      <span>{props.comment.username}</span>
+    </div>
+    <div className="col-md-12 d-flex align-items-center pt-3 mt-3 justify-content-around">
+      <p className="tomato"></p>
+      <p className="tomato"></p>
+    </div>
+    <div className="col-md-12 d-flex align-items-center mt-3">
+      {props.comment.mensaje}
+    </div>
+  </div>
+);
+const Comment3 = (props) => (
+  <div className="review">
+    <div className="col-md-12 d-flex align-items-center pt-3">
+      <img className="review-img" src={"/userpics/" + props.comment.photo}></img>
+      <span>{props.comment.username}</span>
+    </div>
+    <div className="col-md-12 d-flex align-items-center pt-3 mt-3 justify-content-around">
+      <p className="tomato"></p>
+      <p className="tomato"></p>
+      <p className="tomato"></p>
+    </div>
+    <div className="col-md-12 d-flex align-items-center mt-3">
+      {props.comment.mensaje}
+    </div>
+  </div>
+);
+const Comment4 = (props) => (
+  <div className="review">
+    <div className="col-md-12 d-flex align-items-center pt-3">
+      <img className="review-img" src={"/userpics/" + props.comment.photo}></img>
+      <span>{props.comment.username}</span>
+    </div>
+    <div className="col-md-12 d-flex align-items-center pt-3 mt-3 justify-content-around">
+      <p className="tomato"></p>
+      <p className="tomato"></p>
+      <p className="tomato"></p>
+      <p className="tomato"></p>
+    </div>
+    <div className="col-md-12 d-flex align-items-center mt-3">
+      {props.comment.mensaje}
+    </div>
+  </div>
+);
+
+const Comment5 = (props) => (
+  <div className="review">
+    <div className="col-md-12 d-flex align-items-center pt-3">
+      <img className="review-img" src={"/userpics/" + props.comment.photo}></img>
+      <span>{props.comment.username}</span>
+    </div>
+    <div className="col-md-12 d-flex align-items-center pt-3 mt-3 justify-content-around">
+      <p className="tomato"></p>
+      <p className="tomato"></p>
+      <p className="tomato"></p>
+      <p className="tomato"></p>
+      <p className="tomato"></p>
+    </div>
+    <div className="col-md-12 d-flex align-items-center mt-3">
+      {props.comment.mensaje}
+    </div>
+  </div>
+);
+
 export default class ProductsList extends Component {
   constructor(props) {
     super(props);
     this.deleteExercise = this.deleteExercise.bind(this);
     this.addtocart = this.addtocart.bind(this);
-    this.state = { products: [], cookie: "", username: "", email: "" };
+    this.onChangeCommentText = this.onChangeCommentText.bind(this);
+    this.onChangeCommentRate = this.onChangeCommentRate.bind(this);
+    this.onSubmit = this.onSubmit.bind(this);
+
+    this.state = {
+      products: [],
+      cookie: "",
+      username: "",
+      email: "",
+      photo: "",
+      comments: [],
+
+      commenttext: "",
+      commentrate: "",
+    };
   }
 
+  onSubmit(e) {
+    e.preventDefault();
+
+    const comment = {
+      ratingowner: this.state.cookie._id,
+      iduser: this.props.match.params.id,
+      message: this.state.commenttext,
+      score: this.state.commentrate,
+    };
+
+    axios
+      .post("http://localhost:5000/Rating/add/", comment)
+      .then((res) => console.log(res.data));
+  }
+
+  commentList() {
+    return this.state.comments.map((currentcomment) => {
+      if (currentcomment.score == 1) {
+        return <Comment1 comment={currentcomment} />;
+      }
+      if (currentcomment.score == 2) {
+        return <Comment2 comment={currentcomment} />;
+      }
+      if (currentcomment.score == 3) {
+        return <Comment3 comment={currentcomment} />;
+      }
+      if (currentcomment.score == 4) {
+        return <Comment4 comment={currentcomment} />;
+      }
+      if (currentcomment.score == 5) {
+        return <Comment5 comment={currentcomment} />;
+      }
+    });
+  }
   componentDidMount() {
+    try {
+      const { cookie } = getFromStorage("the_main_app");
+      this.setState({
+        cookie: cookie,
+      });
+      console.log(cookie._id);
+    } catch {}
+
     axios
       .get("http://localhost:5000/users/" + this.props.match.params.id)
       .then((response) => {
@@ -63,17 +187,25 @@ export default class ProductsList extends Component {
           products: response.data.products,
           username: response.data.username,
           email: response.data.email,
+          photo: response.data.photo,
         });
       })
       .catch((error) => {
         console.log(error);
       });
 
-    const { cookie } = getFromStorage("the_main_app");
-
-    this.setState({
-      cookie: cookie._id,
-    });
+    axios
+      .get(
+        "http://localhost:5000/Rating/getrating/" + this.props.match.params.id
+      )
+      .then((response) => {
+        this.setState({
+          comments: response.data,
+        });
+      })
+      .catch((error) => {
+        console.log(error);
+      });
   }
 
   deleteExercise(id) {
@@ -100,10 +232,22 @@ export default class ProductsList extends Component {
       .then((res) => console.log(res.data));
   }
 
+  onChangeCommentText(e) {
+    this.setState({
+      commenttext: e.target.value,
+    });
+  }
+
+  onChangeCommentRate(e) {
+    this.setState({
+      commentrate: e.target.value,
+    });
+  }
+
   exerciseList() {
     return this.state.products.map((currentexercise) => {
       return (
-        <Exercise
+        <Product
           exercise={currentexercise}
           deleteExercise={this.deleteExercise}
           addtocart={this.addtocart}
@@ -123,7 +267,10 @@ export default class ProductsList extends Component {
           <div className="container mt-5">
             <div className="row myprofile">
               <div className="profile">
-                <div className="profilepic"></div>
+                <img
+                  className="profilepic"
+                  src={"/userpics/" + this.state.photo}
+                ></img>
                 <div className="profileinfo">
                   <h3>{this.state.username}</h3>
                   <hr className="profile-hr"></hr>
@@ -171,63 +318,41 @@ export default class ProductsList extends Component {
                 <hr className="profile-hr"></hr>
               </div>
             </div>
-            <div className="row profile-content">
-              <div className="review">
-                <div className="col-md-12 d-flex align-items-center pt-3">
-                  <div className="review-img"></div>
-                  <span>Username</span>
-                </div>
-                <div className="col-md-12 d-flex align-items-center pt-3 mt-3">
-                  Tomatoes
-                </div>
-                <div className="col-md-12 d-flex align-items-center pt-3 mt-3">
-                  "Comentario"
-                </div>
-              </div>
-              <div className="review">
-                <div className="col-md-12 d-flex align-items-center pt-3">
-                  <div className="review-img"></div>
-                  <span>Username</span>
-                </div>
-                <div className="col-md-12 d-flex align-items-center pt-3 mt-3">
-                  Tomatoes
-                </div>
-                <div className="col-md-12 d-flex align-items-center pt-3 mt-3">
-                  "Comentario"
-                </div>
-              </div>
-              <div className="review">
-                <div className="col-md-12 d-flex align-items-center pt-3">
-                  <div className="review-img"></div>
-                  <span>Username</span>
-                </div>
-                <div className="col-md-12 d-flex align-items-center pt-3 mt-3">
-                  Tomatoes
-                </div>
-                <div className="col-md-12 d-flex align-items-center pt-3 mt-3">
-                  "Comentario"
-                </div>
-              </div>
-              <div className="review">
-                <div className="col-md-12 d-flex align-items-center pt-3">
-                  <div className="review-img"></div>
-                  <span>Username</span>
-                </div>
-                <div className="col-md-12 d-flex align-items-center pt-3 mt-3">
-                  Tomatoes
-                </div>
-                <div className="col-md-12 d-flex align-items-center pt-3 mt-3">
-                  "Comentario"
-                </div>
+            <div className="row profile-content">{this.commentList()}</div>
+            <div className="row">
+              <div className="mt-5 mb-3">
+                <h3>Add Comment</h3>
+                <hr className="profile-hr"></hr>
               </div>
             </div>
+            <form onSubmit={this.onSubmit}>
+              <input
+                type="text"
+                className="form-control"
+                value={this.state.commenttext}
+                onChange={this.onChangeCommentText}
+              />
+              <input
+                type="number"
+                className="form-control"
+                max="5"
+                min="1"
+                value={this.state.commentrate}
+                onChange={this.onChangeCommentRate}
+              />
+
+              <input type="submit" value="Comment" />
+            </form>
           </div>
         </div>
       );
     } else {
       return (
         <div>
-          <h2>NOT LOGGED LMAO</h2>
+          <Navbar />
+          <div className="container mt-5">
+            <h2>You must be logged in to see user</h2>
+          </div>
         </div>
       );
     }

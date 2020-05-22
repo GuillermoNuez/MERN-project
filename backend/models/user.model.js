@@ -29,24 +29,32 @@ const userSchema = new Schema(
 
     bio: {
       type: String,
-      required: true,
+      required: false,
       unique: true,
       trim: true,
+      default:""
     },
 
     location: {
       type: String,
-      required: true,
-      unique: true,
+      required: false,
+      unique: false,
       trim: true,
+      default:""
     },
     
     role: {
       type: String,
-      required: true,
+      required: false,
       unique: false,
-      trim: true,
+      trim: true
     },
+    photo: {
+      type: String,
+      required: false,
+      unique: false,
+      default:"default.png"
+    }
   },
   {
     timestamps: true,

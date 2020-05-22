@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import axios from "axios";
 import "../../src/index.css";
 import Navbar from "./navbar.component";
+import { getFromStorage } from "../utils/storage";
 
 const Exercise = (props) => (
   <div className="card ml-3 mt-5 carta ">
@@ -24,14 +25,54 @@ const Exercise = (props) => (
   </div>
 );
 
+const Product = (props) => (
+  <div className="productcard mt-5 ">
+    <div className="card-body">
+      <h5 className="card-title">{props.product.product}</h5>
+      <div className="row ml-1 mb-3">
+        <div className="col-md-7">
+          <p className="card-text description">{props.product.description}</p>
+        </div>
+        <Link to={"/product/" + props.product._id}>View Product</Link>
+      </div>
+      <p className="localidad">{props.product.price}</p>
+      <div class="col.md-6"></div>
+    </div>
+  </div>
+);
+
 export default class ExercisesList extends Component {
   constructor(props) {
     super(props);
+    this.onChangeSeason = this.onChangeSeason.bind(this);
+    this.state = { users: [], cookie: "", products: [], season: "Spring" };
+  }
 
-    this.state = { users: [], cookie: "" };
+  onChangeSeason(e) {
+    console.log(e.target.value);
+    this.setState({
+      season: e.target.value,
+      products:"",
+    });
+
+    axios
+    .get("http://localhost:5000/Products/season/" + e.target.value)
+    .then((response) => {
+      this.setState({ products: response.data });
+    })
+    .catch((error) => {
+      console.log(error);
+    });
   }
 
   componentDidMount() {
+    try {
+      const { cookie } = getFromStorage("the_main_app");
+      this.setState({
+        cookie: cookie,
+      });
+    } catch {}
+
     axios
       .get("http://localhost:5000/Users/")
       .then((response) => {
@@ -40,19 +81,53 @@ export default class ExercisesList extends Component {
       .catch((error) => {
         console.log(error);
       });
+
+    console.log(this.state.season);
+    axios
+      .get("http://localhost:5000/Products/season/" + this.state.season)
+      .then((response) => {
+        this.setState({ products: response.data });
+      })
+      .catch((error) => {
+        console.log(error);
+      });
   }
 
   userList() {
     return this.state.users.map((currentuser) => {
-      return (
-        <Exercise
-          user={currentuser}
-          deleteUser={this.deleteUser}
-          addtocart={this.addtocart}
-          key={currentuser._id}
-        />
-      );
+      if (this.state.cookie) {
+        if (currentuser._id != this.state.cookie._id) {
+          return (
+            <Exercise
+              user={currentuser}
+              deleteUser={this.deleteUser}
+              addtocart={this.addtocart}
+              key={currentuser._id}
+            />
+          );
+        }
+      } else {
+        return (
+          <Exercise
+            user={currentuser}
+            deleteUser={this.deleteUser}
+            addtocart={this.addtocart}
+            key={currentuser._id}
+          />
+        );
+      }
     });
+  }
+
+  productsList() {
+
+    if(this.state.products) {
+      console.log(this.state.products);
+      return this.state.products.map((currentproduct) => {
+        return <Product product={currentproduct} key={currentproduct._id} />;
+      });
+    }
+
   }
 
   render() {
@@ -61,15 +136,25 @@ export default class ExercisesList extends Component {
         <Navbar />
         <div className="container mt-5">
           <div className="row">
-            <div className="col-md-4">
+            <div className="col-md-4 latest-farmers">
               <h2>Latest farmers</h2>
               <div className="col-md-12">{this.userList()}</div>
             </div>
-            <div className="cold-md-8">
-              <h2>Season products</h2>
-              <div className="d-flex justify-content-between">
-                <div className="productcard mt-5"></div>
-                <div className="productcard mt-5"></div>
+            <div className="cold-md-8 season-products">
+              <h2>
+                Season products
+                <select
+                  onChange={this.onChangeSeason}
+                  value={this.state.season}
+                >
+                  <option>Spring</option>
+                  <option>Summer</option>
+                  <option>Fall</option>
+                  <option>Winter</option>
+                </select>
+              </h2>
+              <div className="d-flex">
+                {this.productsList()}
               </div>
             </div>
           </div>

@@ -7,8 +7,6 @@ export default class CreateUser extends Component {
     super(props);
 
     this.onChangeUsername = this.onChangeUsername.bind(this);
-    this.onChangeBio = this.onChangeBio.bind(this);
-    this.onChangeLocation = this.onChangeLocation.bind(this);
     this.onChangeEmail = this.onChangeEmail.bind(this);
     this.onChangePassword = this.onChangePassword.bind(this);
     this.onChangeRole = this.onChangeRole.bind(this);
@@ -16,11 +14,9 @@ export default class CreateUser extends Component {
 
     this.state = {
       username: "",
-      bio: "",
-      location: "",
       email: "",
       password: "",
-      role: "",
+      role: "Client",
       selectedFile: null,
     };
   }
@@ -61,18 +57,7 @@ export default class CreateUser extends Component {
     });
   }
 
-  onChangeImage = (event) => {
-    console.log(event.target.files);
-    this.setState({
-      selectedFile: event.target.files,
-    });
-  };
 
-  UploadImage() {
-    const fd= new FormData();
-    fd.append("image",this.state.selectedFile,this.state.selectedFile.name);
-
-  }
   onSubmit(e) {
     e.preventDefault();
 
@@ -80,8 +65,6 @@ export default class CreateUser extends Component {
       username: this.state.username,
       email: this.state.email,
       password: this.state.password,
-      bio: this.state.bio,
-      location: this.state.location,
       role: this.state.role,
     };
 
@@ -95,10 +78,8 @@ export default class CreateUser extends Component {
       username: "",
       email: "",
       password: "",
-      bio: "",
-      location: "",
-      role: "",
     });
+    window.location = "/login";
   }
 
   render() {
@@ -129,42 +110,26 @@ export default class CreateUser extends Component {
 
               <label>Password: </label>
               <input
-                type="text"
+                type="password"
                 required
                 className="form-control"
                 value={this.state.password}
                 onChange={this.onChangePassword}
               />
 
-              <label>Biography: </label>
-              <input
-                type="text"
-                required
-                className="form-control"
-                value={this.state.bio}
-                onChange={this.onChangeBio}
-              />
-
-              <label>Location: </label>
-              <input
-                type="text"
-                required
-                className="form-control"
-                value={this.state.location}
-                onChange={this.onChangeLocation}
-              />
               <label>Role: </label>
-              <input
-                type="text"
-                required
+
+              <select
                 className="form-control"
                 value={this.state.role}
                 onChange={this.onChangeRole}
-              />
+              >
+                <option>Client</option>
+                <option>Farmer</option>
+              </select>
             </div>
 
-            <label>image: </label>
-            <input type="file" required onChange={this.onChangeImage} />
+          
 
             <div className="form-group">
               <input

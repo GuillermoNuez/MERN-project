@@ -31,7 +31,6 @@ export default class SeeProduct extends Component {
         cookie: obj.cookie._id,
       });
 
-
       axios
         .get("http://localhost:5000/products/" + this.props.match.params.id)
         .then((response) => {
@@ -61,7 +60,7 @@ export default class SeeProduct extends Component {
       .post("http://localhost:5000/Cart/add", newProduct)
       .then((res) => console.log(res.data));
 
-      window.location = "/product/"+this.props.match.params.id;
+    window.location = "/product/" + this.props.match.params.id;
   }
 
   render() {
@@ -69,11 +68,11 @@ export default class SeeProduct extends Component {
       <div className="seeproduct pb-5">
         <Navbar />
         <div className="container mt-5">
-    <h5>Product detail</h5>
+          <h5>Product detail</h5>
           <hr className="profile-hr"></hr>
           <div className="row d-flex justify-content-center mt-5 mb-5">
             <div className="product-images">
-              <img className="product-image" />
+              <img className="product-image" src={"/productpics/"+this.state.product.image1}/>
               <div className="col-md-12 d-flex justify-content-between products-row">
                 <img className="little-product" />
                 <img className="little-product" />
@@ -105,6 +104,7 @@ export default class SeeProduct extends Component {
                       type="number"
                       className="form-control product-input"
                       value={this.state.amount}
+                      min="1"
                       onChange={this.onChangeAmount}
                     />
                     - kg

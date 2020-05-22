@@ -1,6 +1,8 @@
 const router = require("express").Router();
 let ShoppingCart = require("../models/shoppingcart.model");
 let Product = require("../models/product.model");
+let Checkout = require("../models/checkout.model");
+let FarmerCheckout = require("../models/farmercheckout.model");
 
 router.route("/:userid").get((req, res) => {
   const id = req.params.userid;
@@ -89,12 +91,20 @@ router.route("/add").post((req, res) => {
   );
 });
 
-router.route("/").delete((req, res) => {  
+router.route("/").delete((req, res) => {
   ShoppingCart.findOneAndDelete({
     userid: req.body.userid,
-    productid: req.body.id
+    productid: req.body.id,
   })
     .then(res.json("Cart product deleted"))
+    .catch((err) => res.status(400).json("Error: " + err));
+});
+
+router.route("/delete").delete((req, res) => {
+  ShoppingCart.findOneAndDelete({
+    userid: req.body.userid,
+  })
+    .then(res.json("OK"))
     .catch((err) => res.status(400).json("Error: " + err));
 });
 
@@ -115,4 +125,102 @@ router.route("/update/:id").post((req, res) => {
     })
     .catch((err) => res.status(400).json("Error: " + err));
 });
+
+router.route("/addcheckout").post((req, res) => {
+  let idclient = req.body.idclient;
+  let products = req.body.products;
+  let name = req.body.name;
+  let adress = req.body.adress;
+  let phonenumber = req.body.phonenumber;
+  let zipcode = req.body.zipcode;
+  let payment = req.body.payment;
+
+  const newCheckout = new Checkout({
+    idclient,
+    products,
+    name,
+    adress,
+    phonenumber,
+    zipcode,
+    payment,
+  });
+
+  newCheckout
+    .save()
+    .then(() => {
+      let idlist = [];
+      products.forEach((element) => {
+        idlist.push(element.productid);
+      });
+      Product.find(
+        {
+          _id: { $in: idlist },
+        },
+        (err, result) => {
+          if (err) {
+            res.json("Server Error");
+          }
+          try {
+            for (let index = 0; index < result.length; index++) {
+              let newFarmerCheckout = new FarmerCheckout({
+                idfarmer: result[index].userid,
+                idproduct: result[index]._id,
+                idpedido: newCheckout._id,
+                amount: products[index].amount,
+              });
+              newFarmerCheckout
+                .save()
+                .catch((err) => res.status(400).json("Error: " + err));
+            }
+            ShoppingCart.findOneAndDelete({
+              userid: idclient,
+            })
+              .then(res.json("OK"))
+              .catch((err) => res.status(400).json("Error: " + err));
+          } catch {
+            res.json("Something went Wrong");
+          }
+        }
+      );
+    })
+    .catch((err) => res.status(400).json("Error: " + err));
+});
+
+router.route("/getcheckout/:userid").get((req, res) => {
+  // const id = req.params.userid;
+  Checkout.find({
+    idclient: req.params.userid,
+  })
+    .then((order) => {
+      res.json(order);
+    })
+    // res.json(products))
+    .catch((err) => res.status(400).json("Error:" + err));
+});
+
+router.route("/request/:userid").get((req, res) => {
+  // const id = req.params.userid;
+  FarmerCheckout.find({
+    idfarmer: req.params.userid,
+  })
+    .then((orders) => {
+      // console.log(orders);
+      var dict1 = [];
+      var dict2 = [];
+      for (let index = 0; index < orders.length; index++) {
+        dict1.push({ key: orders[index].idpedido, products: orders[index] });
+        // console.log(orders[index].body);
+      }
+
+      // let group = dict1.reduce((r, a) => {
+      //   r[a.key] = [...(r[a.key] || []), a];
+      //   return r;
+      // }, {});
+
+      // console.log(group);
+      res.json(orders);
+    })
+    .catch((err) => res.status(400).json("Error:" + err));
+});
+
 module.exports = router;

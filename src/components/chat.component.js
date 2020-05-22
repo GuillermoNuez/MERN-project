@@ -46,7 +46,7 @@ export default class ProductsList extends Component {
     } else {
       console.log("________________________ STATE ________________________");
       console.log(this.state.chatid);
-      if (this.state.chatid == "") {
+      if (!this.state.chatid) {
         console.log(
           "________________________ No Chat found ________________________"
         );

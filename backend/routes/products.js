@@ -7,8 +7,14 @@ router.route("/").get((req, res) => {
     .catch((err) => res.status(400).json("Error:" + err));
 });
 
-router.route("/add").post((req, res) => {
+router.route("/season/:id").get((req, res) => {
+  console.log("Searching " + req.params.id);
+  Product.find({ season: req.params.id })
+    .then((product) => res.json(product))
+    .catch((err) => res.status(400).json("Error: " + err));
+});
 
+router.route("/add").post((req, res) => {
   const userid = req.body.userid;
 
   const product = req.body.product;
@@ -24,11 +30,14 @@ router.route("/add").post((req, res) => {
     type,
     price,
     season,
+    image1: "",
   });
-console.log(newProduct);
+  newProduct.image1 = newProduct._id + "-main." + req.body.format;
+  
+  console.log(newProduct);
   newProduct
     .save()
-    .then(() => res.json("Product added!"))
+    .then(() => res.json({ status: "OK", id: newProduct._id }))
     .catch((err) => res.status(400).json("Error: " + err));
 });
 
@@ -39,8 +48,8 @@ router.route("/:id").get((req, res) => {
 });
 
 router.route("/getuser/:id").get((req, res) => {
-  Product.find({userid:req.params.id})
-    .then((product) =>{
+  Product.find({ userid: req.params.id })
+    .then((product) => {
       res.json(product);
     })
     .catch((err) => res.status(400).json("Error: " + err));

@@ -10,14 +10,30 @@ router.route("/").get((req, res) => {
     .catch((err) => res.status(400).json("Error:" + err));
 });
 
+router.route("/locations").get((req, res) => {
+  let list = [];
+  User.find()
+    .then((users) => {
+      users.forEach((user) => {
+        if (user.location) {
+          list.push(user.location);
+        }
+      });
+      let unique = [...new Set(list)];
+      res.json(unique);
+    })
+    .catch((err) => res.status(400).json("Error:" + err));
+});
+
 router.route("/:id").get((req, res) => {
   let username;
   let email;
-
+  let photo;
   User.findById(req.params.id)
     .then((user) => {
       username = user.username;
       email = user.email;
+      photo = user.photo;
     })
     .catch((err) => res.status(400).json("Error:" + err))
     .then(
@@ -30,6 +46,7 @@ router.route("/:id").get((req, res) => {
             username: username,
             email: email,
             products: products,
+            photo:photo
           };
 
           res.json(info);
@@ -38,16 +55,30 @@ router.route("/:id").get((req, res) => {
     );
 });
 
+router.route("/getproductsbylocation/:id").get((req, res) => {
+  User.find({ location: req.params.id })
+    .then((user) => {
+      let idlist = [];
+      user.forEach((element) => {
+        idlist.push(element._id);
+      });
+      Product.find({
+        userid: { $in: idlist },
+      })
+        .then((products) => {
+          res.json(products);
+        })
+        .catch((err) => res.status(400).json("Error:" + err));
+    })
+    .catch((err) => res.status(400).json("Error:" + err));
+});
+
 router.route("/add").post((req, res) => {
   const username = req.body.username;
   const email = req.body.email;
   const password = req.body.password;
-  const bio = req.body.bio;
-  const location = req.body.location;
   const role = req.body.role;
-
-  const newUser = new User({ username, email, password, bio, location, role });
-
+  const newUser = new User({ username, email, password, role });
   newUser
     .save()
     .then(() => res.json("User added!"))
@@ -55,7 +86,6 @@ router.route("/add").post((req, res) => {
 });
 
 router.route("/login").post((req, res) => {
-  console.log("entrmoas");
   const email = req.body.email;
   const password = req.body.password;
 
@@ -71,14 +101,6 @@ router.route("/login").post((req, res) => {
       try {
         const user = users[0];
         if (email == user.email && password == user.password) {
-          const test = {
-            userid: users[0]._id,
-            username: users[0].username,
-            email: users[0].email,
-            password: users[0].password,
-            role: users[0].role,
-          };
-          console.log(users[0]);
           return res.send({
             success: true,
             mes: "Valid sign in.",
@@ -126,14 +148,18 @@ router.route("/verify").post((req, res) => {
   );
 });
 
-router.route("/update/:id").post((req, res) => {
-  User.findById(req.params.id)
+router.route("/update/").post((req, res) => {
+  User.findById(req.body._id)
     .then((user) => {
       user.username = req.body.username;
       user.email = req.body.email;
       user.password = req.body.password;
+      user.location = req.body.location;
+      user.bio = req.body.bio;
       user.role = req.body.role;
-
+      if (req.body.photo) {
+        user.photo = req.body.photo;
+      }
       user
         .save()
         .then(() =>

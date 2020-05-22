@@ -14,6 +14,9 @@ import Login from "./components/login.component";
 import EditUser from "./components/edit-user.component";
 import MyCart from "./components/cart-list.component";
 import Chat from "./components/chat.component";
+import AllProducts from "./components/allproducts.component";
+import MyOrders from "./components/myorders.component";
+import Requests from "./components/request.component";
 
 function App() {
   return (
@@ -29,6 +32,9 @@ function App() {
       <Route path="/users" component={UsersList} />
       <Route path="/user/:id" exact component={ProductsList} />
       <Route path="/chat/:id" exact component={Chat} />
+      <Route path="/products" exact component={AllProducts} />
+      <Route path="/myorders" exact component={MyOrders} />
+      <Route path="/requests" exact component={Requests} />
     </Router>
   );
 }

@@ -22,6 +22,7 @@ export default class CreateProduct extends Component {
       type: "",
       price: "",
       season: "",
+      file: "",
 
       users: [],
       cookie: "",
@@ -33,8 +34,7 @@ export default class CreateProduct extends Component {
 
     if (obj && obj.cookie) {
       const { cookie } = obj;
-      console.log("_______");
-      console.log(cookie._id);
+
       this.setState({
         cookie: cookie,
         season: "Spring",
@@ -73,26 +73,41 @@ export default class CreateProduct extends Component {
 
   onSubmit(e) {
     e.preventDefault();
-    const obj = getFromStorage("the_main_app");
-    const { cookie } = obj;
+    const fd = new FormData();
+    let aux = this.state.file.name.split(".");
 
     const product = {
-      userid: cookie._id,
+      userid: this.state.cookie._id,
       product: this.state.product,
       description: this.state.description,
       type: this.state.type,
       price: this.state.price,
       season: this.state.season,
+      format: aux[1]
     };
 
-    console.log(product);
+    axios.post("http://localhost:5000/products/add", product).then((res) => {
+      console.log(res.data);
+      if (res.data.status == "OK") {
+        if (this.state.file) {
 
-    axios
-      .post("http://localhost:5000/products/add", product)
-      .then((res) => console.log(res.data));
-
+          fd.append("files", this.state.file, res.data.id + "-main." + aux[1]);
+          axios
+            .post("http://localhost:5000/Upload/uploadproductphoto", fd)
+            .then((res) => {
+              console.log(res);
+            });
+        }
+      }
+    });
     window.location = "/createproduct";
   }
+
+  fileSelectedHandler = (event) => {
+    this.setState({
+      file: event.target.files[0],
+    });
+  };
 
   render() {
     const { cookie } = this.state;
@@ -129,6 +144,7 @@ export default class CreateProduct extends Component {
                   <label>Type: </label>
                   <input
                     type="text"
+                    required
                     className="form-control"
                     value={this.state.type}
                     onChange={this.onChangeType}
@@ -140,6 +156,7 @@ export default class CreateProduct extends Component {
                   <label>Price: </label>
                   <input
                     type="number"
+                    required
                     className="form-control"
                     value={this.state.price}
                     onChange={this.onChangePrice}
@@ -149,6 +166,7 @@ export default class CreateProduct extends Component {
                   <label>Season: </label>
                   <select
                     className="form-control"
+                    required
                     onChange={this.onChangeSeason}
                     value={this.state.season}
                   >
@@ -158,11 +176,18 @@ export default class CreateProduct extends Component {
                     <option>Winter</option>
                   </select>
                 </div>
-
+                <label>Photo : </label>
+                <input
+                  type="file"
+                  className="ml-2"
+                  required
+                  accept="image/x-png,image/jpeg"
+                  onChange={this.fileSelectedHandler}
+                />
                 <div className="form-group">
                   <input
                     type="submit"
-                    value="Create Product Log"
+                    value="Create Product"
                     className="createbutton"
                   />
                 </div>

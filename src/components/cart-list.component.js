@@ -9,7 +9,9 @@ const Product = (props) => (
     <img className="cart-item-img" />
     <p className="cart-item-name ml-4">{props.product.product}</p>
     <p className="cart-item-amount">{props.product.amount}kg</p>
-    <p className="cart-item-price">{props.product.price*props.product.amount}€</p>
+    <p className="cart-item-price">
+      {props.product.price * props.product.amount}€
+    </p>
     <a
       href="#"
       className="cart-item-delete"
@@ -26,8 +28,24 @@ export default class ProductsList extends Component {
   constructor(props) {
     super(props);
     this.deleteProduct = this.deleteProduct.bind(this);
-    this.addtocart = this.addtocart.bind(this);
-    this.state = { products: [], cookie: "" };
+    this.onChangeAdress = this.onChangeAdress.bind(this);
+    this.onChangeName = this.onChangeName.bind(this);
+    this.onChangePayment = this.onChangePayment.bind(this);
+    this.onChangePhone = this.onChangePhone.bind(this);
+    this.onChangeZip = this.onChangeZip.bind(this);
+    this.onSubmit = this.onSubmit.bind(this);
+    this.emptyCart= this.emptyCart.bind(this);
+
+    this.state = {
+      products: [],
+      cookie: "",
+
+      name: "",
+      adress: "",
+      phonenumber: "",
+      zipcode: "",
+      payment: "",
+    };
   }
 
   componentDidMount() {
@@ -47,21 +65,57 @@ export default class ProductsList extends Component {
       });
   }
 
-  addtocart(id) {
-    // console.log(this.state.products[0]);
-    console.log(id);
-    const { cookie } = this.state;
+  onChangeName(e) {
+    this.setState({
+      name: e.target.value,
+    });
+  }
 
-    const newProduct = {
-      userid: cookie.userid,
-      productid: id,
-      amount: 1,
+  onChangeAdress(e) {
+    this.setState({
+      adress: e.target.value,
+    });
+  }
+
+  onChangePhone(e) {
+    this.setState({
+      phonenumber: e.target.value,
+    });
+  }
+
+  onChangeZip(e) {
+    this.setState({
+      zipcode: e.target.value,
+    });
+  }
+
+  onChangePayment(e) {
+    this.setState({
+      payment: e.target.value,
+    });
+  }
+
+  onSubmit(e) {
+    e.preventDefault();
+
+    const info = {
+      idclient: this.state.cookie._id,
+      products: this.state.products,
+      name: this.state.name,
+      adress: this.state.adress,
+      phonenumber: this.state.phonenumber,
+      zipcode: this.state.zipcode,
+      payment: this.state.payment,
     };
 
-    axios
-      .post("http://localhost:5000/Cart/add", newProduct)
-      .then((res) => console.log(res.data))
-      .then((window.location = "/MyCart"));
+    console.log(info);
+
+    axios.post("http://localhost:5000/Cart/addcheckout", info).then((res) => {
+      console.log(res.data);
+      if (res.data == "OK") {
+        window.location = "/MyCart";
+      }
+    });
   }
 
   deleteProduct(id) {
@@ -78,14 +132,29 @@ export default class ProductsList extends Component {
 
     window.location = "/MyCart";
   }
+  emptyCart() {
 
+    fetch("http://localhost:5000/Cart/delete", {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        userid: this.state.cookie._id,
+      }),
+    });
+    window.location = "/MyCart";
+
+  }
+  keepShoping() {
+    window.location = "/products";
+  }
   ProductList() {
     return this.state.products.map((currentproduct) => {
       return (
         <Product
           product={currentproduct}
           deleteProduct={this.deleteProduct}
-          addtocart={this.addtocart}
           key={currentproduct.productid}
         />
       );
@@ -100,7 +169,8 @@ export default class ProductsList extends Component {
           <div className="row d-flex justify-content-center mt-5 mb-5">
             <div className="cart-box">
               <h2>
-                <span>(0)</span> Articles in <span>your cart</span>
+                <span>({this.state.products.length})</span> Articles in{" "}
+                <span>your cart</span>
               </h2>
               <div className="cold-md-12 cart-box-head d-flex align-items-center mb-3">
                 <div className="col-md-7">
@@ -111,19 +181,12 @@ export default class ProductsList extends Component {
                   <h4>Total</h4>
                 </div>
               </div>
-              <div className="cart-list">
-                {/* <div className="cart-item">
-                  <img className="cart-item-img" />
-                  <p className="cart-item-name ml-4">Article Name</p>
-                  <p className="cart-item-amount">5kg</p>
-                  <p className="cart-item-price">5€</p>
-                  <p className="cart-item-delete">X</p>
-                </div> */}
-                {this.ProductList()}
-              </div>
+              <div className="cart-list">{this.ProductList()}</div>
               <div className="col-md-12 d-flex justify-content-between ml-0">
-                <button className="cart-actions">Empty cart</button>
-                <button className="cart-actions">Continue shopping</button>
+                <button className="cart-actions" onClick={this.emptyCart}>
+                  Empty cart
+                </button>
+                <button className="cart-actions"  onClick={this.keepShoping}>Continue shopping</button>
               </div>
             </div>
             <div className="cart-box">
@@ -137,8 +200,8 @@ export default class ProductsList extends Component {
                     type="text"
                     required
                     className="form-control"
-                    value={this.state.product}
-                    onChange={this.onChangeProduct}
+                    value={this.state.name}
+                    onChange={this.onChangeName}
                   />
                 </div>
                 <div className="row d-flex ml-3 pr-5 justify-content-between mb-5">
@@ -147,8 +210,8 @@ export default class ProductsList extends Component {
                     type="text"
                     required
                     className="form-control"
-                    value={this.state.product}
-                    onChange={this.onChangeProduct}
+                    value={this.state.adress}
+                    onChange={this.onChangeAdress}
                   />
                 </div>
                 <div className="row d-flex ml-3 pr-5 justify-content-between mb-5">
@@ -157,16 +220,16 @@ export default class ProductsList extends Component {
                     type="text"
                     required
                     className="form-control medium-input"
-                    value={this.state.product}
-                    onChange={this.onChangeProduct}
+                    value={this.state.phonenumber}
+                    onChange={this.onChangePhone}
                   />
                   <label>Zip code: </label>
                   <input
                     type="text"
                     required
                     className="form-control small-input"
-                    value={this.state.product}
-                    onChange={this.onChangeProduct}
+                    value={this.state.zipcode}
+                    onChange={this.onChangeZip}
                   />
                 </div>
 
@@ -176,8 +239,8 @@ export default class ProductsList extends Component {
                     type="text"
                     required
                     className="form-control "
-                    value={this.state.product}
-                    onChange={this.onChangeProduct}
+                    value={this.state.payment}
+                    onChange={this.onChangePayment}
                   />
                 </div>
 
