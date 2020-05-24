@@ -80,25 +80,9 @@ export default class EditExercise extends Component {
   };
 
   filesSelectedHandler = (event) => {
-    let fileObj = [];
-    let fileArray = [];
-    
-    console.log(event.target.files);
-    const data = new FormData()
-    for(var x = 0; x<this.state.selectedFile.length; x++) {
-        data.append('file', this.state.selectedFile[x])
-    }
-
-    // for (let i = 0; i < fileObj[0].length; i++)X {
-    //   fileArray.push(URL.createObjectURL(this.fileObj[0][i]));
-    // }
-    // this.setState({ files: this.fileArray });
-
-    // axios
-    //   .post("http://localhost:5000/Upload/uploadproductphotos", fd)
-    //   .then((res) => {
-    //     console.log(res);
-    //   });
+    this.setState({
+      files: event.target.files,
+    });
   };
 
   onSubmit(e) {
@@ -120,8 +104,46 @@ export default class EditExercise extends Component {
         "http://localhost:5000/products/update/" + this.props.match.params.id,
         product
       )
-      .then((res) => console.log(res.data));
-    window.location = "/product/" + this.props.match.params.id;
+      .then((res) => {
+        console.log(res.data);
+        if (this.state.file) {
+          const fd = new FormData();
+          let aux = this.state.file.name.split(".");
+
+          fd.append(
+            "files",
+            this.state.file,
+            this.props.match.params.id + "-main." + aux[1]
+          );
+          axios
+            .post(
+              "http://localhost:5000/Upload/updatemainphoto/" +
+                this.props.match.params.id,
+              fd
+            )
+            .then((res) => {
+              console.log(res);
+            });
+        }
+        //
+        if (this.state.files) {
+          let data = new FormData();
+          for (var x = 0; x < this.state.files.length; x++) {
+            data.append("files", this.state.files[x]);
+          }
+
+          axios
+            .post(
+              "http://localhost:5000/Upload/uploadproductphotos/" +
+                this.props.match.params.id,
+              data
+            )
+            .then((res) => {
+              console.log(res);
+            });
+        }
+        window.location = "/product/" + this.props.match.params.id;
+      });
   }
 
   render() {
@@ -190,7 +212,6 @@ export default class EditExercise extends Component {
               <input
                 type="file"
                 className="ml-2"
-                required
                 accept="image/x-png,image/jpeg"
                 onChange={this.fileSelectedHandler}
               />
@@ -199,7 +220,6 @@ export default class EditExercise extends Component {
                 <input
                   type="file"
                   className="ml-2"
-                  required
                   multiple
                   accept="image/x-png,image/jpeg"
                   onChange={this.filesSelectedHandler}

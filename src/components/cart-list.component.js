@@ -6,7 +6,7 @@ import { getFromStorage } from "../utils/storage";
 
 const Product = (props) => (
   <div className="cart-item">
-    <img className="cart-item-img" />
+    <img className="cart-item-img"  src={"/productpics/"+props.product.image}/>
     <p className="cart-item-name ml-4">{props.product.product}</p>
     <p className="cart-item-amount">{props.product.amount}kg</p>
     <p className="cart-item-price">
@@ -151,6 +151,7 @@ export default class ProductsList extends Component {
   }
   ProductList() {
     return this.state.products.map((currentproduct) => {
+      console.log(currentproduct);
       return (
         <Product
           product={currentproduct}

@@ -34,25 +34,23 @@ router.route("/:id").get((req, res) => {
       username = user.username;
       email = user.email;
       photo = user.photo;
-    })
-    .catch((err) => res.status(400).json("Error:" + err))
-    .then(
+
       Product.find({
         userid: req.params.id,
       })
-
         .then((products) => {
           const info = {
             username: username,
             email: email,
             products: products,
-            photo:photo
+            photo: photo,
           };
 
           res.json(info);
         })
         .catch((err) => res.status(400).json("Error:" + err))
-    );
+    })
+    .catch((err) => res.status(400).json("Error:" + err))
 });
 
 router.route("/getproductsbylocation/:id").get((req, res) => {

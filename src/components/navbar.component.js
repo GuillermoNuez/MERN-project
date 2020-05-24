@@ -18,13 +18,13 @@ export default class Navbar extends Component {
     } catch {}
   }
   render() {
-    if(!this.state.cookie) {
+    if (!this.state.cookie) {
       return (
         <div class="row nav2 ">
           <div class="nav2-logo">
             <Link to="/" className="navbar-brand header-logo"></Link>
           </div>
-          <div class="nav2-links">
+          <div class="nav-links">
             <Link to="/users" className="nav-link">
               Farmers
             </Link>
@@ -37,8 +37,7 @@ export default class Navbar extends Component {
           </div>
         </div>
       );
-    }
-    else {
+    } else {
       return (
         <div class="row nav2 ">
           <div class="nav2-logo">
@@ -51,13 +50,16 @@ export default class Navbar extends Component {
             <Link to="/createproduct" className="nav-link">
               Products
             </Link>
-            <Link to="/login" className="nav-link">
+            <Link to="/myprofile" className="nav-link">
               My Profile
+            </Link>
+
+            <Link to="/MyCart" className="myCart">
+              <div className="myCart-logo"><p className="basket-logo"></p></div>
             </Link>
           </div>
         </div>
       );
     }
-
   }
 }

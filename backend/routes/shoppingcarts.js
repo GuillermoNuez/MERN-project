@@ -33,6 +33,7 @@ router.route("/:userid").get((req, res) => {
                 shipping: result[index].shipping,
                 price: result[index].price,
                 amount: products[index].amount,
+                image: result[index].image1,
               };
               productList.push(info);
             }
@@ -221,6 +222,15 @@ router.route("/request/:userid").get((req, res) => {
       res.json(orders);
     })
     .catch((err) => res.status(400).json("Error:" + err));
+});
+
+router.route("/deletechechout").delete((req, res) => {
+  Checkout.findOneAndDelete({
+    idclient: req.body.userid,
+    _id: req.body.id,
+  })
+    .then(res.json("Checkout deleted"))
+    .catch((err) => res.status(400).json("Error: " + err));
 });
 
 module.exports = router;

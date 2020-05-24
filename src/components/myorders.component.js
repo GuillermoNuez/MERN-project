@@ -4,8 +4,8 @@ import "../../src/index.css";
 import Navbar from "./navbar.component";
 import { getFromStorage } from "../utils/storage";
 const Order = (props) => (
-  <ul class="list-group w-25 ml-2 mr-2">
-    <li class="list-group-item active">{/*{props.order._id}*/}</li>
+  <ul class="list-group w-25 ml-2 mr-2 mt-4">
+    <li class="list-group-item active">Order number: {props.order._id}</li>
     {props.order.products.map((item) => {
       return (
         <li class="list-group-item d-flex">
@@ -15,12 +15,27 @@ const Order = (props) => (
         </li>
       );
     })}
+    <h4 className="mt-3 mb-3">Shipping info</h4>
+    <li class="list-group-item">Name: {props.order.name}</li>
+    <li class="list-group-item">C/: {props.order.adress}</li>
+    <li class="list-group-item">Tlfn: {props.order.phonenumber}</li>
+    <li class="list-group-item">Zip: {props.order.zipcode}</li>
+    <a
+      href="#"
+      className="cart-item-delete"
+      onClick={() => {
+        props.deleteOrder(props.order._id);
+      }}
+    >
+      X
+    </a>
   </ul>
 );
 
 export default class ProductsList extends Component {
   constructor(props) {
     super(props);
+    this.deleteOrder = this.deleteOrder.bind(this);
     this.state = {
       orders: [],
       cookie: "",
@@ -40,16 +55,30 @@ export default class ProductsList extends Component {
         this.setState({
           orders: response.data,
         });
-        console.log(response.data);
       })
       .catch((error) => {
         console.log(error);
       });
   }
 
+  deleteOrder(id) {
+    fetch("http://localhost:5000/Cart/deletechechout", {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        id: id,
+        userid: this.state.cookie,
+      }),
+    });
+
+    window.location = "/myorders";
+    console.log(id);
+  }
   OrderList() {
     return this.state.orders.map((currentorder) => {
-      return <Order order={currentorder} />;
+      return <Order order={currentorder} deleteOrder={this.deleteOrder} />;
     });
   }
 
@@ -61,10 +90,8 @@ export default class ProductsList extends Component {
           <Navbar />
 
           <div className="container mt-5">
-
             <h2 className="mb-5">My orders</h2>
-            <div className="row">  {this.OrderList()}</div>
-          
+            <div className="row"> {this.OrderList()}</div>
           </div>
         </div>
       );

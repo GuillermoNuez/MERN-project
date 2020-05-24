@@ -17,6 +17,7 @@ import Chat from "./components/chat.component";
 import AllProducts from "./components/allproducts.component";
 import MyOrders from "./components/myorders.component";
 import Requests from "./components/request.component";
+import MyProfile from "./components/myprofile.component";
 
 function App() {
   return (
@@ -35,6 +36,7 @@ function App() {
       <Route path="/products" exact component={AllProducts} />
       <Route path="/myorders" exact component={MyOrders} />
       <Route path="/requests" exact component={Requests} />
+      <Route path="/myprofile" exact component={MyProfile} />
     </Router>
   );
 }

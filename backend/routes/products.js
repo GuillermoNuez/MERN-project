@@ -8,7 +8,6 @@ router.route("/").get((req, res) => {
 });
 
 router.route("/season/:id").get((req, res) => {
-  console.log("Searching " + req.params.id);
   Product.find({ season: req.params.id })
     .then((product) => res.json(product))
     .catch((err) => res.status(400).json("Error: " + err));

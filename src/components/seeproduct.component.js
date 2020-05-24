@@ -74,10 +74,10 @@ export default class SeeProduct extends Component {
             <div className="product-images">
               <img className="product-image" src={"/productpics/"+this.state.product.image1}/>
               <div className="col-md-12 d-flex justify-content-between products-row">
-                <img className="little-product" />
-                <img className="little-product" />
-                <img className="little-product" />
-                <img className="little-product" />
+                <img className="little-product" src={"/productpics/"+this.state.product.image2}/>
+                <img className="little-product"  src={"/productpics/"+this.state.product.image3}/>
+                <img className="little-product"  src={"/productpics/"+this.state.product.image4}/>
+                <img className="little-product"  src={"/productpics/"+this.state.product.image5}/>
               </div>
             </div>
             <div>

@@ -1,9 +1,8 @@
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
+import Navbar from "../components/navbar.component";
 import axios from "axios";
-import "../../src/index.css";
-import Navbar from "./navbar.component";
-import { getFromStorage } from "../utils/storage";
+import { getFromStorage, setInStorage } from "../utils/storage";
 
 const Product = (props) => (
   <div class="productcard">
@@ -12,14 +11,16 @@ const Product = (props) => (
       <p>{props.product.product}</p>
       <Link to={"/product/" + props.product._id}>See more</Link>
       <br />
+      <Link to={"/edit/" + props.product._id}>edit</Link>
+      <br />
       <a
         href="#"
         className="btn btn-primary"
         onClick={() => {
-          props.addtocart(props.product._id);
+          props.deleteproduct(props.product._id);
         }}
       >
-        +
+        delete
       </a>
     </div>
   </div>
@@ -122,42 +123,46 @@ const Comment5 = (props) => (
     </div>
   </div>
 );
-
-export default class ProductsList extends Component {
+export default class Login extends Component {
   constructor(props) {
     super(props);
-    this.deleteExercise = this.deleteExercise.bind(this);
-    this.addtocart = this.addtocart.bind(this);
-    this.onChangeCommentText = this.onChangeCommentText.bind(this);
-    this.onChangeCommentRate = this.onChangeCommentRate.bind(this);
+    this.deleteproduct = this.deleteproduct.bind(this);
+    this.onChangeEmail = this.onChangeEmail.bind(this);
+    this.onChangePassword = this.onChangePassword.bind(this);
     this.onSubmit = this.onSubmit.bind(this);
 
     this.state = {
-      products: [],
+      isLoading: true,
       cookie: "",
-      username: "",
+      singUpError: "",
+      singInError: "",
       email: "",
-      photo: "",
+      password: "",
+      products: [],
       comments: [],
-
-      commenttext: "",
-      commentrate: "",
     };
   }
+  deleteproduct(id) {
+    axios.delete("http://localhost:5000/products/" + id).then((response) => {
+      console.log(response.data);
+    });
 
-  onSubmit(e) {
-    e.preventDefault();
-
-    const comment = {
-      ratingowner: this.state.cookie._id,
-      iduser: this.props.match.params.id,
-      message: this.state.commenttext,
-      score: this.state.commentrate,
-    };
-
-    axios
-      .post("http://localhost:5000/Rating/add/", comment)
-      .then((res) => console.log(res.data));
+    this.setState({
+      products: this.state.products.filter((el) => el._id !== id),
+    });
+  }
+  productList() {
+    return this.state.products.map((currentproduct) => {
+      console.log(currentproduct);
+      return (
+        <Product
+          product={currentproduct}
+          deleteproduct={this.deleteproduct}
+          addtocart={this.addtocart}
+          key={currentproduct._id}
+        />
+      );
+    });
   }
 
   commentList() {
@@ -179,96 +184,112 @@ export default class ProductsList extends Component {
       }
     });
   }
+
   componentDidMount() {
-    try {
-      const { cookie } = getFromStorage("the_main_app");
+    const obj = getFromStorage("the_main_app");
+
+    if (obj && obj.cookie) {
+      const { cookie } = obj;
       this.setState({
         cookie: cookie,
+        isLoading: false,
       });
-      console.log(cookie._id);
-    } catch {}
-
-    axios
-      .get("http://localhost:5000/users/" + this.props.match.params.id)
-      .then((response) => {
-        console.log(response.data);
-        this.setState({
-          products: response.data.products,
-          username: response.data.username,
-          email: response.data.email,
-          photo: response.data.photo,
+      // GET PRODUCTS
+      axios
+        .get("http://localhost:5000/products/getuser/" + cookie._id)
+        .then((response) => {
+          this.setState({
+            products: response.data,
+          });
+        })
+        .catch((error) => {
+          console.log(error);
         });
-      })
-      .catch((error) => {
-        console.log(error);
-      });
 
-    axios
-      .get(
-        "http://localhost:5000/Rating/getrating/" + this.props.match.params.id
-      )
-      .then((response) => {
-        this.setState({
-          comments: response.data,
+      axios
+        .get("http://localhost:5000/Rating/getrating/" + cookie._id)
+        .then((response) => {
+          this.setState({
+            comments: response.data,
+          });
+        })
+        .catch((error) => {
+          console.log(error);
         });
-      })
-      .catch((error) => {
-        console.log(error);
+    } else {
+      this.setState({
+        isLoading: false,
       });
+    }
   }
 
-  deleteExercise(id) {
-    axios.delete("http://localhost:5000/products/" + id).then((response) => {
-      console.log(response.data);
+  onChangeEmail(e) {
+    this.setState({
+      email: e.target.value,
     });
+  }
+
+  onChangePassword(e) {
+    this.setState({
+      password: e.target.value,
+    });
+  }
+  logout() {
+    try {
+      localStorage
+        .removeItem("the_main_app")
+        .then((window.location = "/login"));
+    } catch {
+      console.log("Something went wrong");
+      window.location = "/login";
+    }
+  }
+
+  onSubmit(e) {
+    e.preventDefault();
 
     this.setState({
-      products: this.state.products.filter((el) => el._id !== id),
+      isLoading: true,
     });
-  }
 
-  addtocart(id) {
-    const { cookie } = this.state;
+    fetch("http://localhost:5000/users/login", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        email: this.state.email,
+        password: this.state.password,
+      }),
+    })
+      .then((res) => res.json())
+      .then((json) => {
+        if (json.success) {
+          setInStorage("the_main_app", { cookie: json.user });
 
-    const newProduct = {
-      userid: cookie,
-      productid: id,
-      amount: 1,
-    };
-
-    axios
-      .post("http://localhost:5000/Cart/add", newProduct)
-      .then((res) => console.log(res.data));
-  }
-
-  onChangeCommentText(e) {
-    this.setState({
-      commenttext: e.target.value,
-    });
-  }
-
-  onChangeCommentRate(e) {
-    this.setState({
-      commentrate: e.target.value,
-    });
-  }
-
-  exerciseList() {
-    return this.state.products.map((currentexercise) => {
-      return (
-        <Product
-          product={currentexercise}
-          deleteExercise={this.deleteExercise}
-          addtocart={this.addtocart}
-          key={currentexercise._id}
-        />
-      );
-    });
+          window.location = "/login";
+        } else {
+          this.setState({
+            isLoading: false,
+            email: "",
+            password: "",
+            cookie: json.cookie,
+          });
+        }
+      });
   }
 
   render() {
     const { cookie } = this.state;
-    if (cookie) {
+    if (!cookie) {
+      // window.location = "/login";
+      return (
+        <div>
+          <Navbar />
+          Not logged
+        </div>
+      );
+    } else {
       return (
         <div>
           <Navbar />
@@ -278,21 +299,22 @@ export default class ProductsList extends Component {
               <div className="profile">
                 <img
                   className="profilepic"
-                  src={"/userpics/" + this.state.photo}
+                  src={"/userpics/" + this.state.cookie.photo}
                 ></img>
                 <div className="profileinfo">
-                  <h3>{this.state.username}</h3>
+                  <h3>{this.state.cookie.username}</h3>
                   <hr className="profile-hr"></hr>
-                  <h5>Biography{this.state.bio}</h5>
+                  <h5>{this.state.cookie.bio}</h5>
                   <hr className="profile-hr"></hr>
-                  <h5 className="mt-3">Granada, Spain</h5>
+                  <h5 className="mt-3">{this.state.cookie.location}</h5>
                   <h5 className="mt-3">+34677896912</h5>
-                  <Link
-                    className="contactme mt-4"
-                    to={"/chat/" + this.props.match.params.id}
-                  >
-                    Contact
+                  <Link className="contactme mt-4" to="/edituser">
+                    Edit profile
                   </Link>
+
+                  <button className="contactme mt-4" onClick={this.logout}>
+                    Logout
+                  </button>
                 </div>
               </div>
               <div className="profileproducts">
@@ -315,7 +337,7 @@ export default class ProductsList extends Component {
                     </div>
                   </div>
                   <div className="row profile-content">
-                    {this.exerciseList()}
+                    {this.productList()}
                   </div>
                 </div>
               </div>
@@ -328,39 +350,6 @@ export default class ProductsList extends Component {
               </div>
             </div>
             <div className="row profile-content">{this.commentList()}</div>
-            <div className="row">
-              <div className="mt-5 mb-3">
-                <h3>Add Comment</h3>
-                <hr className="profile-hr"></hr>
-              </div>
-            </div>
-            <form onSubmit={this.onSubmit}>
-              <input
-                type="text"
-                className="form-control"
-                value={this.state.commenttext}
-                onChange={this.onChangeCommentText}
-              />
-              <input
-                type="number"
-                className="form-control"
-                max="5"
-                min="1"
-                value={this.state.commentrate}
-                onChange={this.onChangeCommentRate}
-              />
-
-              <input type="submit" value="Comment" />
-            </form>
-          </div>
-        </div>
-      );
-    } else {
-      return (
-        <div>
-          <Navbar />
-          <div className="container mt-5">
-            <h2>You must be logged in to see user</h2>
           </div>
         </div>
       );

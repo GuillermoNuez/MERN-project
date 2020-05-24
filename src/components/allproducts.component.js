@@ -5,16 +5,15 @@ import "../../src/index.css";
 import Navbar from "./navbar.component";
 
 const Product = (props) => (
-  <div className="ml-2 mr-2 productcard">
-    <div className="card-body">
-      <h5 className="card-title">{props.exercise.product}</h5>
-      <p className="card-text">{props.exercise.type}</p>
-      <p className="card-text">{props.exercise.price} €</p>
-      <div class="row">
-        <div class="col-md-7">
-          <Link to={"/product/" + props.exercise._id}>See more</Link>
-        </div>
-      </div>
+  <div class="productcard ml-3 mr-3">
+    <img src={"/productpics/" + props.product.image1} class="image" />
+    <div class="middle">
+      <p>{props.product.product}</p>
+
+      <p>{props.product.type}</p>
+      <p>{props.product.price} €/Kg</p>
+      <Link to={"/product/" + props.product._id}>See more</Link>
+      <br />
     </div>
   </div>
 );
@@ -178,13 +177,13 @@ export default class ProductsList extends Component {
       this.setState({
         products: this.state.originalproducts.filter((p) => {
           return p.type.includes(e.target.value);
-        })
+        }),
       });
     }
   }
   productList() {
-    return this.state.products.map((currentexercise) => {
-      return <Product exercise={currentexercise} key={currentexercise._id} />;
+    return this.state.products.map((currentproduct) => {
+      return <Product product={currentproduct} key={currentproduct._id} />;
     });
   }
 

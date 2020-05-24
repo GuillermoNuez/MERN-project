@@ -272,8 +272,16 @@ h1 {
   height: 100%;
 }
 
-.nav2-links {
+.nav-links {
   width: 500px;
+  height: 100%;
+  display: flex;
+  justify-content: space-between;
+  margin-right: 50px;
+}
+
+.nav2-links {
+  width: 600px;
   height: 100%;
   display: flex;
   justify-content: space-between;
@@ -481,12 +489,36 @@ h1 {
 }
 
 .productcard {
+  position: relative;
   width: 200px;
   height: 200px;
-  background-color: #e6dac6 !important;
-  margin-left: 25px;
-  margin-right: 25px;
-  border-radius: 3px;
+}
+
+.productcard .image {
+  opacity: 1;
+  display: block;
+  width: 100%;
+  height: auto;
+  transition: 0.5s ease;
+  backface-visibility: hidden;
+}
+.productcard:hover .image {
+  opacity: 0.3;
+}
+
+.productcard:hover .middle {
+  opacity: 1;
+}
+
+.productcard .middle {
+  transition: 0.5s ease;
+  opacity: 0;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  -ms-transform: translate(-50%, -50%);
+  text-align: center;
 }
 
 .container {
@@ -927,4 +959,35 @@ h1 {
 
 .search-form {
   width: 400px !important;
+}
+
+.myCart {
+  width: 110px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.myCart-logo {
+  padding-top: 10px;
+  width: 50%;
+  border-radius: 50%;
+  background-color: #f9ecd6;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.basket-logo {
+  width: 35px;
+  height: 35px;
+  background-image: url("Fotos/basket.svg");
+  background-position: center;
+  background-size: contain;
+  background-repeat: no-repeat;
+}
+
+.user-image {
+  width: 40px;
+  border-radius: 50%;
 }
