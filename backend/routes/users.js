@@ -29,12 +29,13 @@ router.route("/:id").get((req, res) => {
   let username;
   let email;
   let photo;
+  let photos;
   User.findById(req.params.id)
     .then((user) => {
       username = user.username;
       email = user.email;
       photo = user.photo;
-
+      photos = user.photos;
       Product.find({
         userid: req.params.id,
       })
@@ -44,13 +45,14 @@ router.route("/:id").get((req, res) => {
             email: email,
             products: products,
             photo: photo,
+            photos :photos
           };
 
           res.json(info);
         })
-        .catch((err) => res.status(400).json("Error:" + err))
+        .catch((err) => res.status(400).json("Error:" + err));
     })
-    .catch((err) => res.status(400).json("Error:" + err))
+    .catch((err) => res.status(400).json("Error:" + err));
 });
 
 router.route("/getproductsbylocation/:id").get((req, res) => {
@@ -169,6 +171,14 @@ router.route("/update/").post((req, res) => {
         .catch((err) => res.status(400).json("Error: " + err));
     })
     .catch((err) => res.status(400).json("Error: " + err));
+});
+
+router.route("/getuser/:id").get((req, res) => {
+  User.findById(req.params.id)
+    .then((user) => {
+      res.json(user);
+    })
+    .catch((err) => res.status(400).json("Error:" + err));
 });
 
 module.exports = router;

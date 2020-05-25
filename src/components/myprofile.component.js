@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import Navbar from "../components/navbar.component";
 import axios from "axios";
 import { getFromStorage, setInStorage } from "../utils/storage";
-
+import { Button, Modal } from "react-bootstrap";
 const Product = (props) => (
   <div class="productcard">
     <img src={"/productpics/" + props.product.image1} class="image" />
@@ -44,6 +44,7 @@ const Comment1 = (props) => (
     </div>
   </div>
 );
+
 const Comment2 = (props) => (
   <div className="review">
     <div className="col-md-12 d-flex align-items-center pt-3">
@@ -123,13 +124,31 @@ const Comment5 = (props) => (
     </div>
   </div>
 );
+
+const ProfilePhoto = (props) => (
+  <img
+    className="ml-2 mr-2 profile-photo"
+    src={"/userphotos/" + props.photo}
+  ></img>
+);
+
 export default class Login extends Component {
   constructor(props) {
     super(props);
     this.deleteproduct = this.deleteproduct.bind(this);
     this.onChangeEmail = this.onChangeEmail.bind(this);
     this.onChangePassword = this.onChangePassword.bind(this);
-    this.onSubmit = this.onSubmit.bind(this);
+
+    this.openmodal = this.openmodal.bind(this);
+    this.closemodal = this.closemodal.bind(this); //
+
+    this.onChangeUsername = this.onChangeUsername.bind(this);
+    this.onChangeEmail = this.onChangeEmail.bind(this);
+    this.onChangePassword = this.onChangePassword.bind(this);
+    this.onChangeBio = this.onChangeBio.bind(this);
+    this.onChangeLocation = this.onChangeLocation.bind(this);
+    this.onChangeRole = this.onChangeRole.bind(this);
+    this.confirmEdit = this.confirmEdit.bind(this);
 
     this.state = {
       isLoading: true,
@@ -140,8 +159,184 @@ export default class Login extends Component {
       password: "",
       products: [],
       comments: [],
+
+      // Edit Params
+      open: false,
+      username: "",
+      email: "",
+      password: "",
+      bio: "",
+      location: "",
+      role: "",
+      file: "",
     };
   }
+  onChangeUsername(e) {
+    this.setState({
+      username: e.target.value,
+    });
+  }
+  filesSelectedHandler = (event) => {
+    let data = new FormData();
+    for (var x = 0; x < event.target.files.length; x++) {
+      console.log(event.target.files[x]);
+      data.append("files", event.target.files[x]);
+    }
+
+    axios
+      .post(
+        "http://localhost:5000/Upload/updateprofilephotos/" +
+          this.state.cookie._id,
+        data
+      )
+
+      .then((res) => {
+        console.log(res.data.routes);
+        const user = {
+          _id: this.state.cookie._id,
+          username: this.state.cookie.username,
+          email: this.state.cookie.email,
+          password: this.state.cookie.password,
+          location: this.state.cookie.location,
+          bio: this.state.cookie.bio,
+          role: this.state.cookie.role,
+          photo: this.state.cookie.photo,
+          photos: res.data.routes,
+        };
+        setInStorage("the_main_app", { cookie: user });
+      });
+  };
+  onChangeEmail(e) {
+    this.setState({
+      email: e.target.value,
+    });
+  }
+
+  onChangePassword(e) {
+    this.setState({
+      password: e.target.value,
+    });
+  }
+
+  onChangeBio(e) {
+    this.setState({
+      bio: e.target.value,
+    });
+  }
+
+  onChangeLocation(e) {
+    this.setState({
+      location: e.target.value,
+    });
+  }
+
+  onChangeRole(e) {
+    this.setState({
+      role: e.target.value,
+    });
+  }
+
+  fileSelectedHandler = (event) => {
+    this.setState({
+      file: event.target.files[0],
+    });
+  };
+  confirmEdit() {
+    fetch("http://localhost:5000/users/verify", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        username: this.state.cookie.username,
+        email: this.state.cookie.email,
+        password: this.state.cookie.password,
+        role: this.state.cookie.role,
+      }),
+    })
+      .then((res) => res.json())
+      .then((json) => {
+        if (json.success) {
+          console.log("user verified");
+
+          if (this.state.file) {
+            const fd = new FormData();
+            let aux = this.state.file.name.split(".");
+            fd.append(
+              "files",
+              this.state.file,
+              this.state.cookie._id + "." + aux[1]
+            );
+            axios
+              .post("http://localhost:5000/Upload/upload", fd)
+              .then((res) => {
+                console.log(res);
+              });
+
+            const user = {
+              _id: this.state.cookie._id,
+              username: this.state.username,
+              email: this.state.email,
+              password: this.state.password,
+              location: this.state.location,
+              bio: this.state.bio,
+              role: this.state.role,
+              photo: this.state.cookie._id + "." + aux[1],
+            };
+            setInStorage("the_main_app", { cookie: user });
+            fetch("http://localhost:5000/users/update/", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify(user),
+            })
+              .then((res) => res.json())
+              .then((json) => {
+                if (json.success) {
+                  setInStorage("the_main_app", { cookie: user });
+                  window.location = "/login";
+                  console.log("WORKERD");
+                }
+              });
+          } else {
+            const user = {
+              _id: this.state.cookie._id,
+              username: this.state.username,
+              email: this.state.email,
+              password: this.state.password,
+              location: this.state.location,
+              bio: this.state.bio,
+              role: this.state.role,
+              photo: this.state.cookie.photo,
+            };
+            fetch("http://localhost:5000/users/update/", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify(user),
+            })
+              .then((res) => res.json())
+              .then((json) => {
+                if (json.success) {
+                  setInStorage("the_main_app", { cookie: user });
+                  window.location = "/myprofile";
+                }
+              });
+          }
+        } else {
+          console.log("Verification failed");
+        }
+      });
+  }
+  openmodal() {
+    this.setState({ open: true });
+  }
+  closemodal() {
+    this.setState({ open: false });
+  }
+
   deleteproduct(id) {
     axios.delete("http://localhost:5000/products/" + id).then((response) => {
       console.log(response.data);
@@ -153,7 +348,6 @@ export default class Login extends Component {
   }
   productList() {
     return this.state.products.map((currentproduct) => {
-      console.log(currentproduct);
       return (
         <Product
           product={currentproduct}
@@ -185,15 +379,33 @@ export default class Login extends Component {
     });
   }
 
+  profilephotoslist() {
+    return this.state.cookie.photos.map((currentphoto) => {
+      return <ProfilePhoto photo={currentphoto} />;
+    });
+  }
   componentDidMount() {
-    const obj = getFromStorage("the_main_app");
+    // GET PRODUCTS
 
+    const obj = getFromStorage("the_main_app");
+    console.log(obj);
     if (obj && obj.cookie) {
       const { cookie } = obj;
-      this.setState({
-        cookie: cookie,
-        isLoading: false,
-      });
+
+      axios
+        .get("http://localhost:5000/users/getuser/" + cookie._id)
+        .then((response) => {
+          this.setState({
+            cookie: response.data,
+            username:response.data.username,
+            email:response.data.email,
+            password:response.data.password,
+            bio:response.data.bio,
+            location:response.data.location,
+            role:response.data.role,
+          });
+        });
+
       // GET PRODUCTS
       axios
         .get("http://localhost:5000/products/getuser/" + cookie._id)
@@ -234,59 +446,19 @@ export default class Login extends Component {
       password: e.target.value,
     });
   }
+
   logout() {
-    try {
-      localStorage
-        .removeItem("the_main_app")
-        .then((window.location = "/login"));
-    } catch {
-      console.log("Something went wrong");
-      window.location = "/login";
-    }
-  }
-
-  onSubmit(e) {
-    e.preventDefault();
-
-    this.setState({
-      isLoading: true,
-    });
-
-    fetch("http://localhost:5000/users/login", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        email: this.state.email,
-        password: this.state.password,
-      }),
-    })
-      .then((res) => res.json())
-      .then((json) => {
-        if (json.success) {
-          setInStorage("the_main_app", { cookie: json.user });
-
-          window.location = "/login";
-        } else {
-          this.setState({
-            isLoading: false,
-            email: "",
-            password: "",
-            cookie: json.cookie,
-          });
-        }
-      });
+    localStorage.removeItem("the_main_app");
+    window.location = "/login";
   }
 
   render() {
     const { cookie } = this.state;
     if (!cookie) {
-      // window.location = "/login";
       return (
         <div>
           <Navbar />
-          Not logged
+         
         </div>
       );
     } else {
@@ -308,10 +480,9 @@ export default class Login extends Component {
                   <hr className="profile-hr"></hr>
                   <h5 className="mt-3">{this.state.cookie.location}</h5>
                   <h5 className="mt-3">+34677896912</h5>
-                  <Link className="contactme mt-4" to="/edituser">
+                  <button className="contactme mt-4" onClick={this.openmodal}>
                     Edit profile
-                  </Link>
-
+                  </button>
                   <button className="contactme mt-4" onClick={this.logout}>
                     Logout
                   </button>
@@ -324,11 +495,16 @@ export default class Login extends Component {
                       <h3>Pictures</h3>
                       <hr className="profile-hr"></hr>
                     </div>
+                    <input
+                      type="file"
+                      className="ml-2"
+                      multiple
+                      accept="image/x-png,image/jpeg"
+                      onChange={this.filesSelectedHandler}
+                    />
                   </div>
                   <div className="row profile-content">
-                    <div className="ml-2 mr-2 profile-photo">
-                      <div className="card-body"></div>
-                    </div>
+                    {this.profilephotoslist()}
                   </div>
                   <div className="row">
                     <div>
@@ -351,6 +527,83 @@ export default class Login extends Component {
             </div>
             <div className="row profile-content">{this.commentList()}</div>
           </div>
+          <Modal
+            show={this.state.open}
+            onHide={this.closemodal}
+            centered
+            size="lg"
+            aria-labelledby="contained-modal-title-vcenter"
+          >
+            <Modal.Header closeButton>
+              <Modal.Title>Edit profile</Modal.Title>
+            </Modal.Header>
+            <Modal.Body>
+              <form enctype="multipart/form-data">
+                <label>Username: </label>
+                <input
+                  type="text"
+                  className="form-control"
+                  value={this.state.username}
+                  onChange={this.onChangeUsername}
+                />
+
+                <label>Email : </label>
+                <input
+                  type="email"
+                  className="form-control"
+                  value={this.state.email}
+                  onChange={this.onChangeEmail}
+                />
+
+                <label>Password: </label>
+                <input
+                  type="text"
+                  className="form-control"
+                  value={this.state.password}
+                  onChange={this.onChangePassword}
+                />
+
+                <label>Bio: </label>
+                <input
+                  type="text"
+                  className="form-control"
+                  value={this.state.bio}
+                  onChange={this.onChangeBio}
+                />
+
+                <label>location: </label>
+                <input
+                  type="text"
+                  className="form-control"
+                  value={this.state.location}
+                  onChange={this.onChangeLocation}
+                />
+
+                <label>Role: </label>
+                <select
+                  className="form-control"
+                  value={this.state.role}
+                  onChange={this.onChangeRole}
+                >
+                  <option>Client</option>
+                  <option>Farmer</option>
+                </select>
+
+                <label>Image: </label>
+                <br />
+                <input
+                  type="file"
+                  accept="image/x-png,image/jpeg"
+                  onChange={this.fileSelectedHandler}
+                />
+              </form>
+            </Modal.Body>
+            <Modal.Footer>
+              <Button variant="primary" onClick={this.confirmEdit}>
+                Confirm Changes
+              </Button>
+            </Modal.Footer>
+          </Modal>
         </div>
       );
     }

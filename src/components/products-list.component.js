@@ -4,6 +4,7 @@ import axios from "axios";
 import "../../src/index.css";
 import Navbar from "./navbar.component";
 import { getFromStorage } from "../utils/storage";
+import { Button, Modal } from "react-bootstrap";
 
 const Product = (props) => (
   <div class="productcard">
@@ -23,6 +24,13 @@ const Product = (props) => (
       </a>
     </div>
   </div>
+);
+
+const ProfilePhoto = (props) => (
+  <img
+    className="ml-2 mr-2 profile-photo"
+    src={"/userphotos/" + props.photo}
+  ></img>
 );
 
 const Comment1 = (props) => (
@@ -130,7 +138,10 @@ export default class ProductsList extends Component {
     this.addtocart = this.addtocart.bind(this);
     this.onChangeCommentText = this.onChangeCommentText.bind(this);
     this.onChangeCommentRate = this.onChangeCommentRate.bind(this);
-    this.onSubmit = this.onSubmit.bind(this);
+    this.postComment = this.postComment.bind(this);
+    this.profilephotoslist = this.profilephotoslist.bind(this);
+    this.openmodal = this.openmodal.bind(this);
+    this.closemodal = this.closemodal.bind(this);
 
     this.state = {
       products: [],
@@ -138,16 +149,22 @@ export default class ProductsList extends Component {
       username: "",
       email: "",
       photo: "",
+      photos: [],
       comments: [],
 
       commenttext: "",
       commentrate: "",
+      open: false,
     };
   }
+  openmodal() {
+    this.setState({ open: true });
+  }
+  closemodal() {
+    this.setState({ open: false });
+  }
 
-  onSubmit(e) {
-    e.preventDefault();
-
+  postComment() {
     const comment = {
       ratingowner: this.state.cookie._id,
       iduser: this.props.match.params.id,
@@ -155,11 +172,12 @@ export default class ProductsList extends Component {
       score: this.state.commentrate,
     };
 
-    axios
-      .post("http://localhost:5000/Rating/add/", comment)
-      .then((res) => console.log(res.data));
+    axios.post("http://localhost:5000/Rating/add/", comment).then((res) => {
+      console.log(res.data);
+      this.setState({ open: false });
+      window.location = "/user/" + this.props.match.params.id;
+    });
   }
-
   commentList() {
     return this.state.comments.map((currentcomment) => {
       if (currentcomment.score == 1) {
@@ -185,18 +203,18 @@ export default class ProductsList extends Component {
       this.setState({
         cookie: cookie,
       });
-      console.log(cookie._id);
     } catch {}
 
     axios
       .get("http://localhost:5000/users/" + this.props.match.params.id)
       .then((response) => {
-        console.log(response.data);
+
         this.setState({
           products: response.data.products,
           username: response.data.username,
           email: response.data.email,
           photo: response.data.photo,
+          photos: response.data.photos,
         });
       })
       .catch((error) => {
@@ -224,6 +242,13 @@ export default class ProductsList extends Component {
 
     this.setState({
       products: this.state.products.filter((el) => el._id !== id),
+    });
+  }
+
+  profilephotoslist() {
+    console.log(this.state.photos);
+    return this.state.photos.map((currentphoto) => {
+      return <ProfilePhoto photo={currentphoto} />;
     });
   }
 
@@ -304,9 +329,7 @@ export default class ProductsList extends Component {
                     </div>
                   </div>
                   <div className="row profile-content">
-                    <div className="ml-2 mr-2 profile-photo">
-                      <div className="card-body"></div>
-                    </div>
+                    {this.profilephotoslist()}
                   </div>
                   <div className="row">
                     <div>
@@ -321,37 +344,58 @@ export default class ProductsList extends Component {
               </div>
               <div></div>
             </div>
-            <div className="row">
+            <div className="row d-flex align-items-center">
               <div className="mt-5 mb-3">
                 <h3>Reviews</h3>
                 <hr className="profile-hr"></hr>
               </div>
+
+              <Button
+                className=" ml-4 btn btn-sm h-25"
+                onClick={this.openmodal}
+              >
+                Rate user
+              </Button>
             </div>
             <div className="row profile-content">{this.commentList()}</div>
             <div className="row">
-              <div className="mt-5 mb-3">
-                <h3>Add Comment</h3>
-                <hr className="profile-hr"></hr>
+              <div className="mt-5 mb-2">
+                <Modal
+                  show={this.state.open}
+                  onHide={this.closemodal}
+                  centered
+                  size="lg"
+                  aria-labelledby="contained-modal-title-vcenter"
+                >
+                  <Modal.Header closeButton>
+                    <Modal.Title>Rate farmer</Modal.Title>
+                  </Modal.Header>
+                  <Modal.Body>
+                    <input
+                      type="text"
+                      className="form-control mb-2"
+                      placeholder="Comment"
+                      value={this.state.commenttext}
+                      onChange={this.onChangeCommentText}
+                    />
+                    <input
+                      type="number"
+                      className="form-control"
+                      max="5"
+                      min="1"
+                      placeholder="Rate"
+                      value={this.state.commentrate}
+                      onChange={this.onChangeCommentRate}
+                    />
+                  </Modal.Body>
+                  <Modal.Footer>
+                    <Button variant="primary" onClick={this.postComment}>
+                      Post Comment
+                    </Button>
+                  </Modal.Footer>
+                </Modal>
               </div>
             </div>
-            <form onSubmit={this.onSubmit}>
-              <input
-                type="text"
-                className="form-control"
-                value={this.state.commenttext}
-                onChange={this.onChangeCommentText}
-              />
-              <input
-                type="number"
-                className="form-control"
-                max="5"
-                min="1"
-                value={this.state.commentrate}
-                onChange={this.onChangeCommentRate}
-              />
-
-              <input type="submit" value="Comment" />
-            </form>
           </div>
         </div>
       );

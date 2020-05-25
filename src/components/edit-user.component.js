@@ -157,7 +157,7 @@ export default class EditUser extends Component {
               location: this.state.location,
               bio: this.state.bio,
               role: this.state.role,
-              photo:this.state.cookie.photo,
+              photo: this.state.cookie.photo,
             };
 
             fetch("http://localhost:5000/users/update/", {
@@ -197,55 +197,57 @@ export default class EditUser extends Component {
           <div className="container mt-5">
             <h3>Edit user</h3>
             <form enctype="multipart/form-data" onSubmit={this.onSubmit}>
-              <div className="form-group">
-                <label>Username: </label>
-                <input
-                  type="text"
-                  className="form-control"
-                  value={this.state.username}
-                  onChange={this.onChangeUsername}
-                />
+              <label>Username: </label>
+              <input
+                type="text"
+                className="form-control"
+                value={this.state.username}
+                onChange={this.onChangeUsername}
+              />
 
-                <label>Email : </label>
-                <input
-                  type="email"
-                  className="form-control"
-                  value={this.state.email}
-                  onChange={this.onChangeEmail}
-                />
+              <label>Email : </label>
+              <input
+                type="email"
+                className="form-control"
+                value={this.state.email}
+                onChange={this.onChangeEmail}
+              />
 
-                <label>Password: </label>
-                <input
-                  type="text"
-                  className="form-control"
-                  value={this.state.password}
-                  onChange={this.onChangePassword}
-                />
+              <label>Password: </label>
+              <input
+                type="text"
+                className="form-control"
+                value={this.state.password}
+                onChange={this.onChangePassword}
+              />
 
-                <label>Bio: </label>
-                <input
-                  type="text"
-                  className="form-control"
-                  value={this.state.bio}
-                  onChange={this.onChangeBio}
-                />
+              <label>Bio: </label>
+              <input
+                type="text"
+                className="form-control"
+                value={this.state.bio}
+                onChange={this.onChangeBio}
+              />
 
-                <label>location: </label>
-                <input
-                  type="text"
-                  className="form-control"
-                  value={this.state.location}
-                  onChange={this.onChangeLocation}
-                />
+              <label>location: </label>
+              <input
+                type="text"
+                className="form-control"
+                value={this.state.location}
+                onChange={this.onChangeLocation}
+              />
 
-                <label>Role: </label>
-                <input
-                  type="text"
-                  className="form-control"
-                  value={this.state.role}
-                  onChange={this.onChangeRole}
-                />
-              </div>
+              <label>Role: </label>
+
+              <select
+                className="form-control"
+                value={this.state.role}
+                onChange={this.onChangeRole}
+              >
+                <option>Client</option>
+                <option>Farmer</option>
+              </select>
+
               <div className="form-group">
                 <input
                   type="submit"
@@ -254,7 +256,11 @@ export default class EditUser extends Component {
                 />
               </div>
               <label>image: </label>
-              <input type="file" accept="image/x-png,image/jpeg" onChange={this.fileSelectedHandler} />
+              <input
+                type="file"
+                accept="image/x-png,image/jpeg"
+                onChange={this.fileSelectedHandler}
+              />
             </form>
             <Link to="/login">Go back</Link>
             <br />

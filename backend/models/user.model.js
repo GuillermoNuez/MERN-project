@@ -32,7 +32,7 @@ const userSchema = new Schema(
       required: false,
       unique: true,
       trim: true,
-      default:""
+      default: "",
     },
 
     location: {
@@ -40,21 +40,27 @@ const userSchema = new Schema(
       required: false,
       unique: false,
       trim: true,
-      default:""
+      default: "",
     },
-    
+
     role: {
       type: String,
       required: false,
       unique: false,
-      trim: true
+      trim: true,
     },
     photo: {
       type: String,
       required: false,
       unique: false,
-      default:"default.png"
-    }
+      default: "default.png",
+    },
+    photos: {
+      type: Array,
+      required: false,
+      unique: false,
+      default: [],
+    },
   },
   {
     timestamps: true,

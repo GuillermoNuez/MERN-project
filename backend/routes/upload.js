@@ -1,19 +1,16 @@
 const router = require("express").Router();
 let Product = require("../models/product.model");
+let User = require("../models/user.model");
+
 router.route("/upload").post((req, res) => {
-  if (req.files === null) {
-    res.status(400).json("No file was uploaded");
-  } else {
-    let file = req.files.files;
-    file.mv(`../public/userpics/${file.name}`, (err) => {
-      if (err) {
-        console.log(err);
-        res.status(500).send(err);
-      }
-      console.log("FINISHED");
-      res.json({ fileName: file.name, filePath: `/uploads/${file.name}` });
-    });
-  }
+  let file = req.files.files;
+  file.mv(`../public/userpics/${file.name}`, (err) => {
+    if (err) {
+      console.log(err);
+      res.status(500).send(err);
+    }
+    res.json({ fileName: file.name, filePath: `/uploads/${file.name}` });
+  });
 });
 
 router.route("/uploadproductphoto").post((req, res) => {
@@ -23,7 +20,6 @@ router.route("/uploadproductphoto").post((req, res) => {
       console.log(err);
       res.status(500).send(err);
     }
-    console.log("FINISHED");
     res.json("Upload completed");
   });
 });
@@ -63,16 +59,52 @@ router.route("/updatemainphoto/:id").post((req, res) => {
       console.log(err);
       res.status(500).send(err);
     }
-    console.log("FINISHED");
   });
   Product.findById(req.params.id).then((product) => {
-    product.image1 = file.name
+    product.image1 = file.name;
     product
       .save()
       .then(res.json({ status: "OK", message: "upload completed" }))
       .catch((err) => res.status(400).json("Error: " + err));
   });
-
 });
 
+router.route("/updateprofilephotos/:id").post((req, res) => {
+  let routes = [];
+  if (req.files.files.length > 0) {
+    for (let index = 0; index < req.files.files.length; index++) {
+      let aux = req.files.files[index].name.split(".");
+      let name = `${req.params.id}` + `-` + `${index}` + `.` + `${aux[1]}`;
+      let file = req.files.files[index];
+      file.mv(`../public/userphotos/${name}`, (err) => {
+        if (err) {
+          console.log(err);
+          res.status(500).send(err);
+        }
+      });
+      routes.push(name);
+    }
+  } else {
+    let aux = req.files.files.name.split(".");
+    let name = `${req.params.id}` + `-` + `${0}` + `.` + `${aux[1]}`;
+    let file = req.files.files;
+    file.mv(`../public/userphotos/${name}`, (err) => {
+      if (err) {
+        console.log(err);
+        res.status(500).send(err);
+      }
+    });
+    routes.push(name);
+  }
+
+  User.findById(req.params.id).then((user) => {
+    user.photos = routes;
+    user
+      .save()
+      .then(
+        res.json({ status: "OK", message: "upload completed", routes: routes })
+      )
+      .catch((err) => res.status(400).json("Error: " + err));
+  });
+});
 module.exports = router;
