@@ -20,11 +20,11 @@ export default class Navbar extends Component {
   render() {
     if (!this.state.cookie) {
       return (
-        <div class="row nav2 ">
-          <div class="nav2-logo">
+        <div className="row nav2 ">
+          <div className="nav2-logo">
             <Link to="/" className="navbar-brand header-logo"></Link>
           </div>
-          <div class="nav-links">
+          <div className="nav-links">
             <Link to="/users" className="nav-link">
               Farmers
             </Link>
@@ -39,11 +39,11 @@ export default class Navbar extends Component {
       );
     } else {
       return (
-        <div class="row nav2 ">
-          <div class="nav2-logo">
+        <div className="row nav2 ">
+          <div className="nav2-logo">
             <Link to="/" className="navbar-brand header-logo"></Link>
           </div>
-          <div class="nav2-links">
+          <div className="nav2-links">
             <Link to="/users" className="nav-link">
               Farmers
             </Link>

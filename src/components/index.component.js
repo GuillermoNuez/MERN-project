@@ -5,13 +5,13 @@ export default class TodosList extends Component {
   render() {
     return (
       <div id="index">
-        <div class="row header">
-          <div class="header-img">
-            <div class="row nav">
-              <div class="nav2-logo">
+        <div className="row header">
+          <div className="header-img">
+            <div className="row nav">
+              <div className="nav2-logo">
                 <Link to="/" className="navbar-brand header-logo"></Link>
               </div>
-              <div class="nav2-links2">
+              <div className="nav2-links2">
                 <a href="#about_us">About Us</a>
                 <a href="#farmers">Farmers</a>
                 <a href="#blog">Blog</a>
@@ -21,21 +21,21 @@ export default class TodosList extends Component {
                 </Link>
               </div>
             </div>
-            <div class="row w-100 mt-5 header-container d-flex flex-column">
+            <div className="row w-100 mt-5 header-container d-flex flex-column">
               <h1>
                 Always ,local<br></br>
                 is better for everyone.
               </h1>
-              <h3 class="mt-2">
+              <h3 className="mt-2">
                 Huertup deliver directly to you from the best local farmers &
                 the best product.
               </h3>
-              <div class="header-button mt-4">DOWNLOAD APP</div>
+              <div className="header-button mt-4">DOWNLOAD APP</div>
             </div>
           </div>
         </div>
-        <div id="about_us" class="row">
-          <div class="col-md-6 about-Us-Box d-flex flex-column align-items-center justify-content-center">
+        <div id="about_us" className="row">
+          <div className="col-md-6 about-Us-Box d-flex flex-column align-items-center justify-content-center">
             <h1>ABOUT US</h1>
             <hr className="hr-1"></hr>
             <h4>
@@ -52,19 +52,19 @@ export default class TodosList extends Component {
               <span className="bold">agriculture economy.</span>
             </h4>
           </div>
-          <div class="col-md-6">
+          <div className="col-md-6">
             <div className="bolsa">
               <div className="bolsa-img"></div>
             </div>
           </div>
         </div>
-        <div class="row">
+        <div className="row">
           <div className="col-md-6 d-flex align-items-end justify-content-center">
             <div className="verduras">
               <div className="verduras-img"></div>
             </div>
           </div>
-          <div class="col-md-6 about-Us-Box d-flex flex-column align-items-center justify-content-center">
+          <div className="col-md-6 about-Us-Box d-flex flex-column align-items-center justify-content-center">
             <h1>HOW IT WORKS</h1>
             <hr className="hr-1"></hr>
 
@@ -80,8 +80,8 @@ export default class TodosList extends Component {
             <a href="#">Any questions? -></a>
           </div>
         </div>
-        <div id="farmers" class="row">
-          <div class="col-md-12 d-flex flex-column align-items-center justify-content-center farmers pb-5">
+        <div id="farmers" className="row">
+          <div className="col-md-12 d-flex flex-column align-items-center justify-content-center farmers pb-5">
             <div className="row">
               <div className="col-md-12 d-flex flex-column align-items-center">
                 <h1 className="mt-5">FARMERS</h1>
@@ -89,13 +89,13 @@ export default class TodosList extends Component {
                 <h3>Discover some of our local farmers</h3>
               </div>
               <div className="mt-5 row d-flex justify-content-around  w-100">
-                <div class="carrousel">
+                <div className="carrousel">
                   <input type="radio" name="slides" id="radio-1" checked />
                   <input type="radio" name="slides" id="radio-2" />
                   <input type="radio" name="slides" id="radio-3" />
                   <input type="radio" name="slides" id="radio-4" />
-                  <ul class="slides">
-                    <li class="slide">
+                  <ul className="slides">
+                    <li className="slide">
                       <div className="col-md-3 d-flex flex-column align-items-center">
                         <div className="farmer-img mb-4">
                           <div className="farmer-img-1"></div>
@@ -122,7 +122,7 @@ export default class TodosList extends Component {
                         <h4>All kinds of tomatoes and the best quality</h4>
                       </div>
                     </li>
-                    <li class="slide">
+                    <li className="slide">
                       <div className="col-md-3 d-flex flex-column align-items-center">
                         <div className="farmer-img mb-4">
                           <div className="farmer-img-1"></div>
@@ -149,7 +149,7 @@ export default class TodosList extends Component {
                       </div>
                     </li>
                   </ul>
-                  <div class="slidesNavigation">
+                  <div className="slidesNavigation">
                     <label for="radio-1" id="dotForRadio-1"></label>
                     <label for="radio-2" id="dotForRadio-2"></label>
                   </div>
@@ -158,7 +158,7 @@ export default class TodosList extends Component {
             </div>
           </div>
         </div>
-        <div id="blog" class="row">
+        <div id="blog" className="row">
           <div className="col-md-12 d-flex flex-column align-items-center">
             <h1 className="mt-5">BLOG</h1>
             <hr className="hr-1"></hr>
@@ -201,11 +201,11 @@ export default class TodosList extends Component {
               <a className="mt-3 readmore-btn">Read More</a>
             </div>
           </div>
-          <div class="col-md-12 d-flex align-items-center justify-content-center pb-5 pt-2">
+          <div className="col-md-12 d-flex align-items-center justify-content-center pb-5 pt-2">
             <a className="mt-3 readmore-btn-2">Show More</a>
           </div>
         </div>
-        <div id="contact" class="row contact-us pb-5">
+        <div id="contact" className="row contact-us pb-5">
           <div className="col-md-12 d-flex flex-column align-items-center">
             <h1 className="mt-5">CONTACT US</h1>
             <hr className="hr-1"></hr>
@@ -233,27 +233,27 @@ export default class TodosList extends Component {
             <div className="col-md-3"></div>
           </div>
         </div>
-        <div class="row footer pb-5 justify-content-around pt-5">
-          <div class="col-md-2 d-flex flex-column">
+        <div className="row footer pb-5 justify-content-around pt-5">
+          <div className="col-md-2 d-flex flex-column">
             <a href="#about_us">About Us</a>
             <a href="#farmers">Farmers</a>
             <a href="#blog">Blog</a>
             <a href="#contact">Contact</a>
           </div>
-          <div class="col-md-3">
-            <div class="footer-img"></div>
+          <div className="col-md-3">
+            <div className="footer-img"></div>
           </div>
-          <div class="col-md-3">
-            <div class="row mb-3">
+          <div className="col-md-3">
+            <div className="row mb-3">
               <h4>Subscribe to the newsletter</h4>
             </div>
-            <div class="row justify-content-between">
+            <div className="row justify-content-between">
               <input
                 type="text"
                 placeholder="Description"
                 className="contact-input-3"
               ></input>
-              <div class="footer-button">Submit</div>
+              <div className="footer-button">Submit</div>
             </div>
           </div>
         </div>

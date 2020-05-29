@@ -4,13 +4,18 @@ import "../../src/index.css";
 import Navbar from "./navbar.component";
 import { getFromStorage } from "../utils/storage";
 const Order = (props) => (
-  <ul class="list-group w-25 ml-2 mr-2">
-    <li class="list-group-item active">{props.order.idpedido}</li>
+  <ul className="list-group w-25 ml-2 mr-2 mb-4">
+    <li className="list-group-item active">{props.order.idpedido}</li>
 
-    <li class="list-group-item d-flex">
-      <span className="w-50 text-left">{props.order.idproduct}</span>
-      <span className="w-50 text-right">{props.order.amount}</span>
-    </li>
+    {props.order.products.map((item) => {
+      console.log(item);
+      return (
+        <li className="list-group-item d-flex">
+          <span className="w-75">{item.idproduct}</span>
+          <span className="w-25 text-right">{item.products.amount}</span>
+        </li>
+      );
+    })}
   </ul>
 );
 
@@ -44,14 +49,7 @@ export default class ProductsList extends Component {
   }
 
   RequestList() {
-    console.log("__________________________");
-    // this.state.requests.forEach(element => {
-    //   console.log("try "+element.pedido);
-    //   return <h1>NICE ASS</h1>;
-
-    // });
     return this.state.requests.map((currentorder) => {
-      console.log(currentorder);
       return <Order order={currentorder} />;
     });
   }

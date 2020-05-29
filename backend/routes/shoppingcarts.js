@@ -205,21 +205,57 @@ router.route("/request/:userid").get((req, res) => {
     idfarmer: req.params.userid,
   })
     .then((orders) => {
-      // console.log(orders);
-      var dict1 = [];
-      var dict2 = [];
-      for (let index = 0; index < orders.length; index++) {
-        dict1.push({ key: orders[index].idpedido, products: orders[index] });
-        // console.log(orders[index].body);
-      }
+      let group2 = orders.reduce((r, a) => {
+        r[a.idproduct] = [...(r[a.idproduct] || []), a];
+        return r;
+      }, {});
+      let idarray = [];
+      Object.entries(group2).forEach(([key, value]) => {
+        value.forEach((element) => {
+          idarray.push(element.idproduct);
+        });
+      });
 
-      // let group = dict1.reduce((r, a) => {
-      //   r[a.key] = [...(r[a.key] || []), a];
-      //   return r;
-      // }, {});
+      Product.find({ _id: { $in: idarray } }, function (err, array) {
+        if (err) {
+          res.json(err);
+        } else {
+          var dict = []; // create an empty array
 
-      // console.log(group);
-      res.json(orders);
+          array.forEach((element) => {
+            dict.push({
+              key: element._id,
+              value: element.product,
+            });
+          });
+
+          var dict2 = [];
+          for (let index = 0; index < orders.length; index++) {
+            dict2.push({
+              key: orders[index].idpedido,
+              products: orders[index],
+            });
+          }
+          let group = dict2.reduce((r, a) => {
+            r[a.key] = [...(r[a.key] || []), a];
+            return r;
+          }, {});
+          let info = [];
+          Object.entries(group).forEach(([key, value]) => {
+            for (let index = 0; index < value.length; index++) {
+              for (let i = 0; i < dict.length; i++) {
+                if (value[index].products.idproduct == dict[i].key) {
+                  value[index].idproduct = dict[i].value;
+                }
+              }
+            }
+            info.push({ idpedido: key, products: value });
+          });
+          res.json(info);
+        }
+      });
+
+      //
     })
     .catch((err) => res.status(400).json("Error:" + err));
 });
@@ -235,19 +271,27 @@ router.route("/deletechechout").delete((req, res) => {
 
 router.route("/getoverallinfo/:userid").get((req, res) => {
   const id = req.params.userid;
-
+  let info = [];
   FarmerCheckout.find({
     idfarmer: id,
   })
     .then((products) => {
-
       let group = products.reduce((r, a) => {
-        r[a.idproduct] = [...(r[a.key] || []), a];
+        r[a.idproduct] = [...(r[a.idproduct] || []), a];
         return r;
       }, {});
-      console.log(group);
+
+      Object.entries(group).forEach(([key, value]) => {
+        let amount = 0;
+        value.forEach((element) => {
+          amount += element.amount;
+        });
+        info.push({ productid: key, amount: amount });
+      });
+
+      res.json(info);
     })
-    // res.json(products))
+
     .catch((err) => res.status(400).json("Error:" + err));
 });
 
