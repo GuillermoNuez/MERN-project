@@ -8,6 +8,33 @@ router.route("/").get((req, res) => {
     .catch((err) => res.status(400).json("Error:" + err));
 });
 
+router.route("/getallinfo").get((req, res) => {
+  User.find({
+    role: "Farmer",
+  }).then((users) => {
+    let userids = [];
+
+    users.forEach((element) => {
+      userids.push(element._id);
+    });
+
+    Rating.find({ ratingowner: { $in: userids } }, function (err, array) {
+      console.log(array);
+      if (err) {
+        res.json(err);
+      } else {
+        let data = [];
+        var objects = {};
+        array.forEach((o) => (objects[o._id] = o));
+        var dupArray = userids.map((id) => objects[id]);
+
+        console.log(dupArray);
+        res.json(dupArray);
+      }
+    });
+  });
+});
+
 router.route("/add").post((req, res) => {
   const ratingowner = req.body.ratingowner;
   const iduser = req.body.iduser;
@@ -36,26 +63,33 @@ router.route("/:id").get((req, res) => {
 router.route("/getrating/:id").get((req, res) => {
   let info = [];
   let userids = [];
-
+  let data = [];
   Rating.find({ iduser: req.params.id }).then((ratings) => {
     for (let index = 0; index < ratings.length; index++) {
       userids.push(ratings[index].ratingowner);
     }
 
-    User.find({ _id: { $in: userids } })
-      .then((users) => {
-        for (let i = 0; i < users.length; i++) {
-          let data = {
-            username: users[i].username,
-            photo:users[i].photo,
-            mensaje: ratings[i].message,
-            score: ratings[i].score,
+    User.find({ _id: { $in: userids } }, function (err, array) {
+      if (err) {
+        // handle error
+      } else {
+        var objects = {};
+        array.forEach((o) => (objects[o._id] = o));
+        var dupArray = userids.map((id) => objects[id]);
+        // here you have objects with duplicates in dupArray:
+        for (let index = 0; index < dupArray.length; index++) {
+          let aux = {
+            photo: dupArray[index].photo,
+            username: dupArray[index].username,
+            mensaje: ratings[index].message,
+            score: ratings[index].score,
           };
-          info.push(data);
+          data.push(aux);
         }
-        res.json(info);
-      })
-      .catch((err) => res.status(400).json("Error:" + err));
+
+        res.json(data);
+      }
+    });
   });
 });
 

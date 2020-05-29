@@ -7,7 +7,7 @@ import { getFromStorage } from "../utils/storage";
 import { Button, Modal } from "react-bootstrap";
 
 const Product = (props) => (
-  <div class="productcard">
+  <div class="productcard ml-2 mr-2">
     <img src={"/productpics/" + props.product.image1} class="image" />
     <div class="middle">
       <p>{props.product.product}</p>
@@ -148,6 +148,7 @@ export default class ProductsList extends Component {
       cookie: "",
       username: "",
       email: "",
+      location:"",
       photo: "",
       photos: [],
       comments: [],
@@ -208,13 +209,13 @@ export default class ProductsList extends Component {
     axios
       .get("http://localhost:5000/users/" + this.props.match.params.id)
       .then((response) => {
-
         this.setState({
           products: response.data.products,
           username: response.data.username,
           email: response.data.email,
           photo: response.data.photo,
           photos: response.data.photos,
+          location:response.data.location
         });
       })
       .catch((error) => {
@@ -310,7 +311,7 @@ export default class ProductsList extends Component {
                   <hr className="profile-hr"></hr>
                   <h5>Biography{this.state.bio}</h5>
                   <hr className="profile-hr"></hr>
-                  <h5 className="mt-3">Granada, Spain</h5>
+                  <h5 className="mt-3">{this.state.location}</h5>
                   <h5 className="mt-3">+34677896912</h5>
                   <Link
                     className="contactme mt-4"
@@ -367,32 +368,40 @@ export default class ProductsList extends Component {
                   size="lg"
                   aria-labelledby="contained-modal-title-vcenter"
                 >
-                  <Modal.Header closeButton>
+                  <Modal.Header closeButton className="modal-head">
                     <Modal.Title>Rate farmer</Modal.Title>
                   </Modal.Header>
-                  <Modal.Body>
-                    <input
-                      type="text"
-                      className="form-control mb-2"
-                      placeholder="Comment"
-                      value={this.state.commenttext}
-                      onChange={this.onChangeCommentText}
-                    />
-                    <input
-                      type="number"
-                      className="form-control"
-                      max="5"
-                      min="1"
-                      placeholder="Rate"
-                      value={this.state.commentrate}
-                      onChange={this.onChangeCommentRate}
-                    />
+                  <Modal.Body className="pt-4 pb-4">
+                    <div className="row  d-flex justify-content-center mb-3">
+                    <span className="modal-left">Rate</span>
+                      <input
+                        type="number"
+                        className="form-control modal-form1"
+                        max="5"
+                        min="1"
+
+                        value={this.state.commentrate}
+                        onChange={this.onChangeCommentRate}
+                      />
+                    </div>
+                    <div className="row  d-flex justify-content-center">
+                      <span className="modal-left">Comment</span>
+                      <textarea
+                        type="text"
+                        className="form-control modal-form2"
+                        value={this.state.commenttext}
+                        onChange={this.onChangeCommentText}
+                      />
+                    </div>
+
+                    <button
+                      variant="primary"
+                      onClick={this.postComment}
+                      className="modal-accept mt-3"
+                    >
+                     Save
+                    </button>
                   </Modal.Body>
-                  <Modal.Footer>
-                    <Button variant="primary" onClick={this.postComment}>
-                      Post Comment
-                    </Button>
-                  </Modal.Footer>
                 </Modal>
               </div>
             </div>

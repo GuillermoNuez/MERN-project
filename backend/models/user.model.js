@@ -61,6 +61,12 @@ const userSchema = new Schema(
       unique: false,
       default: [],
     },
+    confirmed : {
+      type: Boolean,
+      required: false,
+      unique: false,
+      default: false,
+    }
   },
   {
     timestamps: true,

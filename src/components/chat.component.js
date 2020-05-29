@@ -8,7 +8,7 @@ const Message = (props) => (
   <div className="outgoing_msg">
     <div className="sent_msg">
       <p>{props.message.message}</p>
-      <span className="time_date"> 11:01 AM | June 9</span>{" "}
+      <span className="time_date">{props.message.updatedAt}</span>{" "}
     </div>
   </div>
 );
@@ -72,7 +72,7 @@ export default class ProductsList extends Component {
         console.log(
           "________________________ Chat found ________________________"
         );
-        console.log("chat id -> "+this.state.chatid);
+        console.log("chat id -> " + this.state.chatid);
         axios
           .post("http://localhost:5000/Chat/addmessage", {
             idchat: this.state.chatid,
@@ -107,17 +107,17 @@ export default class ProductsList extends Component {
       })
       .then((response) => {
         console.log(response.data);
-        console.log("Saving chatid -> " +response.data.messages);
+        console.log("Saving chatid -> " + response.data.messages);
         if (response.data != null) {
           this.setState({
             chatid: response.data.messages,
           });
-          console.log("SAVED AS -> "+this.state.chatid);
+          console.log("SAVED AS -> " + this.state.chatid);
           axios
             .get("http://localhost:5000/Chat/" + response.data.messages)
             .then((response) => {
-              console.log("idk mnaybe ->"+response.data.username);
-              console.log("SAVED AS -> "+this.state.chatid);
+              console.log("idk mnaybe ->" + response.data.username);
+              console.log("SAVED AS -> " + this.state.chatid);
               console.log(response.data);
               this.setState({
                 messages: response.data,
@@ -146,8 +146,23 @@ export default class ProductsList extends Component {
 
   MessageList() {
     const allMsg = Array.from(this.state.messages);
-
+    console.log();
     return allMsg.map((currentproduct) => {
+      let date = new Date(currentproduct.createdAt);
+      let month = date.getMonth() + 1;
+      let dt = date.getDate();
+      let hour = date.getHours();
+      let minutes = date.getMinutes();
+
+      if (dt < 10) {
+        dt = "0" + dt;
+      }
+      if (month < 10) {
+        month = "0" + month;
+      }
+      currentproduct.updatedAt = dt + "-" + month + " | " + hour + " : " + minutes;
+
+      console.log(currentproduct.createdAt);
 
       if (currentproduct.iduser == this.state.cookie._id) {
         return <Message message={currentproduct} />;

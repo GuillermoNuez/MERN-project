@@ -12,10 +12,12 @@ const productSchema = new Schema(
     price: { type: Number, required: true },
     season: { type: String, required: true },
     image1: { type: String, required: true },
-    image2: { type: String, required: false, default: "default.png" },
-    image3: { type: String, required: false, default: "default.png" },
-    image4: { type: String, required: false, default: "default.png" },
-    image5: { type: String, required: false, default: "default.png" },
+    images: {
+      type: Array,
+      required: false,
+      unique: false,
+      default: [],
+    }
   },
   {
     timestamps: true,

@@ -5,7 +5,7 @@ import axios from "axios";
 import { getFromStorage, setInStorage } from "../utils/storage";
 import { Button, Modal } from "react-bootstrap";
 const Product = (props) => (
-  <div class="productcard">
+  <div class="productcard ml-2 mr-2">
     <img src={"/productpics/" + props.product.image1} class="image" />
     <div class="middle">
       <p>{props.product.product}</p>
@@ -397,16 +397,17 @@ export default class Login extends Component {
         .then((response) => {
           this.setState({
             cookie: response.data,
-            username:response.data.username,
-            email:response.data.email,
-            password:response.data.password,
-            bio:response.data.bio,
-            location:response.data.location,
-            role:response.data.role,
+            username: response.data.username,
+            email: response.data.email,
+            password: response.data.password,
+            bio: response.data.bio,
+            location: response.data.location,
+            role: response.data.role,
           });
         });
 
       // GET PRODUCTS
+
       axios
         .get("http://localhost:5000/products/getuser/" + cookie._id)
         .then((response) => {
@@ -452,32 +453,179 @@ export default class Login extends Component {
     window.location = "/login";
   }
 
+  myorders() {
+    window.location = "/myorders";
+  }
+
   render() {
     const { cookie } = this.state;
     if (!cookie) {
       return (
         <div>
           <Navbar />
-         
         </div>
       );
     } else {
-      return (
-        <div>
-          <Navbar />
+      if (cookie.role == "Farmer") {
+        return (
+          <div>
+            <Navbar />
+            <div className="container mt-5">
+              <div className="row myprofile">
+                <div className="profile">
+                  <img
+                    className="profilepic"
+                    src={"/userpics/" + this.state.cookie.photo}
+                  ></img>
+                  <div className="profileinfo">
+                    <h3>{this.state.cookie.username}</h3>
+                    <hr className="profile-hr"></hr>
+                    <h5>{this.state.cookie.bio}</h5>
+                    <hr className="profile-hr"></hr>
+                    <h5 className="mt-3">{this.state.cookie.location}</h5>
+                    <h5 className="mt-3">+34677896912</h5>
+                    <button className="contactme mt-4" onClick={this.openmodal}>
+                      Edit profile
+                    </button>
+                    <button className="contactme mt-4" onClick={this.logout}>
+                      Logout
+                    </button>
+                  </div>
+                </div>
+                <div className="profileproducts">
+                  <div className="profileproducts-content">
+                    <div className="row">
+                      <div>
+                        <h3>Pictures</h3>
+                        <hr className="profile-hr"></hr>
+                      </div>
+                      <input
+                        type="file"
+                        className="ml-2"
+                        multiple
+                        accept="image/x-png,image/jpeg"
+                        onChange={this.filesSelectedHandler}
+                      />
+                    </div>
+                    <div className="row profile-content">
+                      {this.profilephotoslist()}
+                    </div>
+                    <div className="row">
+                      <div>
+                        <h3>Products</h3>
+                        <hr className="profile-hr"></hr>
+                      </div>
+                    </div>
+                    <div className="row profile-content">
+                      {this.productList()}
+                    </div>
+                  </div>
+                </div>
+                <div></div>
+              </div>
+              <div className="row">
+                <div className="mt-5 mb-3">
+                  <h3>Reviews</h3>
+                  <hr className="profile-hr"></hr>
+                </div>
+              </div>
+              <div className="row profile-content">{this.commentList()}</div>
+            </div>
+            <Modal
+              show={this.state.open}
+              onHide={this.closemodal}
+              centered
+              size="lg"
+              aria-labelledby="contained-modal-title-vcenter"
+            >
+              <Modal.Header closeButton className="modal-head">
+                <Modal.Title>Edit profile</Modal.Title>
+              </Modal.Header>
+              <Modal.Body>
+                <form enctype="multipart/form-data">
+                  <label>Username: </label>
+                  <input
+                    type="text"
+                    className="form-control"
+                    value={this.state.username}
+                    onChange={this.onChangeUsername}
+                  />
 
-          <div className="container mt-5">
-            <div className="row myprofile">
-              <div className="profile">
+                  <label>Email : </label>
+                  <input
+                    type="email"
+                    className="form-control"
+                    value={this.state.email}
+                    onChange={this.onChangeEmail}
+                  />
+
+                  <label>Password: </label>
+                  <input
+                    type="text"
+                    className="form-control"
+                    value={this.state.password}
+                    onChange={this.onChangePassword}
+                  />
+
+                  <label>Bio: </label>
+                  <input
+                    type="text"
+                    className="form-control"
+                    value={this.state.bio}
+                    onChange={this.onChangeBio}
+                  />
+
+                  <label>location: </label>
+                  <input
+                    type="text"
+                    className="form-control"
+                    value={this.state.location}
+                    onChange={this.onChangeLocation}
+                  />
+
+                  <label>Role: </label>
+                  <select
+                    className="form-control"
+                    value={this.state.role}
+                    onChange={this.onChangeRole}
+                  >
+                    <option>Client</option>
+                    <option>Farmer</option>
+                  </select>
+
+                  <label>Image: </label>
+                  <br />
+                  <input
+                    type="file"
+                    accept="image/x-png,image/jpeg"
+                    onChange={this.fileSelectedHandler}
+                  />
+                </form>
+                <button
+                  onClick={this.confirmEdit}
+                  className="modal-accept2 mt-3"
+                >
+                  Confirm Changes
+                </button>
+              </Modal.Body>
+            </Modal>
+          </div>
+        );
+      } else {
+        return (
+          <div className="gray">
+            <Navbar />
+            <div className="container d-flex justify-content-center">
+              <div className="profile mt-5 pb-5 w-50">
                 <img
                   className="profilepic"
                   src={"/userpics/" + this.state.cookie.photo}
                 ></img>
                 <div className="profileinfo">
                   <h3>{this.state.cookie.username}</h3>
-                  <hr className="profile-hr"></hr>
+                  <hr className="profile-hr w-25"></hr>
                   <h5>{this.state.cookie.bio}</h5>
-                  <hr className="profile-hr"></hr>
+                  <hr className="profile-hr w-25"></hr>
                   <h5 className="mt-3">{this.state.cookie.location}</h5>
                   <h5 className="mt-3">+34677896912</h5>
                   <button className="contactme mt-4" onClick={this.openmodal}>
@@ -486,126 +634,93 @@ export default class Login extends Component {
                   <button className="contactme mt-4" onClick={this.logout}>
                     Logout
                   </button>
+                  <button className="contactme mt-4" onClick={this.myorders}>
+                    See my orders
+                  </button>
                 </div>
               </div>
-              <div className="profileproducts">
-                <div className="profileproducts-content">
-                  <div className="row">
-                    <div>
-                      <h3>Pictures</h3>
-                      <hr className="profile-hr"></hr>
-                    </div>
-                    <input
-                      type="file"
-                      className="ml-2"
-                      multiple
-                      accept="image/x-png,image/jpeg"
-                      onChange={this.filesSelectedHandler}
-                    />
-                  </div>
-                  <div className="row profile-content">
-                    {this.profilephotoslist()}
-                  </div>
-                  <div className="row">
-                    <div>
-                      <h3>Products</h3>
-                      <hr className="profile-hr"></hr>
-                    </div>
-                  </div>
-                  <div className="row profile-content">
-                    {this.productList()}
-                  </div>
-                </div>
-              </div>
-              <div></div>
             </div>
-            <div className="row">
-              <div className="mt-5 mb-3">
-                <h3>Reviews</h3>
-                <hr className="profile-hr"></hr>
-              </div>
-            </div>
-            <div className="row profile-content">{this.commentList()}</div>
-          </div>
-          <Modal
-            show={this.state.open}
-            onHide={this.closemodal}
-            centered
-            size="lg"
-            aria-labelledby="contained-modal-title-vcenter"
-          >
-            <Modal.Header closeButton>
-              <Modal.Title>Edit profile</Modal.Title>
-            </Modal.Header>
-            <Modal.Body>
-              <form enctype="multipart/form-data">
-                <label>Username: </label>
-                <input
-                  type="text"
-                  className="form-control"
-                  value={this.state.username}
-                  onChange={this.onChangeUsername}
-                />
+            <Modal
+              show={this.state.open}
+              onHide={this.closemodal}
+              centered
+              size="lg"
+              aria-labelledby="contained-modal-title-vcenter"
+            >
+              <Modal.Header closeButton className="modal-head">
+                <Modal.Title>Edit profile</Modal.Title>
+              </Modal.Header>
+              <Modal.Body>
+                <form enctype="multipart/form-data">
+                  <label>Username: </label>
+                  <input
+                    type="text"
+                    className="form-control"
+                    value={this.state.username}
+                    onChange={this.onChangeUsername}
+                  />
 
-                <label>Email : </label>
-                <input
-                  type="email"
-                  className="form-control"
-                  value={this.state.email}
-                  onChange={this.onChangeEmail}
-                />
+                  <label>Email : </label>
+                  <input
+                    type="email"
+                    className="form-control"
+                    value={this.state.email}
+                    onChange={this.onChangeEmail}
+                  />
 
-                <label>Password: </label>
-                <input
-                  type="text"
-                  className="form-control"
-                  value={this.state.password}
-                  onChange={this.onChangePassword}
-                />
+                  <label>Password: </label>
+                  <input
+                    type="text"
+                    className="form-control"
+                    value={this.state.password}
+                    onChange={this.onChangePassword}
+                  />
 
-                <label>Bio: </label>
-                <input
-                  type="text"
-                  className="form-control"
-                  value={this.state.bio}
-                  onChange={this.onChangeBio}
-                />
+                  <label>Bio: </label>
+                  <input
+                    type="text"
+                    className="form-control"
+                    value={this.state.bio}
+                    onChange={this.onChangeBio}
+                  />
 
-                <label>location: </label>
-                <input
-                  type="text"
-                  className="form-control"
-                  value={this.state.location}
-                  onChange={this.onChangeLocation}
-                />
+                  <label>location: </label>
+                  <input
+                    type="text"
+                    className="form-control"
+                    value={this.state.location}
+                    onChange={this.onChangeLocation}
+                  />
 
-                <label>Role: </label>
-                <select
-                  className="form-control"
-                  value={this.state.role}
-                  onChange={this.onChangeRole}
+                  <label>Role: </label>
+                  <select
+                    className="form-control"
+                    value={this.state.role}
+                    onChange={this.onChangeRole}
+                  >
+                    <option>Client</option>
+                    <option>Farmer</option>
+                  </select>
+
+                  <label>Image: </label>
+                  <br />
+                  <input
+                    type="file"
+                    accept="image/x-png,image/jpeg"
+                    onChange={this.fileSelectedHandler}
+                  />
+                </form>
+                <button
+                  onClick={this.confirmEdit}
+                  className="modal-accept2 mt-3"
                 >
-                  <option>Client</option>
-                  <option>Farmer</option>
-                </select>
-
-                <label>Image: </label>
-                <br />
-                <input
-                  type="file"
-                  accept="image/x-png,image/jpeg"
-                  onChange={this.fileSelectedHandler}
-                />
-              </form>
-            </Modal.Body>
-            <Modal.Footer>
-              <Button variant="primary" onClick={this.confirmEdit}>
-                Confirm Changes
-              </Button>
-            </Modal.Footer>
-          </Modal>
-        </div>
-      );
+                  Confirm Changes
+                </button>
+              </Modal.Body>
+            </Modal>
+          </div>
+        );
+      }
     }
   }
 }

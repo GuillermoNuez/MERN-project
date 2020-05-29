@@ -26,6 +26,7 @@ const shoppingcarts = require('./routes/shoppingcarts');
 const chat = require('./routes/chat');
 const ratings = require('./routes/ratings');
 const upload = require('./routes/upload');
+const verify = require('./routes/verify');
 
 
 app.use('/products', exercisesRouter);
@@ -34,7 +35,7 @@ app.use('/Cart', shoppingcarts);
 app.use('/Chat', chat);
 app.use('/Rating', ratings);
 app.use('/Upload', upload);
-
+app.use('/verify', verify);
 app.listen(port, () => {
     console.log(`Server is running on port: ${port}`);
 });

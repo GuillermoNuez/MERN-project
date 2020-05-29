@@ -102,7 +102,7 @@ router.route("/").delete((req, res) => {
 });
 
 router.route("/delete").delete((req, res) => {
-  ShoppingCart.findOneAndDelete({
+  ShoppingCart.deleteMany({
     userid: req.body.userid,
   })
     .then(res.json("OK"))
@@ -173,7 +173,7 @@ router.route("/addcheckout").post((req, res) => {
                 .save()
                 .catch((err) => res.status(400).json("Error: " + err));
             }
-            ShoppingCart.findOneAndDelete({
+            ShoppingCart.deleteMany({
               userid: idclient,
             })
               .then(res.json("OK"))
@@ -231,6 +231,24 @@ router.route("/deletechechout").delete((req, res) => {
   })
     .then(res.json("Checkout deleted"))
     .catch((err) => res.status(400).json("Error: " + err));
+});
+
+router.route("/getoverallinfo/:userid").get((req, res) => {
+  const id = req.params.userid;
+
+  FarmerCheckout.find({
+    idfarmer: id,
+  })
+    .then((products) => {
+
+      let group = products.reduce((r, a) => {
+        r[a.idproduct] = [...(r[a.key] || []), a];
+        return r;
+      }, {});
+      console.log(group);
+    })
+    // res.json(products))
+    .catch((err) => res.status(400).json("Error:" + err));
 });
 
 module.exports = router;

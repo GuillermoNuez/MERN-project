@@ -16,6 +16,8 @@ export default class Login extends Component {
       cookie: "",
       email: "",
       password: "",
+      status:"",
+      statusclass:""
     };
   }
 
@@ -60,12 +62,16 @@ export default class Login extends Component {
   onChangeEmail(e) {
     this.setState({
       email: e.target.value,
+      status:"",
+      statusclass:""
     });
   }
 
   onChangePassword(e) {
     this.setState({
       password: e.target.value,
+      status:"",
+      statusclass:""
     });
   }
 
@@ -94,9 +100,12 @@ export default class Login extends Component {
           window.location = "/login";
         } else {
           this.setState({
+            status: json,
+            statusclass:"mb-4"
+          });
+          console.log(json);
+          this.setState({
             isLoading: false,
-            email: "",
-            password: "",
             cookie: json.cookie,
           });
         }
@@ -107,7 +116,7 @@ export default class Login extends Component {
     const { cookie } = this.state;
     if (!cookie) {
       return (
-        <div>
+        <div className="login-bg">
           <Navbar />
           <div className="container login-container">
             <form onSubmit={this.onSubmit}>
@@ -134,7 +143,9 @@ export default class Login extends Component {
                   onChange={this.onChangePassword}
                 />
               </div>
-
+              <span className={this.state.statusclass}>
+                {this.state.status}
+              </span>
               <input type="submit" value="Login" className="btn" />
 
               <Link className="btn btn2 mt-3" to="/createuser">

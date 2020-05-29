@@ -1,6 +1,15 @@
 const router = require("express").Router();
 let User = require("../models/user.model");
 let Product = require("../models/product.model");
+const nodemailer = require("nodemailer");
+
+const transporter = nodemailer.createTransport({
+  service: "Gmail",
+  auth: {
+    user: "HuertUpProject@gmail.com",
+    pass: "huertup123",
+  },
+});
 
 router.route("/").get((req, res) => {
   User.find({
@@ -28,6 +37,7 @@ router.route("/locations").get((req, res) => {
 router.route("/:id").get((req, res) => {
   let username;
   let email;
+  let location;
   let photo;
   let photos;
   User.findById(req.params.id)
@@ -35,6 +45,7 @@ router.route("/:id").get((req, res) => {
       username = user.username;
       email = user.email;
       photo = user.photo;
+      location = user.location;
       photos = user.photos;
       Product.find({
         userid: req.params.id,
@@ -45,7 +56,8 @@ router.route("/:id").get((req, res) => {
             email: email,
             products: products,
             photo: photo,
-            photos :photos
+            location: location,
+            photos: photos,
           };
 
           res.json(info);
@@ -79,9 +91,20 @@ router.route("/add").post((req, res) => {
   const password = req.body.password;
   const role = req.body.role;
   const newUser = new User({ username, email, password, role });
+  console.log(newUser._id);
   newUser
     .save()
-    .then(() => res.json("User added!"))
+    .then(() => {
+      transporter.sendMail({
+        to: email,
+        subject: "Confirm Email",
+        html:
+          '<p>Click <a href="http://localhost:5000/verify/' +
+          newUser._id +
+          '">here</a> to verify your email</p>',
+      });
+      res.json("User added!");
+    })
     .catch((err) => res.status(400).json("Error: " + err));
 });
 
@@ -101,11 +124,16 @@ router.route("/login").post((req, res) => {
       try {
         const user = users[0];
         if (email == user.email && password == user.password) {
-          return res.send({
-            success: true,
-            mes: "Valid sign in.",
-            user: users[0],
-          });
+          if (user.confirmed == false) {
+            res.json("Please confirm your email");
+            console.log("EMAIL NOT CONFIRMED");
+          } else {
+            return res.send({
+              success: true,
+              mes: "Valid sign in.",
+              user: users[0],
+            });
+          }
         }
       } catch {
         res.json("Wrong Parameters");

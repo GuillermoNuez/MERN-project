@@ -3,18 +3,29 @@ import { Link } from "react-router-dom";
 import axios from "axios";
 import "../../src/index.css";
 import Navbar from "./navbar.component";
+import { getFromStorage } from "../utils/storage";
 
 const Product = (props) => (
-  <div class="productcard ml-3 mr-3">
-    <img src={"/productpics/" + props.product.image1} class="image" />
-    <div class="middle">
-      <p>{props.product.product}</p>
-
-      <p>{props.product.type}</p>
-      <p>{props.product.price} €/Kg</p>
-      <Link to={"/product/" + props.product._id}>See more</Link>
-      <br />
+  <div class="product-box ml-2 mr-2 mb-4">
+    <img src={"/productpics/" + props.product.image1} class="product-box-img" />
+    <h4>{props.product.product}</h4>
+    <h3 className="bold">{props.product.price}€/Kg</h3>
+    <div className="product-box-info">
+      <div class="d-flex align-items-center justify-content-between">
+        <img
+          className="product-box-userpic "
+          src={"/userpics/" + props.product.userphoto}
+        ></img>
+        <p className="mb-0">{props.product.username}</p>
+      </div>
+      <div class="product-sidebox">
+        <p className="mb-0 location"></p>
+        <p className="mb-0">{props.product.location}</p>
+      </div>
     </div>
+    <Link className="viewproduct" to={"/product/" + props.product._id}>
+      <h5 className="mb-0">View Product</h5>
+    </Link>
   </div>
 );
 
@@ -28,6 +39,7 @@ export default class ProductsList extends Component {
     this.onChangeType = this.onChangeType.bind(this);
 
     this.state = {
+      cookie: "",
       originalproducts: [],
       products: [],
       season: "All",
@@ -40,8 +52,14 @@ export default class ProductsList extends Component {
   }
 
   componentDidMount() {
+    const obj = getFromStorage("the_main_app");
+    console.log(obj);
+    if (obj && obj.cookie) {
+      const { cookie } = obj;
+      this.setState({ cookie: cookie });
+    }
     axios
-      .get("http://localhost:5000/products/")
+      .get("http://localhost:5000/products/getallinfo/")
       .then((response) => {
         console.log(response.data);
         this.setState({
@@ -99,32 +117,21 @@ export default class ProductsList extends Component {
   }
 
   onChangeLocation(e) {
-    console.log(e.target.value);
     this.setState({
       location: e.target.value,
     });
     if (e.target.value == "") {
+      console.log("RESETING");
       this.setState({
         products: this.state.originalproducts,
       });
     } else {
-      this.state = {
-        products: [],
-      };
-
-      axios
-        .get(
-          "http://localhost:5000/Users/getproductsbylocation/" + e.target.value
-        )
-        .then((response) => {
-          this.setState({
-            products: response.data,
-          });
-          console.log(response.data);
-        })
-        .catch(function (error) {
-          console.log(error);
-        });
+      this.setState({
+        season: "All",
+        products: this.state.originalproducts.filter((p) => {
+          return p.location.includes(e.target.value);
+        }),
+      });
     }
   }
 
@@ -183,6 +190,7 @@ export default class ProductsList extends Component {
   }
   productList() {
     return this.state.products.map((currentproduct) => {
+      console.log(currentproduct);
       return <Product product={currentproduct} key={currentproduct._id} />;
     });
   }
@@ -200,51 +208,180 @@ export default class ProductsList extends Component {
   }
 
   render() {
-    return (
-      <div>
-        <Navbar />
-        <div className="container mt-5">
-          <div className="row mb-5">
-            <input
-              type="text"
-              className="form-control search-form"
-              placeholder="Search"
-              value={this.state.search}
-              onChange={this.onChangeSearch}
-            />
-            <select onChange={this.onChangeSeason} value={this.state.season}>
-              <option>All</option>
-              <option>Spring</option>
-              <option>Summer</option>
-              <option>Fall</option>
-              <option>Winter</option>
-            </select>
+    const { cookie } = this.state;
+    if (!cookie) {
+      return (
+        <div className="gray">
+          <Navbar />
+          <div className="container mt-5">
+            <div className="row mb-5 d-flex align-items-center">
+              <h3>
+                All <span className="bold">products</span> from our{" "}
+                <span className="bold">farmers</span>
+              </h3>
+              <input
+                type="text"
+                className="form-control search-form ml-4 mr-4"
+                placeholder="Search product..."
+                value={this.state.search}
+                onChange={this.onChangeSearch}
+              />
+              <span>Season</span>
+              <select
+                className="ml-4 mr-4"
+                onChange={this.onChangeSeason}
+                value={this.state.season}
+              >
+                <option>All</option>
+                <option>Spring</option>
+                <option>Summer</option>
+                <option>Fall</option>
+                <option>Winter</option>
+              </select>
+              <span>Location</span>
+              <select
+                className="ml-4 mr-4"
+                onChange={this.onChangeLocation}
+                value={this.state.location}
+              >
+                <option></option>
+                {this.locationList()}
+              </select>
 
-            <select
-              onChange={this.onChangeLocation}
-              value={this.state.location}
-            >
-              <option></option>
-              {this.locationList()}
-            </select>
+              <span>Price : </span>
 
-            <label>Price : </label>
+              <select
+                onChange={this.onChangePrice}
+                value={this.state.price}
+                className="ml-4 mr-4"
+              >
+                <option></option>
+                <option>Lower to higher</option>
+                <option>Higher to lower</option>
+              </select>
+            </div>
 
-            <select onChange={this.onChangePrice} value={this.state.price}>
-              <option></option>
-              <option>Lower to higher</option>
-              <option>Higher to lower</option>
-            </select>
-
-            <select onChange={this.onChangeType} value={this.state.type}>
-              <option></option>
-              {this.typeList()}
-            </select>
+            <div className="row">{this.productList()}</div>
           </div>
-
-          <div className="row">{this.productList()}</div>
         </div>
-      </div>
-    );
+      );
+    } else {
+      if (cookie.role == "Farmer") {
+        return (
+          <div className="gray">
+            <Navbar />
+            <div className="container mt-5">
+              <Link to={"/createproduct"}>
+                <h5 className="mb-5 createproduct">Create product</h5>
+              </Link>
+              <div className="row mb-5 d-flex align-items-center">
+                <h3>
+                  All <span className="bold">products</span> from our{" "}
+                  <span className="bold">farmers</span>
+                </h3>
+                <input
+                  type="text"
+                  className="form-control search-form ml-4 mr-4"
+                  placeholder="Search product..."
+                  value={this.state.search}
+                  onChange={this.onChangeSearch}
+                />
+                <span>Season</span>
+                <select
+                  className="ml-4 mr-4"
+                  onChange={this.onChangeSeason}
+                  value={this.state.season}
+                >
+                  <option>All</option>
+                  <option>Spring</option>
+                  <option>Summer</option>
+                  <option>Fall</option>
+                  <option>Winter</option>
+                </select>
+                <span>Location</span>
+                <select
+                  className="ml-4 mr-4"
+                  onChange={this.onChangeLocation}
+                  value={this.state.location}
+                >
+                  <option></option>
+                  {this.locationList()}
+                </select>
+
+                <span>Price : </span>
+
+                <select
+                  onChange={this.onChangePrice}
+                  value={this.state.price}
+                  className="ml-4 mr-4"
+                >
+                  <option></option>
+                  <option>Lower to higher</option>
+                  <option>Higher to lower</option>
+                </select>
+              </div>
+
+              <div className="row">{this.productList()}</div>
+            </div>
+          </div>
+        );
+      } else {
+        return (
+          <div className="gray">
+            <Navbar />
+            <div className="container mt-5">
+              <div className="row mb-5 d-flex align-items-center">
+                <h3>
+                  All <span className="bold">products</span> from our{" "}
+                  <span className="bold">farmers</span>
+                </h3>
+                <input
+                  type="text"
+                  className="form-control search-form ml-4 mr-4"
+                  placeholder="Search product..."
+                  value={this.state.search}
+                  onChange={this.onChangeSearch}
+                />
+                <span>Season</span>
+                <select
+                  className="ml-4 mr-4"
+                  onChange={this.onChangeSeason}
+                  value={this.state.season}
+                >
+                  <option>All</option>
+                  <option>Spring</option>
+                  <option>Summer</option>
+                  <option>Fall</option>
+                  <option>Winter</option>
+                </select>
+                <span>Location</span>
+                <select
+                  className="ml-4 mr-4"
+                  onChange={this.onChangeLocation}
+                  value={this.state.location}
+                >
+                  <option></option>
+                  {this.locationList()}
+                </select>
+
+                <span>Price : </span>
+
+                <select
+                  onChange={this.onChangePrice}
+                  value={this.state.price}
+                  className="ml-4 mr-4"
+                >
+                  <option></option>
+                  <option>Lower to higher</option>
+                  <option>Higher to lower</option>
+                </select>
+              </div>
+
+              <div className="row">{this.productList()}</div>
+            </div>
+          </div>
+        );
+      }
+    }
   }
 }

@@ -3,6 +3,11 @@ import axios from "axios";
 import Navbar from "../components/navbar.component";
 import "react-datepicker/dist/react-datepicker.css";
 import { getFromStorage } from "../utils/storage";
+
+const LittleImage = (props) => (
+  <img className="little-product" src={"/productpics/" + props.photo} />
+);
+
 export default class SeeProduct extends Component {
   constructor(props) {
     super(props);
@@ -15,6 +20,14 @@ export default class SeeProduct extends Component {
       product: "",
       amount: 1,
     };
+  }
+
+  profilephotoslist() {
+    if (this.state.product.images) {
+      return this.state.product.images.map((currentphoto) => {
+        return <LittleImage photo={currentphoto} />;
+      });
+    }
   }
 
   onChangeAmount(e) {
@@ -37,7 +50,7 @@ export default class SeeProduct extends Component {
           this.setState({
             product: response.data,
           });
-          console.log(response);
+          console.log(response.data);
         })
         .catch(function (error) {
           console.log(error);
@@ -72,12 +85,12 @@ export default class SeeProduct extends Component {
           <hr className="profile-hr"></hr>
           <div className="row d-flex justify-content-center mt-5 mb-5">
             <div className="product-images">
-              <img className="product-image" src={"/productpics/"+this.state.product.image1}/>
-              <div className="col-md-12 d-flex justify-content-between products-row">
-                <img className="little-product" src={"/productpics/"+this.state.product.image2}/>
-                <img className="little-product"  src={"/productpics/"+this.state.product.image3}/>
-                <img className="little-product"  src={"/productpics/"+this.state.product.image4}/>
-                <img className="little-product"  src={"/productpics/"+this.state.product.image5}/>
+              <img
+                className="product-image"
+                src={"/productpics/" + this.state.product.image1}
+              />
+              <div className="col-md-12 d-flex products-row">
+                {this.profilephotoslist()}
               </div>
             </div>
             <div>
@@ -86,7 +99,6 @@ export default class SeeProduct extends Component {
                 <p className="product-price"> {this.state.product.price}€/kg</p>
                 <h5>Description</h5>
                 <p className="product-description">
-                  {" "}
                   {this.state.product.description}
                 </p>
                 <p className="product-season">
@@ -126,10 +138,10 @@ export default class SeeProduct extends Component {
           <hr className="profile-hr mb-5"></hr>
 
           <div className="col-md-12 products-row d-flex justify-content-between">
-            <img className="related-product " />
-            <img className="related-product " />
-            <img className="related-product " />
-            <img className="related-product " />
+            <img className="related-product related-0" />
+            <img className="related-product related-1" />
+            <img className="related-product related-2" />
+            <img className="related-product related-3" />
           </div>
         </div>
       </div>

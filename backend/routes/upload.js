@@ -38,13 +38,9 @@ router.route("/uploadproductphotos/:id").post((req, res) => {
     });
     routes.push(name);
   }
-
+console.log("MAYBE");
   Product.findById(req.params.id).then((product) => {
-    (product.image2 = routes[0]),
-      (product.image3 = routes[1]),
-      (product.image4 = routes[2]),
-      (product.image5 = routes[3]);
-
+    product.images = routes;
     product
       .save()
       .then(res.json({ status: "OK", message: "upload completed" }))

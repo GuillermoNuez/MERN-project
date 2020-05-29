@@ -5,27 +5,46 @@ import "../../src/index.css";
 import Navbar from "./navbar.component";
 import { getFromStorage } from "../utils/storage";
 
-const User = (props) => (
-  <div className="card ml-3 mt-5 carta ">
-    <div className="card-body">
-      <div className="row pl-3 mb-3">
-     
-        <img src={"/userpics/" + props.user.photo} class="user-image mr-3" />
-        <h5 className="card-title">{props.user.username}</h5>
-      </div>
+// const User = (props) => (
+//   <div className="card carta ">
+//     <div className="card-body">
+//       <div className="col-md-12 pl-3 mb-3 d-flex align-items-center">
+//         <img src={"/userpics/" + props.user.photo} class="user-image mr-3" />
+//         <h5 className="card-title mb-0">{props.user.username}</h5>
+//       </div>
 
-      <div className="row mb-3">
-        <div className="col-md-7">
-          <p className="card-text description">{props.user.bio}</p>
-        </div>
-        <div className="col-md-5">
-          <Link className="viewprofile" to={"/user/" + props.user._id}>
-            View Profile
-          </Link>
-        </div>
+//       <div className="row mb-3">
+//         <div className="col-md-7">
+//           <p className="card-text description">{props.user.bio}</p>
+//         </div>
+//         <div className="col-md-5">
+//           <Link className="viewprofile" to={"/user/" + props.user._id}>
+//             View Profile
+//           </Link>
+//         </div>
+//       </div>
+//       <p className="localidad">{props.user.location}</p>
+//       <div class="col.md-6"></div>
+//     </div>
+//   </div>
+// );
+
+const User = (props) => (
+  <div className="card carta mb-4">
+    <div className="card-body d-flex">
+      <div className="col-md-3 pl-0">
+        <img src={"/userpics/" + props.user.photo} class="user-image mr-3" />
       </div>
-      <p className="localidad">{props.user.location}</p>
-      <div class="col.md-6"></div>
+      <div className="col-md-5">
+        <h5 className="card-title mb-0">{props.user.username}</h5>
+        <p className="card-text descriptionc mt-4">{props.user.bio}</p>
+        <p className="localidad">{props.user.location}</p>
+      </div>
+      <div className="col-md-4 pr-0">
+        <Link className="viewprofile" to={"/user/" + props.user._id}>
+          View Profile
+        </Link>
+      </div>
     </div>
   </div>
 );
@@ -66,7 +85,9 @@ export default class ExercisesList extends Component {
         console.log(error);
       });
   }
-
+  seeAllProducts() {
+    window.location = "/products";
+  }
   componentDidMount() {
     try {
       const { cookie } = getFromStorage("the_main_app");
@@ -133,28 +154,55 @@ export default class ExercisesList extends Component {
 
   render() {
     return (
-      <div>
+      <div className="gray">
         <Navbar />
         <div className="container mt-5">
-          <div className="row">
-            <div className="col-md-4 latest-farmers">
-              <h2>Latest farmers</h2>
-              <div className="col-md-12">{this.userList()}</div>
+          <div className="col-md-12 d-flex justify-content-center">
+            <div className="col-md-5 latest-farmers pl-0 pr-0">
+              <h2 className="mb-4">Latest farmers</h2>
+              <div className="col-md-12 pl-0">{this.userList()}</div>
             </div>
-            <div className="cold-md-8 season-products">
-              <h2>
-                Season products
-                <select
-                  onChange={this.onChangeSeason}
-                  value={this.state.season}
-                >
-                  <option>Spring</option>
-                  <option>Summer</option>
-                  <option>Fall</option>
-                  <option>Winter</option>
-                </select>
+            <div className="season-products">
+              <h2 className="w-100 text-left mb-4">
+                Products from this season
               </h2>
-              <div className="d-flex">{this.productsList()}</div>
+              <div className="d-flex justify-content-center mb-4">
+                {/* {this.productsList()} */}
+                <div className="seasonproduct mr-5">
+                  <div className="seasonproduct-img1"></div>
+                  <div className="col-md-12 d-flex flex-row justify-content-center align-items-center">
+                    <p className="tomato mr-2"></p>
+                    <h5>Tomatoes</h5>
+                  </div>
+                </div>
+                <div className="seasonproduct">
+                  <div className="seasonproduct-img2"></div>
+                  <div className="col-md-12 d-flex flex-row justify-content-center align-items-center">
+                    <p className="eggplant mr-2"></p>
+                    <h5>Eggplant</h5>
+                  </div>
+                </div>
+              </div>
+              <div className="d-flex justify-content-center">
+                {/* {this.productsList()} */}
+                <div className="seasonproduct mr-5">
+                  <div className="seasonproduct-img3"></div>
+                  <div className="col-md-12 d-flex flex-row justify-content-center align-items-center">
+                    <p className="avocado mr-2"></p>
+                    <h5>Avocados</h5>
+                  </div>
+                </div>
+                <div className="seasonproduct">
+                  <div className="seasonproduct-img4"></div>
+                  <div className="col-md-12 d-flex flex-row justify-content-center align-items-center">
+                    <p className="orange mr-2"></p>
+                    <h5>Oranges</h5>
+                  </div>
+                </div>
+              </div>
+              <button className="viewall" onClick={this.seeAllProducts}>
+                See all products
+              </button>
             </div>
           </div>
         </div>

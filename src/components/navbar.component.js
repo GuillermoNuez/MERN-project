@@ -28,7 +28,7 @@ export default class Navbar extends Component {
             <Link to="/users" className="nav-link">
               Farmers
             </Link>
-            <Link to="/createproduct" className="nav-link">
+            <Link to="/products" className="nav-link">
               Products
             </Link>
             <Link to="/login" className="nav-link">
@@ -47,7 +47,7 @@ export default class Navbar extends Component {
             <Link to="/users" className="nav-link">
               Farmers
             </Link>
-            <Link to="/createproduct" className="nav-link">
+            <Link to="/products" className="nav-link">
               Products
             </Link>
             <Link to="/myprofile" className="nav-link">

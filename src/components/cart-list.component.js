@@ -6,7 +6,10 @@ import { getFromStorage } from "../utils/storage";
 
 const Product = (props) => (
   <div className="cart-item">
-    <img className="cart-item-img"  src={"/productpics/"+props.product.image}/>
+    <img
+      className="cart-item-img"
+      src={"/productpics/" + props.product.image}
+    />
     <p className="cart-item-name ml-4">{props.product.product}</p>
     <p className="cart-item-amount">{props.product.amount}kg</p>
     <p className="cart-item-price">
@@ -34,7 +37,7 @@ export default class ProductsList extends Component {
     this.onChangePhone = this.onChangePhone.bind(this);
     this.onChangeZip = this.onChangeZip.bind(this);
     this.onSubmit = this.onSubmit.bind(this);
-    this.emptyCart= this.emptyCart.bind(this);
+    this.emptyCart = this.emptyCart.bind(this);
 
     this.state = {
       products: [],
@@ -45,6 +48,7 @@ export default class ProductsList extends Component {
       phonenumber: "",
       zipcode: "",
       payment: "",
+      total: 0,
     };
   }
 
@@ -59,6 +63,11 @@ export default class ProductsList extends Component {
       .then((response) => {
         console.log(response.data);
         this.setState({ products: response.data });
+        let total = 0;
+        for (let index = 0; index < response.data.length; index++) {
+          total += response.data[index].price * response.data[index].amount;
+        }
+        this.setState({ total: total });
       })
       .catch((error) => {
         console.log(error);
@@ -133,7 +142,6 @@ export default class ProductsList extends Component {
     window.location = "/MyCart";
   }
   emptyCart() {
-
     fetch("http://localhost:5000/Cart/delete", {
       method: "DELETE",
       headers: {
@@ -144,14 +152,12 @@ export default class ProductsList extends Component {
       }),
     });
     window.location = "/MyCart";
-
   }
   keepShoping() {
     window.location = "/products";
   }
   ProductList() {
     return this.state.products.map((currentproduct) => {
-      console.log(currentproduct);
       return (
         <Product
           product={currentproduct}
@@ -164,7 +170,7 @@ export default class ProductsList extends Component {
 
   render() {
     return (
-      <div className="seeproduct pb-5">
+      <div className="gray">
         <Navbar />
         <div className="container mt-5">
           <div className="row d-flex justify-content-center mt-5 mb-5">
@@ -173,13 +179,13 @@ export default class ProductsList extends Component {
                 <span>({this.state.products.length})</span> Articles in{" "}
                 <span>your cart</span>
               </h2>
-              <div className="cold-md-12 cart-box-head d-flex align-items-center mb-3">
+              <div className="cold-md-12 cart-box-head d-flex align-items-center justify-content-center mb-3">
                 <div className="col-md-7">
-                  <h4>Product</h4>
+                  <h4 className="mb-0">Product</h4>
                 </div>
                 <div className="col-md-5 d-flex d-row justify-content-between">
-                  <h4>Quantity</h4>
-                  <h4>Total</h4>
+                  <h4 className="mb-0">Quantity</h4>
+                  <h4 className="mb-0">Total</h4>
                 </div>
               </div>
               <div className="cart-list">{this.ProductList()}</div>
@@ -187,7 +193,9 @@ export default class ProductsList extends Component {
                 <button className="cart-actions" onClick={this.emptyCart}>
                   Empty cart
                 </button>
-                <button className="cart-actions"  onClick={this.keepShoping}>Continue shopping</button>
+                <button className="cart-actions" onClick={this.keepShoping}>
+                  Continue shopping
+                </button>
               </div>
             </div>
             <div className="cart-box">
@@ -244,12 +252,14 @@ export default class ProductsList extends Component {
                     onChange={this.onChangePayment}
                   />
                 </div>
-
+                <div className="d-flex flex-column align-items-center">
+                <p className="total">Total : {this.state.total}€</p>
                 <input
                   type="submit"
                   value="Proceed to checkout"
                   className="createbutton"
                 />
+             </div>
               </form>
             </div>
           </div>

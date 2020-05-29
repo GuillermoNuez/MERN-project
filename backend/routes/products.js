@@ -1,9 +1,52 @@
 const router = require("express").Router();
 let Product = require("../models/product.model");
+let User = require("../models/user.model");
 
 router.route("/").get((req, res) => {
   Product.find()
     .then((products) => res.json(products))
+    .catch((err) => res.status(400).json("Error:" + err));
+});
+
+router.route("/getallinfo/").get((req, res) => {
+  Product.find()
+    .then((products) => {
+      let info = [];
+      let data = [];
+
+      products.forEach((element) => {
+        info.push(element.userid);
+      });
+
+      User.find({ _id: { $in: info } }, function (err, array) {
+        if (err) {
+          // handle error
+        } else {
+          var objects = {};
+          array.forEach((o) => (objects[o._id] = o));
+          var dupArray = info.map((id) => objects[id]);
+          // here you have objects with duplicates in dupArray:
+          for (let index = 0; index < dupArray.length; index++) {
+            let aux = {
+              userphoto: dupArray[index].photo,
+              username: dupArray[index].username,
+              location: dupArray[index].location,
+              product: products[index].product,
+              _id: products[index]._id,
+              description: products[index].description,
+              type: products[index].type,
+              price: products[index].price,
+              season: products[index].season,
+              image1: products[index].image1,
+            };
+            data.push(aux);
+          }
+
+          res.json(data);
+        }
+      });
+
+    })
     .catch((err) => res.status(400).json("Error:" + err));
 });
 
@@ -32,8 +75,7 @@ router.route("/add").post((req, res) => {
     image1: "",
   });
   newProduct.image1 = newProduct._id + "-main." + req.body.format;
-  
-  console.log(newProduct);
+
   newProduct
     .save()
     .then(() => res.json({ status: "OK", id: newProduct._id }))

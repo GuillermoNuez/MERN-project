@@ -83,14 +83,13 @@ export default class CreateProduct extends Component {
       type: this.state.type,
       price: this.state.price,
       season: this.state.season,
-      format: aux[1]
+      format: aux[1],
     };
 
     axios.post("http://localhost:5000/products/add", product).then((res) => {
       console.log(res.data);
       if (res.data.status == "OK") {
         if (this.state.file) {
-
           fd.append("files", this.state.file, res.data.id + "-main." + aux[1]);
           axios
             .post("http://localhost:5000/Upload/uploadproductphoto", fd)
@@ -112,90 +111,101 @@ export default class CreateProduct extends Component {
   render() {
     const { cookie } = this.state;
     if (cookie) {
-      return (
-        <div>
-          <Navbar />
-          <div className="container mt-5">
-            <h3>Add new product</h3>
-            <form onSubmit={this.onSubmit} className="create-product mt-5">
-              <div>
-                <div className="form-group ">
-                  <label>Product: </label>
-                  <input
-                    type="text"
-                    required
-                    className="form-control"
-                    value={this.state.product}
-                    onChange={this.onChangeProduct}
-                  />
-                </div>
-
-                <div className="form-group ">
-                  <label>Description: </label>
-                  <input
-                    type="text"
-                    required
-                    className="form-control"
-                    value={this.state.description}
-                    onChange={this.onChangeDescription}
-                  />
-                </div>
-                <div className="form-group">
-                  <label>Type: </label>
-                  <input
-                    type="text"
-                    required
-                    className="form-control"
-                    value={this.state.type}
-                    onChange={this.onChangeType}
-                  />
-                </div>
-              </div>
-              <div>
-                <div className="form-group">
-                  <label>Price: </label>
-                  <input
-                    type="number"
-                    required
-                    className="form-control"
-                    value={this.state.price}
-                    onChange={this.onChangePrice}
-                  />
-                </div>
-                <div className="form-group">
-                  <label>Season: </label>
-                  <select
-                    className="form-control"
-                    required
-                    onChange={this.onChangeSeason}
-                    value={this.state.season}
-                  >
-                    <option>Spring</option>
-                    <option>Summer</option>
-                    <option>Fall</option>
-                    <option>Winter</option>
-                  </select>
-                </div>
-                <label>Photo : </label>
-                <input
-                  type="file"
-                  className="ml-2"
-                  required
-                  accept="image/x-png,image/jpeg"
-                  onChange={this.fileSelectedHandler}
-                />
-                <div className="form-group">
-                  <input
-                    type="submit"
-                    value="Create Product"
-                    className="createbutton"
-                  />
-                </div>
-              </div>
-            </form>
+      if (cookie.role == "Client") {
+        return (
+          <div>
+            <Navbar />
+            <div className="container mt-5">
+              <h2>You dont have permissions to create a product as a Client</h2>
+            </div>
           </div>
-        </div>
-      );
+        );
+      } else {
+        return (
+          <div className="gray">
+            <Navbar />
+            <div className="container mt-5">
+              <h3>Add new product</h3>
+              <form onSubmit={this.onSubmit} className="create-product mt-5">
+                <div>
+                  <div className="form-group ">
+                    <label>Product: </label>
+                    <input
+                      type="text"
+                      required
+                      className="form-control"
+                      value={this.state.product}
+                      onChange={this.onChangeProduct}
+                    />
+                  </div>
+
+                  <div className="form-group ">
+                    <label>Description: </label>
+                    <input
+                      type="text"
+                      required
+                      className="form-control"
+                      value={this.state.description}
+                      onChange={this.onChangeDescription}
+                    />
+                  </div>
+                  <div className="form-group">
+                    <label>Type: </label>
+                    <input
+                      type="text"
+                      required
+                      className="form-control"
+                      value={this.state.type}
+                      onChange={this.onChangeType}
+                    />
+                  </div>
+                </div>
+                <div>
+                  <div className="form-group">
+                    <label>Price: </label>
+                    <input
+                      type="number"
+                      required
+                      className="form-control"
+                      value={this.state.price}
+                      onChange={this.onChangePrice}
+                    />
+                  </div>
+                  <div className="form-group">
+                    <label>Season: </label>
+                    <select
+                      className="form-control"
+                      required
+                      onChange={this.onChangeSeason}
+                      value={this.state.season}
+                    >
+                      <option>Spring</option>
+                      <option>Summer</option>
+                      <option>Fall</option>
+                      <option>Winter</option>
+                    </select>
+                  </div>
+                  <label>Photo : </label>
+                  <input
+                    type="file"
+                    className="ml-2"
+                    required
+                    accept="image/x-png,image/jpeg"
+                    onChange={this.fileSelectedHandler}
+                  />
+                  <div className="form-group">
+                    <input
+                      type="submit"
+                      value="Create Product"
+                      className="createbutton"
+                    />
+                  </div>
+                </div>
+              </form>
+            </div>
+          </div>
+        );
+      }
     } else {
       return (
         <div>
