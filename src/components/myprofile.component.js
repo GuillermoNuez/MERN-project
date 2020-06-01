@@ -3,7 +3,9 @@ import { Link } from "react-router-dom";
 import Navbar from "../components/navbar.component";
 import axios from "axios";
 import { getFromStorage, setInStorage } from "../utils/storage";
-import { Button, Modal } from "react-bootstrap";
+import { Modal } from "react-bootstrap";
+import { Bar, Line, Pie, Bubble } from "react-chartjs-2";
+
 const Product = (props) => (
   <div class="productcard ml-2 mr-2">
     <img src={"/productpics/" + props.product.image1} class="image" />
@@ -151,7 +153,6 @@ export default class Login extends Component {
     this.confirmEdit = this.confirmEdit.bind(this);
 
     this.state = {
-      isLoading: true,
       cookie: "",
       singUpError: "",
       singInError: "",
@@ -161,6 +162,7 @@ export default class Login extends Component {
       comments: [],
 
       // Edit Params
+
       open: false,
       username: "",
       email: "",
@@ -169,6 +171,11 @@ export default class Login extends Component {
       location: "",
       role: "",
       file: "",
+
+      // Graphs
+
+      graphdata: "",
+      graphstate: "hidden",
     };
   }
   onChangeUsername(e) {
@@ -296,7 +303,6 @@ export default class Login extends Component {
                 if (json.success) {
                   setInStorage("the_main_app", { cookie: user });
                   window.location = "/login";
-                  console.log("WORKERD");
                 }
               });
           } else {
@@ -429,10 +435,50 @@ export default class Login extends Component {
         .catch((error) => {
           console.log(error);
         });
-    } else {
-      this.setState({
-        isLoading: false,
-      });
+
+      axios
+        .get("http://localhost:5000/Cart/getoverallinfo/" + cookie._id)
+        .then((response) => {
+          console.log(response.data);
+          if (response.data.length > 0) {
+            this.setState({ graphstate: "" });
+          }
+          let labels = [];
+          let data = [];
+
+          response.data.forEach((element) => {
+            labels.push(element.Name);
+            data.push(element.amount);
+          });
+
+          data.push(0); //WTF
+
+          this.setState({
+            graphdata: response.data,
+            chartdata: {
+              labels: labels,
+              datasets: [
+                {
+                  label: "Purchases",
+                  data: data,
+                  backgroundColor: [
+                    "rgba(255, 99, 132, 1)",
+                    "rgba(54, 162, 235,1)",
+                    "rgba(255, 206, 86, 1)",
+                    "rgba(75, 192, 192, 1)",
+                    "rgba(153, 102, 255, 1)",
+                    "rgba(255, 159, 64, 1)",
+                  ],
+
+                  borderWidth: 1,
+                },
+              ],
+            },
+          });
+        })
+        .catch((error) => {
+          console.log(error);
+        });
     }
   }
 
@@ -482,12 +528,20 @@ export default class Login extends Component {
                     <hr className="profile-hr"></hr>
                     <h5>{this.state.cookie.bio}</h5>
                     <hr className="profile-hr"></hr>
-                    <h5 className="mt-3">{this.state.cookie.location}</h5>
+                    <h5 className="mt-3 d-flex align-items-center">
+                      <p className="location mb-0 mr-3"> </p>
+                      {this.state.cookie.location}
+                    </h5>
                     <h5 className="mt-3">+34677896912</h5>
-                    <button className="contactme mt-4" onClick={this.openmodal}>
+                    <button className="contactme mt-2" onClick={this.openmodal}>
                       Edit profile
                     </button>
-                    <button className="contactme mt-4" onClick={this.logout}>
+
+                    <Link className="contactme mt-4 mb-2" to="/requests">
+                      Requests
+                    </Link>
+
+                    <button className="logout" onClick={this.logout}>
                       Logout
                     </button>
                   </div>
@@ -530,7 +584,17 @@ export default class Login extends Component {
                 </div>
               </div>
               <div className="row profile-content">{this.commentList()}</div>
+              {/* <div className={this.state.graphstate}>
+                <div className="row">
+                  <div className="mt-5 mb-3">
+                    <h3>My Charts</h3>
+                    <hr className="profile-hr"></hr>
+                  </div>
+                </div>
+                <Bar className="chart" data={this.state.chartdata} height="100"/>{" "}
+              </div> */}
             </div>
+
             <Modal
               show={this.state.open}
               onHide={this.closemodal}
@@ -611,7 +675,8 @@ export default class Login extends Component {
             </Modal>
           </div>
         );
-      } else {
+      }
+      if (cookie.role == "Client") {
         return (
           <div className="gray">
             <Navbar />

@@ -12,12 +12,12 @@ export default class Login extends Component {
     this.onSubmit = this.onSubmit.bind(this);
 
     this.state = {
-      isLoading: true,
       cookie: "",
       email: "",
       password: "",
-      status:"",
-      statusclass:""
+      status: "",
+      statusclass: "hidden",
+      forgotclass: "hidden",
     };
   }
 
@@ -28,33 +28,6 @@ export default class Login extends Component {
       const { cookie } = obj;
       this.setState({
         cookie: cookie,
-        isLoading: false,
-      });
-      // GET PRODUCTS
-      axios
-        .get("http://localhost:5000/products/getuser/" + cookie._id)
-        .then((response) => {
-          this.setState({
-            products: response.data,
-          });
-        })
-        .catch((error) => {
-          console.log(error);
-        });
-
-      axios
-        .get("http://localhost:5000/Rating/getrating/" + cookie._id)
-        .then((response) => {
-          this.setState({
-            comments: response.data,
-          });
-        })
-        .catch((error) => {
-          console.log(error);
-        });
-    } else {
-      this.setState({
-        isLoading: false,
       });
     }
   }
@@ -62,25 +35,23 @@ export default class Login extends Component {
   onChangeEmail(e) {
     this.setState({
       email: e.target.value,
-      status:"",
-      statusclass:""
+      status: "",
+      statusclass: "",
+      forgotclass:"hidden"
     });
   }
 
   onChangePassword(e) {
     this.setState({
       password: e.target.value,
-      status:"",
-      statusclass:""
+      status: "",
+      statusclass: "",
+      forgotclass:"hidden"
     });
   }
 
   onSubmit(e) {
     e.preventDefault();
-
-    this.setState({
-      isLoading: true,
-    });
 
     fetch("http://localhost:5000/users/login", {
       method: "POST",
@@ -99,15 +70,23 @@ export default class Login extends Component {
 
           window.location = "/login";
         } else {
-          this.setState({
-            status: json,
-            statusclass:"mb-4"
-          });
           console.log(json);
-          this.setState({
-            isLoading: false,
-            cookie: json.cookie,
-          });
+          if (json == "Wrong Parameters") {
+            this.setState({
+              status: "Wrong parameters",
+              statusclass: "mb-4",
+              forgotclass: "mb-4",
+            });
+          } else {
+            this.setState({
+              status: json,
+              statusclass: "mb-4",
+            });
+            console.log(json);
+            this.setState({
+              cookie: json.cookie,
+            });
+          }
         }
       });
   }
@@ -118,8 +97,8 @@ export default class Login extends Component {
       return (
         <div className="login-bg">
           <Navbar />
-          <div className="container login-container">
-            <form onSubmit={this.onSubmit}>
+          <div className="container login-container mt-5 pt-5">
+            <form onSubmit={this.onSubmit} className="mt-5">
               <div className="login-logo"></div>
               <h3>Login</h3>
               <div className="form-group">
@@ -144,8 +123,16 @@ export default class Login extends Component {
                 />
               </div>
               <span className={this.state.statusclass}>
-                {this.state.status}
+                {this.state.status}{" "}
               </span>
+              <span className={this.state.forgotclass}>
+                Forgot your password? click  
+                
+              <Link className="ml-1" to="/forgotpassword">
+                Here
+              </Link>
+              </span>
+
               <input type="submit" value="Login" className="btn" />
 
               <Link className="btn btn2 mt-3" to="/createuser">

@@ -30,7 +30,7 @@ const userSchema = new Schema(
     bio: {
       type: String,
       required: false,
-      unique: true,
+      unique: false,
       trim: true,
       default: "",
     },

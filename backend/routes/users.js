@@ -1,6 +1,7 @@
 const router = require("express").Router();
 let User = require("../models/user.model");
 let Product = require("../models/product.model");
+let Rating = require("../models/rating.model");
 const nodemailer = require("nodemailer");
 
 const transporter = nodemailer.createTransport({
@@ -11,11 +12,93 @@ const transporter = nodemailer.createTransport({
   },
 });
 
+router.route("/recoverpassword/:email").get((req, res) => {
+  console.log("ENTRAMOS ->" + req.params.email);
+  User.findOne({ email: req.params.email })
+    .then((user) => {
+      if (user) {
+        transporter.sendMail({
+          to: user.email,
+          subject: "Recover password",
+          html: "<p>Your password is : " + user.password + "</p>",
+        });
+        res.json("Email sent");
+      } else {
+        res.json("Fake Email sent");
+      }
+    })
+    .catch((err) => res.status(400).json("Error:" + err));
+});
+
 router.route("/").get((req, res) => {
   User.find({
     role: "Farmer",
   })
     .then((users) => res.json(users))
+    .catch((err) => res.status(400).json("Error:" + err));
+});
+
+router.route("/allusers").get((req, res) => {
+  User.find({
+    role: "Farmer",
+  })
+    .then((users) => {
+      // console.log(users);
+      let data = [];
+      let aux = [];
+      users.forEach((element) => {
+        aux.push(element._id);
+      });
+
+      Rating.find({
+        iduser: { $in: aux },
+      })
+        .then((products) => {
+          let info = [];
+          let group = products.reduce((r, a) => {
+            r[a.iduser] = [...(r[a.iduser] || []), a];
+            return r;
+          }, {});
+
+          Object.entries(group).forEach(([key, value]) => {
+            let rating = 0;
+            let total = 0;
+
+            value.forEach((element) => {
+              rating += element.score;
+              total++;
+            });
+
+            rating = rating / total;
+            info.push({ Id: key, score: rating });
+          });
+          console.log(info);
+          let s;
+          
+          users.forEach((element) => {
+            s = 0;
+
+            info.forEach((e) => {
+              if (e.Id == element._id) {
+                s = e.score;
+              }
+            });
+
+            let p = {
+              _id: element._id,
+              location: element.location,
+              username: element.username,
+              photo: element.photo,
+              score: s,
+            };
+            console.log(p);
+            data.push(p);
+          });
+          console.log(info);
+          res.json(data);
+        })
+        .catch((err) => res.status(400).json("Error:" + err));
+    })
     .catch((err) => res.status(400).json("Error:" + err));
 });
 
@@ -40,6 +123,7 @@ router.route("/:id").get((req, res) => {
   let location;
   let photo;
   let photos;
+  let bio;
   User.findById(req.params.id)
     .then((user) => {
       username = user.username;
@@ -47,6 +131,7 @@ router.route("/:id").get((req, res) => {
       photo = user.photo;
       location = user.location;
       photos = user.photos;
+      bio=user.bio;
       Product.find({
         userid: req.params.id,
       })
@@ -58,6 +143,7 @@ router.route("/:id").get((req, res) => {
             photo: photo,
             location: location,
             photos: photos,
+            bio:bio
           };
 
           res.json(info);
@@ -103,9 +189,13 @@ router.route("/add").post((req, res) => {
           newUser._id +
           '">here</a> to verify your email</p>',
       });
+      console.log("User added!");
       res.json("User added!");
     })
-    .catch((err) => res.status(400).json("Error: " + err));
+    .catch((err) => {
+      console.log("Error: " + err);
+      res.status(400).json("Error: " + err);
+    });
 });
 
 router.route("/login").post((req, res) => {

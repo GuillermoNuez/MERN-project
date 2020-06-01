@@ -4,19 +4,29 @@ import "../../src/index.css";
 import Navbar from "./navbar.component";
 import { getFromStorage } from "../utils/storage";
 const Order = (props) => (
-  <ul className="list-group w-25 ml-2 mr-2 mb-4">
-    <li className="list-group-item active">{props.order.idpedido}</li>
-
-    {props.order.products.map((item) => {
-      console.log(item);
-      return (
-        <li className="list-group-item d-flex">
-          <span className="w-75">{item.idproduct}</span>
-          <span className="w-25 text-right">{item.products.amount}</span>
-        </li>
-      );
-    })}
-  </ul>
+  <div className="myorder ml-2 mr-2 mb-4">
+    <p className="orderdate">Order : {props.order.idpedido}</p>
+    <div className="ordercontainer d-flex flex-column align-items-center mt-3">
+      <div className="col-md-12 d-flex flex-column orderproducts align-items-center mb-3">
+        <div className="d-flex w-100">
+          <p className="w-100 orderamount">
+            <span className="bold">({props.order.products.length}) </span>{" "}
+            article(s)
+          </p>
+        </div>
+        <div className="products-container">
+          {props.order.products.map((item) => {
+            return (
+              <div className="row w-100 justify-content-around mr-0">
+                <p>{item.idproduct} </p>
+                <p >  {item.products.amount}</p>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+    </div>
+  </div>
 );
 
 export default class ProductsList extends Component {

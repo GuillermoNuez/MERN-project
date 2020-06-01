@@ -286,10 +286,35 @@ router.route("/getoverallinfo/:userid").get((req, res) => {
         value.forEach((element) => {
           amount += element.amount;
         });
-        info.push({ productid: key, amount: amount });
+        info.push({ Name: key, amount: amount });
+      });
+      let aux = [];
+      info.forEach((element) => {
+        aux.push(element.Name);
       });
 
-      res.json(info);
+      Product.find(
+        {
+          _id: { $in: aux },
+        },
+        (err, result) => {
+          if (err) {
+            res.json("Server Error");
+          }
+          try {
+            console.log("______________________");
+            console.log(result);
+            let data = [];
+            for (let index = 0; index < result.length; index++) {
+              data.push({ Name: result[index].product , amount: info[index].amount });
+            }
+            res.json(data);
+          } catch {
+            res.json(err);
+          }
+        }
+      );
+      // res.json(info);
     })
 
     .catch((err) => res.status(400).json("Error:" + err));

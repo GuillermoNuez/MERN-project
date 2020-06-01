@@ -13,8 +13,10 @@ router.route("/").post((req, res) => {
     .catch((err) => res.status(400).json("Error:" + err))
     .then(
       Chat.findOne({
-        $or: [{ iduser1: req.body.iduser1 }, { iduser2: req.body.iduser1 }],
-        $or: [{ iduser2: req.body.iduser2 }, { iduser1: req.body.iduser2 }],
+        $or: [
+          { iduser1: req.body.iduser1, iduser2: req.body.iduser2 },
+          { iduser1: req.body.iduser2, iduser2: req.body.iduser1 },
+        ],
       })
         .then((chat) => {
           if (chat) {
@@ -41,7 +43,6 @@ router.route("/:id").get((req, res) => {
     idchat: req.params.id,
   })
     .then((product) => {
-      console.log(product);
       res.json(product);
     })
     .catch((err) => res.status(400).json("Error: " + err));
@@ -120,5 +121,86 @@ router.route("/update/:id").post((req, res) => {
         .catch((err) => res.status(400).json("Error: " + err));
     })
     .catch((err) => res.status(400).json("Error: " + err));
+});
+
+router.route("/getchats/:id").get((req, res) => {
+  let id = req.params.id;
+  Chat.find({
+    $or: [{ iduser1: id }, { iduser2: id }],
+  }).then((chats) => {
+    if (chats) {
+      let data = [];
+      let chatids = [];
+      let userids = [];
+      let lastmessages = [];
+
+      let aux = "";
+
+      chats.forEach((element) => {
+        aux = "";
+        chatids.push(element._id);
+
+        if (element.iduser1 == id) {
+          aux = element.iduser2;
+        } else {
+          aux = element.iduser1;
+        }
+        userids.push(aux);
+        data.push({ userid: aux, idchat: element._id });
+      });
+
+      User.find({ _id: { $in: userids } })
+        .then((users) => {
+          let data2 = [];
+          for (let index = 0; index < users.length; index++) {
+            let element = {
+              userid: data[index].userid,
+              idchat: data[index].idchat,
+              userphoto: users[index].photo,
+              username: users[index].username,
+            };
+            data2.push(element);
+          }
+
+          Message.find({ idchat: { $in: chatids } }, function (err, array) {
+            if (err) {
+              res.json(err);
+            } else {
+              var dict2 = [];
+              for (let index = 0; index < array.length; index++) {
+                dict2.push({
+                  key: array[index].idchat,
+                  message: array[index].message,
+                });
+              }
+
+              let group = dict2.reduce((r, a) => {
+                r[a.key] = [...(r[a.key] || []), a];
+                return r;
+              }, {});
+              let info = [];
+              Object.entries(group).forEach(([key, value]) => {
+                lastmessages.push(value[value.length - 1]);
+              });
+              data = [];
+              for (let index = 0; index < data2.length; index++) {
+                data.push({
+                  userid: data2[index].userid,
+                  userphoto: data2[index].userphoto,
+                  username: data2[index].username,
+                  lastmessage: lastmessages[index].message,
+                });
+              }
+              console.log(data);
+              res.json(data);
+            }
+          });
+        })
+        .catch((err) => res.status(400).json("Error: " + err));
+    } else {
+      console.log("You have no chats");
+      res.json("You have no chats");
+    }
+  });
 });
 module.exports = router;

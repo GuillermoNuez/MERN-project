@@ -148,6 +148,7 @@ export default class ProductsList extends Component {
       cookie: "",
       username: "",
       email: "",
+      bio:"",
       location:"",
       photo: "",
       photos: [],
@@ -209,13 +210,15 @@ export default class ProductsList extends Component {
     axios
       .get("http://localhost:5000/users/" + this.props.match.params.id)
       .then((response) => {
+        console.log(response.data);
         this.setState({
           products: response.data.products,
           username: response.data.username,
           email: response.data.email,
           photo: response.data.photo,
           photos: response.data.photos,
-          location:response.data.location
+          location:response.data.location,
+          bio:response.data.bio
         });
       })
       .catch((error) => {
@@ -309,7 +312,7 @@ export default class ProductsList extends Component {
                 <div className="profileinfo">
                   <h3>{this.state.username}</h3>
                   <hr className="profile-hr"></hr>
-                  <h5>Biography{this.state.bio}</h5>
+                  <h5>{this.state.bio}</h5>
                   <hr className="profile-hr"></hr>
                   <h5 className="mt-3">{this.state.location}</h5>
                   <h5 className="mt-3">+34677896912</h5>

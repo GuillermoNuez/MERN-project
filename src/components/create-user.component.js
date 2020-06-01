@@ -52,11 +52,11 @@ export default class CreateUser extends Component {
   }
 
   onChangeRole(e) {
+    console.log(e.target.value);
     this.setState({
       role: e.target.value,
     });
   }
-
 
   onSubmit(e) {
     e.preventDefault();
@@ -84,12 +84,14 @@ export default class CreateUser extends Component {
 
   render() {
     return (
-      <div>
+      <div className="login-bg">
         <Navbar />
-        <div className="container mt-5">
-          <h3>Create New User</h3>
-          <form onSubmit={this.onSubmit}>
-            <div className="form-group">
+        <div className="container login-container mt-5 pt-5">
+          
+          <form onSubmit={this.onSubmit} className="mt-5">
+          <h3>Register</h3>
+            <div className="form-group mt-2">
+              
               <label>Username: </label>
               <input
                 type="text"
@@ -117,26 +119,34 @@ export default class CreateUser extends Component {
                 onChange={this.onChangePassword}
               />
 
-              <label>Role: </label>
+              <label>Role </label>
 
-              <select
-                className="form-control"
-                value={this.state.role}
-                onChange={this.onChangeRole}
-              >
-                <option>Client</option>
-                <option>Farmer</option>
-              </select>
+              <div className="d-flex justify-content-center">
+                <div>
+                  <input
+                    type="radio"
+                    name="site_name"
+                    value="Client"
+                    onChange={this.onChangeRole}
+                    required
+                  ></input>
+                  <label className="ml-2">Client</label>
+                </div>
+                <div className="ml-4">
+                  <input
+                    type="radio"
+                    name="site_name"
+                    value="Farmer"
+                    onChange={this.onChangeRole}
+                    required
+                  ></input>
+                  <label className="ml-2">Farmer</label>
+                </div>
+              </div>
             </div>
 
-          
-
             <div className="form-group">
-              <input
-                type="submit"
-                value="Create User"
-                className="btn btn-primary mt-4"
-              />
+              <input type="submit" value="Create User" className="btn btn2" />
             </div>
           </form>
         </div>

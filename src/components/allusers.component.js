@@ -11,17 +11,21 @@ const User = (props) => (
       <img src={"/userpics/" + props.user.photo} class="user-image mr-3" />
     </div>
     <div className="col-md-8">
-      <h5 className="card-title mb-3">{props.user.username}</h5>
-      <div className="col-md-12 d-flex justify-content-between mb-4">
-        <div className=" d-flex">
-          <p className="location"></p>
+      <h5 className="card-title mb-3 bold">{props.user.username}</h5>
+      <div className="col-md-12 d-flex justify-content-between mb-4 pl-0">
+        <div className=" d-flex bgray align-items-center">
+          <p className="location mb-0 mr-1"></p>
           <span>{props.user.location}</span>
         </div>
 
+        <div className=" d-flex bgray2 align-items-center justify-content-end">
+        <span>{props.user.score}</span>
+          <p className="tomato mb-0 ml-2"></p>
 
+        </div>
       </div>
 
-      <Link className="viewfarmer" to={"/user/" + props.user._id}>
+      <Link className="viewfarmer w-100" to={"/user/"+ props.user._id}>
         View Farmer
       </Link>
     </div>
@@ -43,7 +47,7 @@ export default class ExercisesList extends Component {
     } catch {}
 
     axios
-      .get("http://localhost:5000/Users/")
+      .get("http://localhost:5000/Users/allusers")
       .then((response) => {
         this.setState({ users: response.data });
       })
@@ -78,7 +82,7 @@ export default class ExercisesList extends Component {
               <input
                 type="text"
                 className="form-control search-form ml-4 mr-4"
-                placeholder="Search product..."
+                placeholder="Search user..."
                 value={this.state.search}
                 onChange={this.onChangeSearch}
               />

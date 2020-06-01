@@ -5,42 +5,18 @@ import "../../src/index.css";
 import Navbar from "./navbar.component";
 import { getFromStorage } from "../utils/storage";
 
-// const User = (props) => (
-//   <div className="card carta ">
-//     <div className="card-body">
-//       <div className="col-md-12 pl-3 mb-3 d-flex align-items-center">
-//         <img src={"/userpics/" + props.user.photo} class="user-image mr-3" />
-//         <h5 className="card-title mb-0">{props.user.username}</h5>
-//       </div>
-
-//       <div className="row mb-3">
-//         <div className="col-md-7">
-//           <p className="card-text description">{props.user.bio}</p>
-//         </div>
-//         <div className="col-md-5">
-//           <Link className="viewprofile" to={"/user/" + props.user._id}>
-//             View Profile
-//           </Link>
-//         </div>
-//       </div>
-//       <p className="localidad">{props.user.location}</p>
-//       <div class="col.md-6"></div>
-//     </div>
-//   </div>
-// );
-
 const User = (props) => (
   <div className="card carta mb-4">
     <div className="card-body d-flex">
       <div className="col-md-3 pl-0">
         <img src={"/userpics/" + props.user.photo} class="user-image mr-3" />
       </div>
-      <div className="col-md-5">
+      <div className="col-md-6">
         <h5 className="card-title mb-0">{props.user.username}</h5>
         <p className="card-text descriptionc mt-4">{props.user.bio}</p>
         <p className="localidad">{props.user.location}</p>
       </div>
-      <div className="col-md-4 pr-0">
+      <div className="col-md-3 pr-0">
         <Link className="viewprofile" to={"/user/" + props.user._id}>
           View Profile
         </Link>
@@ -87,6 +63,10 @@ export default class ExercisesList extends Component {
   }
   seeAllProducts() {
     window.location = "/products";
+  }
+
+  seeAllUsers() {
+    window.location = "/allusers";
   }
   componentDidMount() {
     try {
@@ -158,9 +138,14 @@ export default class ExercisesList extends Component {
         <Navbar />
         <div className="container mt-5">
           <div className="col-md-12 d-flex justify-content-center">
-            <div className="col-md-5 latest-farmers pl-0 pr-0">
+            <div>
               <h2 className="mb-4">Latest farmers</h2>
-              <div className="col-md-12 pl-0">{this.userList()}</div>
+              <div className="col-md-12 latest-farmers pl-0 pr-0">
+                <div className="col-md-12 pl-0">{this.userList()}</div>
+              </div>
+              <button className="viewall" onClick={this.seeAllUsers}>
+                See all users
+              </button>
             </div>
             <div className="season-products">
               <h2 className="w-100 text-left mb-4">

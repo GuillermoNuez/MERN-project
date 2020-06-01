@@ -19,6 +19,8 @@ import MyOrders from "./components/myorders.component";
 import Requests from "./components/request.component";
 import MyProfile from "./components/myprofile.component";
 import AllUsers from "./components/allusers.component";
+import ForgotPassword from "./components/forgotpassword.component";
+import Chats from "./components/chats.component";
 
 function App() {
   return (
@@ -39,6 +41,8 @@ function App() {
       <Route path="/requests" exact component={Requests} />
       <Route path="/myprofile" exact component={MyProfile} />
       <Route path="/allusers" exact component={AllUsers} />
+      <Route path="/forgotpassword" exact component={ForgotPassword} />
+      <Route path="/chats" exact component={Chats} />
     </Router>
   );
 }
