@@ -42,6 +42,12 @@ const checkoutSchema = new Schema(
       required: true,
       unique: false,
     },
+    status: {
+      type:String,
+      required: false,
+      unique: false,
+      default: "in preparation",
+    }
   },
   {
     timestamps: true,

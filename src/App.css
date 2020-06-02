@@ -169,5 +169,10 @@ width: 100%;
   overflow-y: auto;
   width: 100%;
 }
+.msg_history2 {
+  overflow-y: auto;
+  height: 456px;
+  width: 100%;
+}
 .container{max-width:1170px; margin:auto;} img{ max-width:100%;}
 

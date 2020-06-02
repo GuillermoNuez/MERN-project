@@ -306,7 +306,10 @@ router.route("/getoverallinfo/:userid").get((req, res) => {
             console.log(result);
             let data = [];
             for (let index = 0; index < result.length; index++) {
-              data.push({ Name: result[index].product , amount: info[index].amount });
+              data.push({
+                Name: result[index].product,
+                amount: info[index].amount,
+              });
             }
             res.json(data);
           } catch {
@@ -319,5 +322,22 @@ router.route("/getoverallinfo/:userid").get((req, res) => {
 
     .catch((err) => res.status(400).json("Error:" + err));
 });
+
+router.route("/getcheckoutlenght/:userid").get((req, res) => {
+  ShoppingCart.find({
+    userid: req.params.userid,
+  })
+    .then((order) => {
+      if (order == []) {
+        res.json(0);
+      } else {
+        res.json(order.length);
+        console.log(order.length);
+      }
+    })
+    .catch((err) => res.status(400).json("Error:" + err));
+});
+
+
 
 module.exports = router;

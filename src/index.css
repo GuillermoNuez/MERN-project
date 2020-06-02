@@ -525,6 +525,7 @@ h1 {
   transition: 0.5s ease;
   backface-visibility: hidden;
   border-radius: 3px;
+  object-fit: cover;
 }
 .productcard:hover .image {
   opacity: 0.3;
@@ -622,6 +623,7 @@ h1 {
   background-color: lightgrey;
   border-radius: 50%;
   margin-bottom: 25px;
+  object-fit: cover;
 }
 
 .profileinfo {
@@ -685,6 +687,8 @@ h1 {
   margin-left: 25px;
   margin-right: 25px;
   border-radius: 5px;
+  font-family: "Montserrat";
+  font-size: 1.4em;
 }
 
 .review-img {
@@ -694,6 +698,8 @@ h1 {
   background-color: lightblue;
   margin-right: 20px;
   margin-left: 5px;
+  margin-left: 0;
+  object-fit: cover;
 }
 
 .profile-photo {
@@ -703,6 +709,7 @@ h1 {
   margin-left: 25px;
   margin-right: 25px;
   border-radius: 3px;
+  object-fit: cover !important;
 }
 
 .create-product {
@@ -765,6 +772,7 @@ h1 {
   background-color: lightgray;
   margin-bottom: 25px;
   border-radius: 5px;
+  object-fit: cover;
 }
 
 .little-product {
@@ -775,6 +783,7 @@ h1 {
   /* flex-grow: 1; */
   margin-left: 5px;
   margin-right: 5px;
+  object-fit: cover;
 }
 
 .product-name {
@@ -1000,12 +1009,13 @@ h1 {
 
 .myCart-logo {
   padding-top: 10px;
-  width: 50%;
+  width: 60px;
   border-radius: 50%;
   background-color: #f9ecd6;
   display: flex;
   justify-content: center;
   align-items: center;
+  min-width: 60px;
 }
 
 .basket-logo {
@@ -1023,6 +1033,7 @@ h1 {
   min-width: 123.08px;
   height: 123.08px;
   min-height: 123.08px;
+  object-fit: cover;
 }
 .hide input {
   display: none;
@@ -1226,6 +1237,8 @@ button.close {
 .myorder {
   background-color: white;
   box-shadow: 3px 3px 10px rgba(0, 0, 0, 0.192);
+  width: 430px;
+  height: 570px;
 }
 
 .orderdate {
@@ -1306,6 +1319,7 @@ button.close {
   height: 200px;
   margin-bottom: 10px;
   border-radius: 3px;
+  object-fit: cover;
 }
 
 .product-box-info {
@@ -1339,6 +1353,7 @@ button.close {
   background-color: lightblue;
   border-radius: 45px;
   margin-right: 10px;
+  object-fit: cover;
 }
 
 .location {
@@ -1408,31 +1423,98 @@ canvas {
 
 .alluser-card .bgray {
   background-color: #f3f3f3;
-  padding:5px;
+  padding: 5px;
   min-width: 100px;
   border-radius: 5px;
 }
 
 .alluser-card .bgray2 {
   background-color: #f3f3f3;
-  padding:5px;
+  padding: 5px;
   min-width: 70px;
   border-radius: 5px;
 }
 
 .chat-card {
   background-color: white;
-  width: 450px;
+  width: 100%;
   display: flex;
   padding: 20px;
   border-radius: 5px;
   box-shadow: 4px 4px 4px rgba(0, 0, 0, 0.205);
-  color:black !important;
+  color: black !important;
   margin-bottom: 25px;
   text-decoration: none !important;
+  border-color: transparent;
+}
+
+
+.chat-card-img {
+  border-radius: 50%;
+  width: 75px;
+  min-width: 75px;
+  height: 75px;
+  min-height: 75px;
+  object-fit: cover;
 }
 
 .logout {
-  background-color: transparent ;
+  background-color: transparent;
   border: none;
+}
+
+.cartnumber {
+  width: 25px;
+  height: 25px;
+  background-color: rgb(214, 90, 68);
+  color: white;
+  border-radius: 50%;
+  min-width: 25px;
+  position: absolute;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 22px;
+  margin-left: 20px;
+  font-size: 0.6em;
+}
+
+.italic {
+  font-style: italic;
+  font-weight: 400;
+}
+
+.deleteorder {
+  background-color: #c24141;
+  color: white;
+  border: none;
+  padding: 7px;
+  border-radius: 3px;
+  font-weight: 600;
+  width: 100px;
+}
+
+.deletebody {
+  font-size: 1.2em;
+}
+
+.deletehead {
+  font-size: 0.9em;
+  font-family: "Arvo";
+}
+
+
+.chatscolumn {
+  width: 30%;
+}
+
+.chatscolumn2 {
+  width: 65%;
+  background-color: white;
+  height: 600px;
+}
+
+.chat-body {
+  height: 552px;
+  max-height: 552px;
 }

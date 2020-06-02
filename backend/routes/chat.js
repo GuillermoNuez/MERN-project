@@ -42,8 +42,8 @@ router.route("/:id").get((req, res) => {
   Message.find({
     idchat: req.params.id,
   })
-    .then((product) => {
-      res.json(product);
+    .then((messages) => {
+      res.json(messages);
     })
     .catch((err) => res.status(400).json("Error: " + err));
 });
@@ -189,6 +189,7 @@ router.route("/getchats/:id").get((req, res) => {
                   userphoto: data2[index].userphoto,
                   username: data2[index].username,
                   lastmessage: lastmessages[index].message,
+                  idchat: chatids[index],
                 });
               }
               console.log(data);

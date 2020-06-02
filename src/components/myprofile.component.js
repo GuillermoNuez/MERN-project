@@ -29,7 +29,7 @@ const Product = (props) => (
 );
 
 const Comment1 = (props) => (
-  <div className="review">
+  <div className="review mb-3">
     <div className="col-md-12 d-flex align-items-center pt-3">
       <img
         className="review-img"
@@ -37,18 +37,17 @@ const Comment1 = (props) => (
       ></img>
       <span>{props.comment.username}</span>
     </div>
-    <div className="col-md-12 d-flex align-items-center pt-3 mt-3 justify-content-around">
-      <p className="tomato"></p>
+    <div className="col-md-12 d-flex align-items-center pt-3 mt-3 justify-content-between">
       <p className="tomato"></p>
     </div>
-    <div className="col-md-12 d-flex align-items-center mt-3">
-      {props.comment.mensaje}
+    <div className="col-md-12 d-flex align-items-center mt-3 italic">
+      "{props.comment.mensaje}"
     </div>
   </div>
 );
 
 const Comment2 = (props) => (
-  <div className="review">
+  <div className="review mb-3">
     <div className="col-md-12 d-flex align-items-center pt-3">
       <img
         className="review-img"
@@ -56,17 +55,17 @@ const Comment2 = (props) => (
       ></img>
       <span>{props.comment.username}</span>
     </div>
-    <div className="col-md-12 d-flex align-items-center pt-3 mt-3 justify-content-around">
-      <p className="tomato"></p>
+    <div className="col-md-12 d-flex align-items-center pt-3 mt-3">
+      <p className="tomato mr-5"></p>
       <p className="tomato"></p>
     </div>
-    <div className="col-md-12 d-flex align-items-center mt-3">
-      {props.comment.mensaje}
+    <div className="col-md-12 d-flex align-items-center mt-3 italic">
+      "{props.comment.mensaje}"
     </div>
   </div>
 );
 const Comment3 = (props) => (
-  <div className="review">
+  <div className="review mb-3">
     <div className="col-md-12 d-flex align-items-center pt-3">
       <img
         className="review-img"
@@ -74,18 +73,18 @@ const Comment3 = (props) => (
       ></img>
       <span>{props.comment.username}</span>
     </div>
-    <div className="col-md-12 d-flex align-items-center pt-3 mt-3 justify-content-around">
-      <p className="tomato"></p>
-      <p className="tomato"></p>
+    <div className="col-md-12 d-flex align-items-center pt-3 mt-3">
+      <p className="tomato mr-5"></p>
+      <p className="tomato mr-5"></p>
       <p className="tomato"></p>
     </div>
-    <div className="col-md-12 d-flex align-items-center mt-3">
-      {props.comment.mensaje}
+    <div className="col-md-12 d-flex align-items-center mt-3 italic">
+      "{props.comment.mensaje}"
     </div>
   </div>
 );
 const Comment4 = (props) => (
-  <div className="review">
+  <div className="review mb-3">
     <div className="col-md-12 d-flex align-items-center pt-3">
       <img
         className="review-img"
@@ -93,20 +92,20 @@ const Comment4 = (props) => (
       ></img>
       <span>{props.comment.username}</span>
     </div>
-    <div className="col-md-12 d-flex align-items-center pt-3 mt-3 justify-content-around">
+    <div className="col-md-12 d-flex align-items-center pt-3 mt-3 justify-content-between">
       <p className="tomato"></p>
       <p className="tomato"></p>
       <p className="tomato"></p>
       <p className="tomato"></p>
     </div>
-    <div className="col-md-12 d-flex align-items-center mt-3">
-      {props.comment.mensaje}
+    <div className="col-md-12 d-flex align-items-center mt-3 italic">
+      "{props.comment.mensaje}"
     </div>
   </div>
 );
 
 const Comment5 = (props) => (
-  <div className="review">
+  <div className="review mb-3">
     <div className="col-md-12 d-flex align-items-center pt-3">
       <img
         className="review-img"
@@ -114,15 +113,15 @@ const Comment5 = (props) => (
       ></img>
       <span>{props.comment.username}</span>
     </div>
-    <div className="col-md-12 d-flex align-items-center pt-3 mt-3 justify-content-around">
+    <div className="col-md-12 d-flex align-items-center pt-3 mt-3 justify-content-between">
       <p className="tomato"></p>
       <p className="tomato"></p>
       <p className="tomato"></p>
       <p className="tomato"></p>
       <p className="tomato"></p>
     </div>
-    <div className="col-md-12 d-flex align-items-center mt-3">
-      {props.comment.mensaje}
+    <div className="col-md-12 d-flex align-items-center mt-3 italic">
+      "{props.comment.mensaje}"
     </div>
   </div>
 );
@@ -583,7 +582,9 @@ export default class Login extends Component {
                   <hr className="profile-hr"></hr>
                 </div>
               </div>
-              <div className="row profile-content">{this.commentList()}</div>
+              <div className="row profile-content mb-5">
+                {this.commentList()}
+              </div>
               {/* <div className={this.state.graphstate}>
                 <div className="row">
                   <div className="mt-5 mb-3">
@@ -783,6 +784,14 @@ export default class Login extends Component {
                 </button>
               </Modal.Body>
             </Modal>
+          </div>
+        );
+      }
+      if (cookie.role == "Admin") {
+        return (
+          <div className="gray">
+            <Navbar />
+            <div className="container mt-5">Oops nothing to see here</div>
           </div>
         );
       }

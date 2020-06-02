@@ -3,9 +3,10 @@ import axios from "axios";
 import "../../src/index.css";
 import Navbar from "./navbar.component";
 import { getFromStorage } from "../utils/storage";
+import { Modal } from "react-bootstrap";
 
 const Order = (props) => (
-  <div className="myorder ml-2 mr-2 mb-4">
+  <div className="myorder ml-2 mr-2">
     <p className="orderdate">Order date : {props.order.createdAt}</p>
     <p className="ordernumber">Order number : {props.order._id}</p>
     <div className="ordercontainer d-flex flex-column align-items-center mt-3">
@@ -15,7 +16,7 @@ const Order = (props) => (
             <span className="bold">({props.order.products.length}) </span>{" "}
             article(s)
           </p>
-          <p className="w-50 orderstatus">Status: on delivery</p>
+          <p className="w-50 orderstatus">Status: {props.order.status}</p>
         </div>
         <div className="products-container">
           {props.order.products.map((item) => {
@@ -54,14 +55,68 @@ const Order = (props) => (
     </div>
   </div>
 );
+
+const Order2 = (props) => (
+  <div className="myorder ml-2 mr-2">
+    <p className="orderdate">Order date : {props.order.createdAt}</p>
+    <p className="ordernumber">Order number : {props.order._id}</p>
+    <div className="ordercontainer d-flex flex-column align-items-center mt-3">
+      <div className="col-md-12 d-flex flex-column orderproducts align-items-center">
+        <div className="d-flex w-100">
+          <p className="w-50 orderamount">
+            <span className="bold">({props.order.products.length}) </span>{" "}
+            article(s)
+          </p>
+          <p className="w-50 orderstatus">Status: {props.order.status}</p>
+        </div>
+        <div className="products-container">
+          {props.order.products.map((item) => {
+            return (
+              <div className="row w-100 justify-content-center">
+                <p className="mr-2">{item.product} - </p>
+                <p> {item.amount}kg</p>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+    </div>
+    <div className="ordercontainer d-flex flex-column align-items-center mt-3">
+      <div className="col-md-12 d-flex flex-column orderproducts align-items-center">
+        <div className="w-100 text-center order-head-black mb-3">
+          Shipping info
+        </div>
+
+        <p>Name: {props.order.name}</p>
+        <p>C/: {props.order.adress}</p>
+        <p> {props.order.phonenumber}</p>
+        <p>Zip: {props.order.zipcode}</p>
+      </div>
+    </div>
+  </div>
+);
+
 export default class ProductsList extends Component {
   constructor(props) {
     super(props);
     this.deleteOrder = this.deleteOrder.bind(this);
+    this.openmodal = this.openmodal.bind(this);
+    this.closemodal = this.closemodal.bind(this);
+    this.deleteComment = this.deleteComment.bind(this);
+
     this.state = {
       orders: [],
       cookie: "",
+      open: false,
+      idtoremove: "",
     };
+  }
+
+  openmodal() {
+    this.setState({ open: true });
+  }
+  closemodal() {
+    this.setState({ open: false, idtoremove: "" });
   }
 
   componentDidMount() {
@@ -84,24 +139,32 @@ export default class ProductsList extends Component {
   }
 
   deleteOrder(id) {
+    this.setState({ open: true, idtoremove: id });
+  }
+
+  deleteComment() {
     fetch("http://localhost:5000/Cart/deletechechout", {
       method: "DELETE",
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        id: id,
+        id: this.state.idtoremove,
         userid: this.state.cookie,
       }),
     });
 
     window.location = "/myorders";
-    console.log(id);
   }
   OrderList() {
     return this.state.orders.map((currentorder) => {
       console.log(currentorder);
-      return <Order order={currentorder} deleteOrder={this.deleteOrder} />;
+      if(currentorder.status=="in preparation") {
+        return <Order2 order={currentorder} deleteOrder={this.deleteOrder} />;
+      }
+      else{
+        return <Order order={currentorder} deleteOrder={this.deleteOrder} />;
+      }
     });
   }
 
@@ -116,6 +179,33 @@ export default class ProductsList extends Component {
             <h2 className="mb-5 w-100 text-left">My orders</h2>
             <div className="row"> {this.OrderList()}</div>
           </div>
+          <Modal
+            show={this.state.open}
+            onHide={this.closemodal}
+            centered
+            size="lg"
+            aria-labelledby="contained-modal-title-vcenter"
+          >
+            <Modal.Header closeButton className="modal-head">
+              <Modal.Title>
+                <span className="deletehead">Delete Order</span>
+              </Modal.Title>
+            </Modal.Header>
+            <Modal.Body className="pt-4 pb-4 d-flex flex-column align-items-center">
+              <span className="deletebody">
+                Are you sure you want to <span className="bold"> delete </span> this order, this action is
+                <span className="bold"> irreversible</span>
+              </span>
+
+              <button
+                variant="primary"
+                onClick={this.deleteComment}
+                className="deleteorder mt-3"
+              >
+                Delete
+              </button>
+            </Modal.Body>
+          </Modal>
         </div>
       );
     } else {

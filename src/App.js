@@ -21,6 +21,7 @@ import MyProfile from "./components/myprofile.component";
 import AllUsers from "./components/allusers.component";
 import ForgotPassword from "./components/forgotpassword.component";
 import Chats from "./components/chats.component";
+import AdminPanel from "./components/adminpanel.component";
 
 function App() {
   return (
@@ -43,6 +44,7 @@ function App() {
       <Route path="/allusers" exact component={AllUsers} />
       <Route path="/forgotpassword" exact component={ForgotPassword} />
       <Route path="/chats" exact component={Chats} />
+      <Route path="/adminpanel" exact component={AdminPanel} />
     </Router>
   );
 }

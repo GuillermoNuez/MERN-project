@@ -28,7 +28,6 @@ const ratings = require('./routes/ratings');
 const upload = require('./routes/upload');
 const verify = require('./routes/verify');
 
-
 app.use('/products', exercisesRouter);
 app.use('/users', usersRouter);
 app.use('/Cart', shoppingcarts);

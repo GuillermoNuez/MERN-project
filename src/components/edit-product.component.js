@@ -142,7 +142,7 @@ export default class EditExercise extends Component {
               console.log(res);
             });
         }
-        window.location = "/product/" + this.props.match.params.id;
+        // window.location = "/product/" + this.props.match.params.id;
       });
   }
 

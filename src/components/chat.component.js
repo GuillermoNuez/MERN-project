@@ -18,7 +18,7 @@ const Message2 = (props) => (
     <div className="received_msg">
       <div className="received_withd_msg">
         <p>{props.message.message}</p>
-        <span className="time_date"> 11:01 AM | Today</span>
+        <span className="time_date">{props.message.updatedAt}</span>{" "}
       </div>
     </div>
   </div>
