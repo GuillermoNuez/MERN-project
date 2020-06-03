@@ -559,11 +559,11 @@ h1 {
 }
 
 .login-container form {
-  background-color: #f1c34a;
+  background-color: #ffffff;
   width: 700px;
   padding: 50px;
   text-align: center;
-  border-radius: 5px;
+  border-radius: 10px;
 
   display: flex;
   flex-direction: column;
@@ -575,12 +575,17 @@ h1 {
   width: 75% !important;
 }
 
+.login-container .form-group input {
+  background-color: #f8f8f8;
+}
+
 .login-container form .form-group .form-control {
   margin-bottom: 25px;
 }
 
 .login-container .btn {
-  background-color: #de6a34;
+  background-color: #f2c34c;
+  font-weight: 500;
   padding-left: 50px;
   padding-right: 50px;
 }
@@ -1240,6 +1245,11 @@ button.close {
   width: 430px;
   height: 570px;
 }
+.myrequest {
+  background-color: white;
+  box-shadow: 3px 3px 10px rgba(0, 0, 0, 0.192);
+  width: 430px;
+}
 
 .orderdate {
   background-color: #f9ecd6;
@@ -1448,7 +1458,6 @@ canvas {
   border-color: transparent;
 }
 
-
 .chat-card-img {
   border-radius: 50%;
   width: 75px;
@@ -1503,7 +1512,6 @@ canvas {
   font-family: "Arvo";
 }
 
-
 .chatscolumn {
   width: 30%;
 }
@@ -1517,4 +1525,14 @@ canvas {
 .chat-body {
   height: 552px;
   max-height: 552px;
+}
+
+.registerbutton {
+  background-color: #f2c34c !important;
+}
+
+.no-button{
+  cursor: pointer;
+  color: #303030;
+
 }

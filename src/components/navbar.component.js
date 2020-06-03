@@ -85,7 +85,7 @@ export default class Navbar extends Component {
         );
       }
 
-      if (this.state.cookie.role == "Client") {
+      if (this.state.cookie.role == "Farmer") {
         return (
           <div className="row nav2 ">
             <div className="nav2-logo">

@@ -13,7 +13,6 @@ const transporter = nodemailer.createTransport({
 });
 
 router.route("/recoverpassword/:email").get((req, res) => {
-  console.log("ENTRAMOS ->" + req.params.email);
   User.findOne({ email: req.params.email })
     .then((user) => {
       if (user) {
@@ -43,7 +42,6 @@ router.route("/allusers").get((req, res) => {
     role: "Farmer",
   })
     .then((users) => {
-      // console.log(users);
       let data = [];
       let aux = [];
       users.forEach((element) => {
@@ -72,9 +70,8 @@ router.route("/allusers").get((req, res) => {
             rating = rating / total;
             info.push({ Id: key, score: rating });
           });
-          console.log(info);
           let s;
-          
+
           users.forEach((element) => {
             s = 0;
 
@@ -91,13 +88,25 @@ router.route("/allusers").get((req, res) => {
               photo: element.photo,
               score: s,
             };
-            console.log(p);
             data.push(p);
           });
-          console.log(info);
           res.json(data);
         })
         .catch((err) => res.status(400).json("Error:" + err));
+    })
+    .catch((err) => res.status(400).json("Error:" + err));
+});
+
+router.route("/:id").delete((req, res) => {
+  User.findByIdAndDelete(req.params.id)
+    .then((product) => res.json("User deleted"))
+    .catch((err) => res.status(400).json("Error: " + err));
+});
+
+router.route("/all").get((req, res) => {
+  User.find({ $or: [{ role: "Client" }, { role: "Farmer" }] })
+    .then((users) => {
+      res.json(users);
     })
     .catch((err) => res.status(400).json("Error:" + err));
 });
@@ -131,7 +140,7 @@ router.route("/:id").get((req, res) => {
       photo = user.photo;
       location = user.location;
       photos = user.photos;
-      bio=user.bio;
+      bio = user.bio;
       Product.find({
         userid: req.params.id,
       })
@@ -143,7 +152,7 @@ router.route("/:id").get((req, res) => {
             photo: photo,
             location: location,
             photos: photos,
-            bio:bio
+            bio: bio,
           };
 
           res.json(info);
@@ -177,7 +186,6 @@ router.route("/add").post((req, res) => {
   const password = req.body.password;
   const role = req.body.role;
   const newUser = new User({ username, email, password, role });
-  console.log(newUser._id);
   newUser
     .save()
     .then(() => {

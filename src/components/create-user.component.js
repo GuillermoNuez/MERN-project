@@ -1,6 +1,10 @@
 import React, { Component } from "react";
 import axios from "axios";
 import Navbar from "../components/navbar.component";
+import { Modal } from "react-bootstrap";
+// Fontawesome
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faInfoCircle } from "@fortawesome/free-solid-svg-icons";
 
 export default class CreateUser extends Component {
   constructor(props) {
@@ -11,6 +15,8 @@ export default class CreateUser extends Component {
     this.onChangePassword = this.onChangePassword.bind(this);
     this.onChangeRole = this.onChangeRole.bind(this);
     this.onSubmit = this.onSubmit.bind(this);
+    this.openmodal = this.openmodal.bind(this);
+    this.closemodal = this.closemodal.bind(this);
 
     this.state = {
       username: "",
@@ -18,6 +24,7 @@ export default class CreateUser extends Component {
       password: "",
       role: "Client",
       selectedFile: null,
+      openmodal: true,
     };
   }
 
@@ -58,6 +65,14 @@ export default class CreateUser extends Component {
     });
   }
 
+  openmodal(id) {
+    this.setState({ openmodal: true });
+  }
+
+  closemodal() {
+    this.setState({ openmodal: false });
+  }
+
   onSubmit(e) {
     e.preventDefault();
 
@@ -86,12 +101,10 @@ export default class CreateUser extends Component {
     return (
       <div className="login-bg">
         <Navbar />
-        <div className="container login-container mt-5 pt-5">
-          
+        <div className="container login-container mt-2 pt-5">
           <form onSubmit={this.onSubmit} className="mt-5">
-          <h3>Register</h3>
+            <h3>Register</h3>
             <div className="form-group mt-2">
-              
               <label>Username: </label>
               <input
                 type="text"
@@ -119,7 +132,12 @@ export default class CreateUser extends Component {
                 onChange={this.onChangePassword}
               />
 
-              <label>Role </label>
+              <label>
+                Role{" "}
+                <span className="no-button" onClick={this.openmodal}>
+                  <FontAwesomeIcon icon={faInfoCircle} />
+                </span>
+              </label>
 
               <div className="d-flex justify-content-center">
                 <div>
@@ -144,12 +162,45 @@ export default class CreateUser extends Component {
                 </div>
               </div>
             </div>
-
             <div className="form-group">
-              <input type="submit" value="Create User" className="btn btn2" />
+              <input
+                type="submit"
+                value="Sign up"
+                className="btn btn-warning registerbutton"
+              />
             </div>
           </form>
         </div>
+        <Modal
+          show={this.state.openmodal}
+          onHide={this.closemodal}
+          centered
+          size="lg"
+          aria-labelledby="contained-modal-title-vcenter"
+        >
+          <Modal.Header closeButton className="modal-head">
+            <Modal.Title>
+              <span className="deletehead">Info about roles</span>
+            </Modal.Title>
+          </Modal.Header>
+          <Modal.Body className="pt-4 pb-4 d-flex flex-column align-items-center">
+            <span className="deletebody">
+              <h5>Client role:</h5> - This type of user can <span className="bold"> buy products</span> from our farmers. <br/>
+              - You  <span className="bold">can't sell</span> your own products. <br/><br/>
+              <h5>Farmer role:</h5>
+              - You<span className="bold"> can sell products</span> to our clients. <br/>
+              - You can't buy products from other farmers.
+            </span>
+
+            <button
+              variant="primary"
+              onClick={this.closemodal}
+              className="btn btn-success mt-4 w-25"
+            >
+              I understand
+            </button>
+          </Modal.Body>
+        </Modal>
       </div>
     );
   }

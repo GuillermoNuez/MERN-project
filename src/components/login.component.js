@@ -37,7 +37,7 @@ export default class Login extends Component {
       email: e.target.value,
       status: "",
       statusclass: "",
-      forgotclass:"hidden"
+      forgotclass: "hidden",
     });
   }
 
@@ -46,7 +46,7 @@ export default class Login extends Component {
       password: e.target.value,
       status: "",
       statusclass: "",
-      forgotclass:"hidden"
+      forgotclass: "hidden",
     });
   }
 
@@ -73,8 +73,8 @@ export default class Login extends Component {
           console.log(json);
           if (json == "Wrong Parameters") {
             this.setState({
-              status: "Wrong parameters",
-              statusclass: "mb-4",
+              status: "Invalid email or password",
+              statusclass: "mb-4 bold",
               forgotclass: "mb-4",
             });
           } else {
@@ -98,10 +98,10 @@ export default class Login extends Component {
         <div className="login-bg">
           <Navbar />
           <div className="container login-container mt-5 pt-5">
-            <form onSubmit={this.onSubmit} className="mt-5">
+            <form onSubmit={this.onSubmit} className="mt-2">
               <div className="login-logo"></div>
               <h3>Login</h3>
-              <div className="form-group">
+              <div className="form-group mt-4">
                 <label>Email </label>
                 <input
                   type="email"
@@ -126,18 +126,20 @@ export default class Login extends Component {
                 {this.state.status}{" "}
               </span>
               <span className={this.state.forgotclass}>
-                Forgot your password? click  
-                
-              <Link className="ml-1" to="/forgotpassword">
-                Here
-              </Link>
+                Forgot your password? click
+                <Link className="ml-1" to="/forgotpassword">
+                  here
+                </Link>
               </span>
 
-              <input type="submit" value="Login" className="btn" />
+              <input type="submit" value="Log in" className="btn mb-4" />
 
-              <Link className="btn btn2 mt-3" to="/createuser">
-                Register
-              </Link>
+              <span className="mt-3">
+               Don't have an account?
+                <Link className="ml-1" to="/createuser">
+                  Register here
+                </Link>{" "}               
+              </span>
             </form>
           </div>
         </div>

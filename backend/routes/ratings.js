@@ -19,7 +19,6 @@ router.route("/getallinfo").get((req, res) => {
     });
 
     Rating.find({ ratingowner: { $in: userids } }, function (err, array) {
-      console.log(array);
       if (err) {
         res.json(err);
       } else {
@@ -28,7 +27,6 @@ router.route("/getallinfo").get((req, res) => {
         array.forEach((o) => (objects[o._id] = o));
         var dupArray = userids.map((id) => objects[id]);
 
-        console.log(dupArray);
         res.json(dupArray);
       }
     });

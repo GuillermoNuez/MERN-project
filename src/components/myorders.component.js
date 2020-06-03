@@ -159,11 +159,10 @@ export default class ProductsList extends Component {
   OrderList() {
     return this.state.orders.map((currentorder) => {
       console.log(currentorder);
-      if(currentorder.status=="in preparation") {
-        return <Order2 order={currentorder} deleteOrder={this.deleteOrder} />;
-      }
-      else{
+      if (currentorder.status == "in preparation") {
         return <Order order={currentorder} deleteOrder={this.deleteOrder} />;
+      } else {
+        return <Order2 order={currentorder} deleteOrder={this.deleteOrder} />;
       }
     });
   }
@@ -193,7 +192,8 @@ export default class ProductsList extends Component {
             </Modal.Header>
             <Modal.Body className="pt-4 pb-4 d-flex flex-column align-items-center">
               <span className="deletebody">
-                Are you sure you want to <span className="bold"> delete </span> this order, this action is
+                Are you sure you want to <span className="bold"> delete </span>{" "}
+                this order, this action is
                 <span className="bold"> irreversible</span>
               </span>
 

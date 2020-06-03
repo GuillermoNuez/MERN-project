@@ -13,15 +13,6 @@ const Product = (props) => (
       <p>{props.product.product}</p>
       <Link to={"/product/" + props.product._id}>See more</Link>
       <br />
-      <a
-        href="#"
-        className="btn btn-primary"
-        onClick={() => {
-          props.addtocart(props.product._id);
-        }}
-      >
-        +
-      </a>
     </div>
   </div>
 );

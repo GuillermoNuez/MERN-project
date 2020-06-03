@@ -48,6 +48,18 @@ router.route("/:userid").get((req, res) => {
     .catch((err) => res.status(400).json("Error:" + err));
 });
 
+router.route("/ready/:userid").get((req, res) => {
+  Checkout.findOne({
+    _id: req.params.userid,
+  })
+    .then((order) => {
+      order.status = "ready";
+      order
+      .save().then(res.json("OK"));
+    })
+    .catch((err) => res.status(400).json("Error:" + err));
+});
+
 router.route("/add").post((req, res) => {
   const userid = req.body.userid;
   const productid = req.body.productid;
@@ -249,9 +261,29 @@ router.route("/request/:userid").get((req, res) => {
                 }
               }
             }
-            info.push({ idpedido: key, products: value });
+            info.push({ idpedido: key, products: value, status: "" });
           });
-          res.json(info);
+          let a = [];
+          info.forEach((element) => {
+            a.push(element.idpedido);
+          });
+
+          Checkout.find({ _id: { $in: a } }, function (err, array) {
+            if (err) {
+              res.json(err);
+            } else {
+              console.log(array);
+              let data2 = [];
+              for (let index = 0; index < info.length; index++) {
+                data2.push({
+                  idpedido: info[index].idpedido,
+                  products: info[index].products,
+                  status: array[index].status,
+                });
+              }
+              res.json(data2);
+            }
+          });
         }
       });
 
@@ -332,12 +364,10 @@ router.route("/getcheckoutlenght/:userid").get((req, res) => {
         res.json(0);
       } else {
         res.json(order.length);
-        console.log(order.length);
       }
     })
     .catch((err) => res.status(400).json("Error:" + err));
 });
-
 
 
 module.exports = router;

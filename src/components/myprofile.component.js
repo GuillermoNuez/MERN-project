@@ -595,7 +595,6 @@ export default class Login extends Component {
                 <Bar className="chart" data={this.state.chartdata} height="100"/>{" "}
               </div> */}
             </div>
-
             <Modal
               show={this.state.open}
               onHide={this.closemodal}
@@ -788,12 +787,7 @@ export default class Login extends Component {
         );
       }
       if (cookie.role == "Admin") {
-        return (
-          <div className="gray">
-            <Navbar />
-            <div className="container mt-5">Oops nothing to see here</div>
-          </div>
-        );
+        window.location = "/adminpanel";
       }
     }
   }
