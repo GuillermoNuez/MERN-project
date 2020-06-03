@@ -24,7 +24,7 @@ export default class CreateUser extends Component {
       password: "",
       role: "Client",
       selectedFile: null,
-      openmodal: true,
+      openmodal: false,
     };
   }
 
