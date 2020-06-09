@@ -21,16 +21,17 @@ export default class TodosList extends Component {
                 </Link>
               </div>
             </div>
-            <div className="row w-100 mt-5 header-container d-flex flex-column">
-              <h1>
-                Always ,local<br></br>
+            <div className="row w-100 mt-5 header-container d-flex flex-column trazado">
+              <h1 className="bold mb-4">
+                Always local<br></br>
                 is better for everyone.
               </h1>
               <h3 className="mt-2">
                 Huertup deliver directly to you from the best local farmers &
                 the best product.
               </h3>
-              <div className="header-button mt-4">DOWNLOAD APP</div>
+              <div className="header-button mt-4">Go to App</div>
+ 
             </div>
           </div>
         </div>
@@ -52,7 +53,7 @@ export default class TodosList extends Component {
               <span className="bold">agriculture economy.</span>
             </h4>
           </div>
-          <div className="col-md-6">
+          <div className="col-md-6 pr-0">
             <div className="bolsa">
               <div className="bolsa-img"></div>
             </div>

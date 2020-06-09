@@ -92,7 +92,7 @@ export default class Login extends Component {
                   onChange={this.onChangeEmail}
                 />
 
-                <input type="submit" value="Send email" className="btn" />
+                <input type="submit" value="Send email" className="btn registerbutton" />
               </div>
             </form>
           </div>

@@ -6,12 +6,18 @@ import Navbar from "./navbar.component";
 import { getFromStorage } from "../utils/storage";
 import { Button, Modal } from "react-bootstrap";
 
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faEye } from "@fortawesome/free-solid-svg-icons";
+
+import Rating from "@material-ui/lab/Rating";
+import Box from "@material-ui/core/Box";
+
 const Product = (props) => (
   <div class="productcard ml-2 mr-2">
     <img src={"/productpics/" + props.product.image1} class="image" />
     <div class="middle">
-      <p>{props.product.product}</p>
-      <Link to={"/product/" + props.product._id}>See more</Link>
+    <p className="bold">{props.product.product}</p>
+      <Link className="btn btn-sm btn-primary" to={"/product/" + props.product._id}><FontAwesomeIcon icon={faEye}/></Link>
       <br />
     </div>
   </div>
@@ -128,11 +134,11 @@ export default class ProductsList extends Component {
     this.deleteExercise = this.deleteExercise.bind(this);
     this.addtocart = this.addtocart.bind(this);
     this.onChangeCommentText = this.onChangeCommentText.bind(this);
-    this.onChangeCommentRate = this.onChangeCommentRate.bind(this);
     this.postComment = this.postComment.bind(this);
     this.profilephotoslist = this.profilephotoslist.bind(this);
     this.openmodal = this.openmodal.bind(this);
     this.closemodal = this.closemodal.bind(this);
+    this.onChangeRating = this.onChangeRating.bind(this);
 
     this.state = {
       products: [],
@@ -146,7 +152,6 @@ export default class ProductsList extends Component {
       comments: [],
 
       commenttext: "",
-      commentrate: "",
       open: false,
     };
   }
@@ -162,7 +167,7 @@ export default class ProductsList extends Component {
       ratingowner: this.state.cookie._id,
       iduser: this.props.match.params.id,
       message: this.state.commenttext,
-      score: this.state.commentrate,
+      score: this.state.rating,
     };
 
     axios.post("http://localhost:5000/Rating/add/", comment).then((res) => {
@@ -267,9 +272,10 @@ export default class ProductsList extends Component {
     });
   }
 
-  onChangeCommentRate(e) {
+  onChangeRating(e) {
+    console.log("Changing rating to : " + e.target.value);
     this.setState({
-      commentrate: e.target.value,
+      rating: e.target.value,
     });
   }
 
@@ -306,7 +312,7 @@ export default class ProductsList extends Component {
                   <h5>{this.state.bio}</h5>
                   <hr className="profile-hr"></hr>
                   <h5 className="mt-3">{this.state.location}</h5>
-                  <h5 className="mt-3">+34677896912</h5>
+                  {/* <h5 className="mt-3">+34677896912</h5> */}
                   <Link
                     className="contactme mt-4"
                     to={"/chat/" + this.props.match.params.id}
@@ -355,30 +361,33 @@ export default class ProductsList extends Component {
             <div className="row profile-content">{this.commentList()}</div>
             <div className="row">
               <div className="mt-5 mb-2">
-                <Modal
+              <Modal
                   show={this.state.open}
                   onHide={this.closemodal}
                   centered
-                  size="lg"
+                  size="md"
                   aria-labelledby="contained-modal-title-vcenter"
                 >
                   <Modal.Header closeButton className="modal-head">
                     <Modal.Title>Rate farmer</Modal.Title>
                   </Modal.Header>
-                  <Modal.Body className="pt-4 pb-4">
-                    <div className="row  d-flex justify-content-center mb-3">
-                    <span className="modal-left">Rate</span>
-                      <input
-                        type="number"
-                        className="form-control modal-form1"
-                        max="5"
-                        min="1"
-
-                        value={this.state.commentrate}
-                        onChange={this.onChangeCommentRate}
-                      />
+                  <Modal.Body className="pt-4 pb-4 d-flex flex-column align-items-center">
+                    <div className="row w-100 d-flex justify-content-center mb-3 align-itmems-center">
+                      <span className="modal-left">Rate</span>
+                      <Box
+                        component="fieldset"
+                        mb={3}
+                        borderColor="transparent"
+                      >
+                        <Rating
+                          name="simple-controlled"
+                          value={this.state.rating}
+                          onChange={this.onChangeRating}
+                          size="large"
+                        />
+                      </Box>
                     </div>
-                    <div className="row  d-flex justify-content-center">
+                    <div className="row w-100 d-flex justify-content-center">
                       <span className="modal-left">Comment</span>
                       <textarea
                         type="text"
@@ -391,9 +400,9 @@ export default class ProductsList extends Component {
                     <button
                       variant="primary"
                       onClick={this.postComment}
-                      className="modal-accept mt-3"
+                      className="modal-accept3 mt-3"
                     >
-                     Save
+                      Save
                     </button>
                   </Modal.Body>
                 </Modal>

@@ -65,7 +65,7 @@ const userSchema = new Schema(
       type: Boolean,
       required: false,
       unique: false,
-      default: false,
+      default: true,
     }
   },
   {

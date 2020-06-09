@@ -6,24 +6,47 @@ import { getFromStorage, setInStorage } from "../utils/storage";
 import { Modal } from "react-bootstrap";
 import { Bar, Line, Pie, Bubble } from "react-chartjs-2";
 
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+  faEye,
+  faTrashAlt,
+  faPencilAlt,
+  faFileImage,
+  faMapMarkerAlt,
+} from "@fortawesome/free-solid-svg-icons";
+
 const Product = (props) => (
   <div class="productcard ml-2 mr-2">
-    <img src={"/productpics/" + props.product.image1} class="image" />
+    <img src={"/productpics/" + props.product.image1} className="image" />
+
     <div class="middle">
-      <p>{props.product.product}</p>
-      <Link to={"/product/" + props.product._id}>See more</Link>
-      <br />
-      <Link to={"/edit/" + props.product._id}>edit</Link>
-      <br />
-      <a
-        href="#"
-        className="btn btn-primary"
-        onClick={() => {
-          props.deleteproduct(props.product._id);
-        }}
-      >
-        delete
-      </a>
+      <p className="bold">{props.product.product}</p>
+      <div className="d-flex">
+        <Link
+          className="btn btn-sm btn-primary"
+          to={"/product/" + props.product._id}
+        >
+          {" "}
+          <FontAwesomeIcon icon={faEye} />
+        </Link>
+        <br />
+        <Link
+          className="btn btn-sm btn-warning ml-3"
+          to={"/edit/" + props.product._id}
+        >
+          <FontAwesomeIcon icon={faPencilAlt} />
+        </Link>
+        <br />
+        <button
+          href="#"
+          className="btn btn-sm btn-danger ml-3"
+          onClick={() => {
+            props.opendeleteproduct(props.product._id);
+          }}
+        >
+          <FontAwesomeIcon icon={faTrashAlt} />
+        </button>
+      </div>
     </div>
   </div>
 );
@@ -151,6 +174,10 @@ export default class Login extends Component {
     this.onChangeRole = this.onChangeRole.bind(this);
     this.confirmEdit = this.confirmEdit.bind(this);
 
+    this.opendeleteproduct = this.opendeleteproduct.bind(this);
+    this.closedeleteproduct = this.closedeleteproduct.bind(this);
+    this.deleteproduct = this.deleteproduct.bind(this);
+
     this.state = {
       cookie: "",
       singUpError: "",
@@ -175,8 +202,28 @@ export default class Login extends Component {
 
       graphdata: "",
       graphstate: "hidden",
+
+      // modal2
+
+      opendeleteproduct: false,
+      idtoremove: "",
     };
   }
+
+  opendeleteproduct(id) {
+    this.setState({
+      opendeleteproduct: true,
+      idtoremove: id,
+    });
+  }
+
+  closedeleteproduct() {
+    this.setState({
+      opendeleteproduct: false,
+      idtoremove: "",
+    });
+  }
+
   onChangeUsername(e) {
     this.setState({
       username: e.target.value,
@@ -342,21 +389,12 @@ export default class Login extends Component {
     this.setState({ open: false });
   }
 
-  deleteproduct(id) {
-    axios.delete("http://localhost:5000/products/" + id).then((response) => {
-      console.log(response.data);
-    });
-
-    this.setState({
-      products: this.state.products.filter((el) => el._id !== id),
-    });
-  }
   productList() {
     return this.state.products.map((currentproduct) => {
       return (
         <Product
           product={currentproduct}
-          deleteproduct={this.deleteproduct}
+          opendeleteproduct={this.opendeleteproduct}
           addtocart={this.addtocart}
           key={currentproduct._id}
         />
@@ -450,7 +488,7 @@ export default class Login extends Component {
             data.push(element.amount);
           });
 
-          data.push(0); //WTF
+          data.push(0);
 
           this.setState({
             graphdata: response.data,
@@ -498,6 +536,30 @@ export default class Login extends Component {
     window.location = "/login";
   }
 
+  deleteproduct() {
+    console.log("deleting product " + this.state.idtoremove);
+    this.setState({
+      opendeleteproduct: false,
+    });
+
+    axios
+      .delete("http://localhost:5000/products/" + this.state.idtoremove)
+      .then((response) => {
+        console.log(response.data);
+
+        axios
+          .get("http://localhost:5000/products/getuser/" + this.state.cookie._id)
+          .then((response) => {
+            this.setState({
+              products: response.data,
+            });
+          })
+          .catch((error) => {
+            console.log(error);
+          });
+      });
+  }
+
   myorders() {
     window.location = "/myorders";
   }
@@ -525,14 +587,14 @@ export default class Login extends Component {
                   <div className="profileinfo">
                     <h3>{this.state.cookie.username}</h3>
                     <hr className="profile-hr"></hr>
-                    <h5>{this.state.cookie.bio}</h5>
+                    <h5 className="Montserrat">{this.state.cookie.bio}</h5>
                     <hr className="profile-hr"></hr>
                     <h5 className="mt-3 d-flex align-items-center">
-                      <p className="location mb-0 mr-3"> </p>
-                      {this.state.cookie.location}
+                      <FontAwesomeIcon className="mr-2" icon={faMapMarkerAlt} />{" "}
+                      {this.state.cookie.location}{" "}
                     </h5>
-                    <h5 className="mt-3">+34677896912</h5>
-                    <button className="contactme mt-2" onClick={this.openmodal}>
+                    {/* <h5 className="mt-3">+34677896912</h5> */}
+                    <button className="contactme mt-4" onClick={this.openmodal}>
                       Edit profile
                     </button>
 
@@ -554,11 +616,19 @@ export default class Login extends Component {
                       </div>
                       <input
                         type="file"
-                        className="ml-2"
+                        className="ml-2 d-none"
+                        name="uploadimage"
+                        id="uploadimage"
                         multiple
                         accept="image/x-png,image/jpeg"
                         onChange={this.filesSelectedHandler}
                       />
+                      <label
+                        htmlFor="uploadimage"
+                        className="btn btn-sm btn-primary ml-3 h-50"
+                      >
+                        <FontAwesomeIcon icon={faFileImage} /> Upload images
+                      </label>
                     </div>
                     <div className="row profile-content">
                       {this.profilephotoslist()}
@@ -673,6 +743,35 @@ export default class Login extends Component {
                 </button>
               </Modal.Body>
             </Modal>
+            <Modal //DeleteProduct
+              show={this.state.opendeleteproduct}
+              onHide={this.closedeleteproduct}
+              centered
+              size="lg"
+              aria-labelledby="contained-modal-title-vcenter"
+            >
+              <Modal.Header closeButton className="modal-head">
+                <Modal.Title>
+                  <span className="deletehead">Delete Product</span>
+                </Modal.Title>
+              </Modal.Header>
+              <Modal.Body className="pt-4 pb-4 d-flex flex-column align-items-center">
+                <span className="deletebody">
+                  Are you sure you want to
+                  <span className="bold"> delete </span> this product, this
+                  action is
+                  <span className="bold"> irreversible</span>
+                </span>
+
+                <button
+                  variant="primary"
+                  onClick={this.deleteproduct}
+                  className="deleteorder mt-3"
+                >
+                  Delete
+                </button>
+              </Modal.Body>
+            </Modal>
           </div>
         );
       }
@@ -689,18 +788,25 @@ export default class Login extends Component {
                 <div className="profileinfo">
                   <h3>{this.state.cookie.username}</h3>
                   <hr className="profile-hr w-25"></hr>
-                  <h5>{this.state.cookie.bio}</h5>
+                  <h5 className="Montserrat">{this.state.cookie.bio}</h5>
                   <hr className="profile-hr w-25"></hr>
-                  <h5 className="mt-3">{this.state.cookie.location}</h5>
-                  <h5 className="mt-3">+34677896912</h5>
+                  <h5 className="mt-3">
+                    <FontAwesomeIcon className="mr-2" icon={faMapMarkerAlt} />
+                    {this.state.cookie.location}
+                  </h5>
                   <button className="contactme mt-4" onClick={this.openmodal}>
                     Edit profile
                   </button>
-                  <button className="contactme mt-4" onClick={this.logout}>
-                    Logout
-                  </button>
-                  <button className="contactme mt-4" onClick={this.myorders}>
+
+                  <button
+                    className="contactme mt-4 mb-4"
+                    onClick={this.myorders}
+                  >
                     See my orders
+                  </button>
+
+                  <button className="logout" onClick={this.logout}>
+                    Logout
                   </button>
                 </div>
               </div>

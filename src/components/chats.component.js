@@ -4,6 +4,7 @@ import axios from "axios";
 import "../../src/index.css";
 import Navbar from "./navbar.component";
 import { getFromStorage } from "../utils/storage";
+import ScrollToBottom from "react-scroll-to-bottom";
 
 const Message = (props) => (
   <div className="outgoing_msg">
@@ -42,6 +43,25 @@ const Chat = (props) => (
   </button>
 );
 
+const Chat2 = (props) => (
+  <button
+    className="chat-card"
+    onClick={() => {
+      props.handleclick(props.chat);
+    }}
+  >
+    <img src={"/userpics/" + props.chat.userphoto} class="chat-card-img mr-3" />
+
+    <div className="col-md-8 d-flex flex-column justify-content-between">
+      <h5 className="bold text-left">{props.chat.username}</h5>
+      <div className=" d-flex align-items-center">
+        <span>{props.chat.lastmessage}</span>
+      </div>
+    </div>
+    <span className="unreadmessages">{props.chat.unread}</span>
+  </button>
+);
+
 export default class Chats extends Component {
   constructor(props) {
     super(props);
@@ -69,7 +89,14 @@ export default class Chats extends Component {
       axios
         .get("http://localhost:5000/Chat/getchats/" + cookie._id)
         .then((response) => {
-          this.setState({ chats: response.data });
+          console.log(response.data);
+          response.data.forEach((element) => {
+            console.log(element.createdAt);
+          });
+          let data = response.data;
+          data.sort((a, b) => b.createdAt - a.createdAt);
+
+          this.setState({ chats: data });
         })
         .catch((error) => {
           console.log(error);
@@ -90,8 +117,6 @@ export default class Chats extends Component {
     if (this.state.text == "") {
       console.log("YOU CANT SEND EMPTY");
     } else {
-      console.log("chat id -> " + this.state.selected.idchat);
-
       axios
         .post("http://localhost:5000/Chat/addmessage", {
           idchat: this.state.selected.idchat,
@@ -101,15 +126,24 @@ export default class Chats extends Component {
         .then((response) => {
           if (response.data == "Message created") {
             axios
-            .get("http://localhost:5000/Chat/" + this.state.selected.idchat)
-            .then((response) => {
-              this.setState({
-                messages: response.data,
+              .get("http://localhost:5000/Chat/" + this.state.selected.idchat)
+              .then((response) => {
+                this.setState({
+                  messages: response.data,
+                });
+
+                axios
+                  .get("http://localhost:5000/Chat/getchats/" + cookie._id)
+                  .then((response) => {
+                    let data = response.data;
+                    data.sort((a, b) => b.createdAt - a.createdAt);
+
+                    this.setState({ chats: data });
+                  });
+              })
+              .catch((error) => {
+                console.log(error);
               });
-            })
-            .catch((error) => {
-              console.log(error);
-            });
           }
         })
         .catch((error) => {
@@ -123,12 +157,18 @@ export default class Chats extends Component {
   }
   handleclick(info) {
     if (this.state.selected != info) {
-      console.log(info);
       this.setState({
         selected: info,
-        chatclass: "chatscolumn2 d-flex flex-column justify-content-between col-md-7",
+        chatclass:
+          "chatscolumn2 d-flex flex-column justify-content-between col-md-7",
       });
-
+      if (info.unread != 0) {
+        this.state.chats.forEach((element) => {
+          if (element == info) {
+            element.unread = 0;
+          }
+        });
+      }
       axios
         .get("http://localhost:5000/Chat/" + info.idchat)
         .then((response) => {
@@ -139,18 +179,36 @@ export default class Chats extends Component {
         .catch((error) => {
           console.log(error);
         });
+
+      axios.post("http://localhost:5000/Chat/readchat", {
+        idchat: info.idchat,
+        iduser: info.userid,
+      });
     }
   }
 
   chatList() {
     return this.state.chats.map((currentchat) => {
-      return (
-        <Chat
-          chat={currentchat}
-          key={currentchat._id}
-          handleclick={this.handleclick}
-        />
-      );
+      if (
+        currentchat.unread != 0 &&
+        currentchat.userid != this.state.cookie._id
+      ) {
+        return (
+          <Chat2
+            chat={currentchat}
+            key={currentchat._id}
+            handleclick={this.handleclick}
+          />
+        );
+      } else {
+        return (
+          <Chat
+            chat={currentchat}
+            key={currentchat._id}
+            handleclick={this.handleclick}
+          />
+        );
+      }
     });
   }
   MessageList() {
@@ -207,8 +265,10 @@ export default class Chats extends Component {
                   </h3>
                   <div>
                     <div>
-                      <div className="mesgs">
-                        <div className="msg_history2">{this.MessageList()}</div>
+                      <div className="mesgs2">
+                        <ScrollToBottom className="msg_history2">
+                          {this.MessageList()}
+                        </ScrollToBottom>
                       </div>
                     </div>
                   </div>

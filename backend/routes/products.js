@@ -109,6 +109,7 @@ router.route("/update/:id").post((req, res) => {
       product.product = req.body.product;
       product.type = req.body.type;
       product.season = req.body.season;
+      product.description = req.body.description;
       product.price = Number(req.body.price);
 
       product

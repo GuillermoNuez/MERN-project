@@ -19,6 +19,12 @@ const messageSchema = new Schema(
       required: true,
       unique: false,
     },
+    read : {
+      type: Boolean,
+      required: false,
+      unique: false,
+      default: false,
+    }
   },
   {
     timestamps: true,

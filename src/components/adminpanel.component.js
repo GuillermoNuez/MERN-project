@@ -16,7 +16,6 @@ import {
 
 const User = (props) => (
   <tr>
-    <th scope="row">1</th>
     <td>{props.user.username}</td>
     <td>{props.user.location}</td>
     <td>{props.user.role}</td>
@@ -49,7 +48,6 @@ const User = (props) => (
 
 const Product = (props) => (
   <tr>
-    <th scope="row">1</th>
     <td>{props.product.product}</td>
     <td>{props.product.price}</td>
     <td>{props.product.season}</td>
@@ -426,6 +424,7 @@ export default class Login extends Component {
         </div>
       );
     } else {
+      console.log(cookie.role);
       if (cookie.role == "Admin") {
         return (
           <div>
@@ -449,7 +448,6 @@ export default class Login extends Component {
                   <table class="table table-hover mb-5">
                     <thead className="thead-dark">
                       <tr>
-                        <th scope="col">#</th>
                         <th scope="col">Name</th>
                         <th scope="col">Location</th>
                         <th scope="col">Role</th>
@@ -466,7 +464,7 @@ export default class Login extends Component {
                   <table class="table table-hover">
                     <thead className="thead-dark">
                       <tr>
-                        <th scope="col">#</th>
+
                         <th scope="col">Name</th>
                         <th scope="col">Price</th>
                         <th scope="col">Season</th>

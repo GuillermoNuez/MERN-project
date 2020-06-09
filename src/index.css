@@ -358,7 +358,7 @@ h1 {
 }
 
 .header-button {
-  background-color: #b0c472;
+  background-color: #4c884b;
   width: 300px;
   text-align: center;
   padding: 8px;
@@ -493,11 +493,9 @@ h1 {
 }
 
 .viewprofile {
-  width: 100%;
+  width: 120px;
   background-color: #de6a34;
   color: black;
-  padding-left: 10px;
-  padding-right: 10px;
   padding-top: 3px;
   padding-bottom: 3px;
   border: 1px solid black;
@@ -511,22 +509,20 @@ h1 {
   font-size: 0.9em;
 }
 
-.productcard {
+.productcard{
   position: relative;
   width: 200px;
   height: 200px;
 }
 
 .productcard .image {
-  opacity: 1;
-  display: block;
-  width: 100%;
-  height: auto;
+  position: relative;
+  width: 200px;
+  height: 200px;
   transition: 0.5s ease;
-  backface-visibility: hidden;
-  border-radius: 3px;
   object-fit: cover;
 }
+
 .productcard:hover .image {
   opacity: 0.3;
 }
@@ -534,6 +530,7 @@ h1 {
 .productcard:hover .middle {
   opacity: 1;
 }
+
 
 .productcard .middle {
   transition: 0.5s ease;
@@ -930,6 +927,7 @@ h1 {
   width: 80px;
   height: 80px;
   background-color: #e0e0e0;
+  object-fit: cover;
 }
 .cart-item-name {
   width: 180px;
@@ -1021,6 +1019,7 @@ h1 {
   justify-content: center;
   align-items: center;
   min-width: 60px;
+  min-height: 60px;
 }
 
 .basket-logo {
@@ -1030,6 +1029,17 @@ h1 {
   background-position: center;
   background-size: contain;
   background-repeat: no-repeat;
+  margin-bottom: 12px;
+}
+
+.msg-logo {
+  width: 30px;
+  height: 30px;
+  background-image: url("Fotos/mail.svg");
+  background-position: center;
+  background-size: contain;
+  background-repeat: no-repeat;
+  margin-bottom: 12px;
 }
 
 .user-image {
@@ -1133,6 +1143,16 @@ button.close {
   width: 150px;
 }
 
+.modal-accept3 {
+  background-color: #b0c472;
+  color: #1c1c1c;
+  border: none;
+  padding: 7px;
+  border-radius: 3px;
+  font-weight: 500;
+  width: 100px;
+}
+
 .modal-body {
   background-color: #f6f2eb;
 }
@@ -1145,7 +1165,8 @@ button.close {
 
 .modal-form2 {
   height: 100px !important;
-  width: 60% !important;
+  width: 250px !important;
+  margin-left: 20px;
 }
 .modal-form1 {
   width: 60% !important;
@@ -1422,6 +1443,7 @@ button.close {
   padding-left: 15px;
   box-shadow: 3px 3px 5px rgba(0, 0, 0, 0.157);
   width: 200px;
+  text-align: center;
 }
 .hidden {
   display: none;
@@ -1456,6 +1478,7 @@ canvas {
   margin-bottom: 25px;
   text-decoration: none !important;
   border-color: transparent;
+  align-items: center;
 }
 
 .chat-card-img {
@@ -1531,8 +1554,47 @@ canvas {
   background-color: #f2c34c !important;
 }
 
-.no-button{
+.no-button {
   cursor: pointer;
   color: #303030;
+}
 
+.unreadmessages {
+  width: 40px;
+  height: 40px;
+  min-width: 40px;
+  min-height: 40px;
+  border-radius: 50%;
+
+  background-color: #f2c34c;
+  color: black;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-weight: 600px;
+}
+
+.css-1qyrjaz {
+  background-color: white !important;
+  border-color: black !important;
+  border: 3px solid black !important;
+}
+
+.trazado {
+  background-image: url("Fotos/Trazado_1.png");
+  background-position: center;
+  background-size: contain;
+  background-repeat: no-repeat;
+  font-family: "Montserrat", sans-serif;
+}
+
+
+.Montserrat {  font-family: "Montserrat", sans-serif !important;}
+
+.whitelabel {
+  color: #fff !important;
+}
+
+.profileinfo .Montserrat {
+  font-size: 1em;
 }

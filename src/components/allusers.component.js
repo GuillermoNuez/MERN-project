@@ -19,13 +19,12 @@ const User = (props) => (
         </div>
 
         <div className=" d-flex bgray2 align-items-center justify-content-end">
-        <span>{props.user.score}</span>
+          <span>{props.user.score}</span>
           <p className="tomato mb-0 ml-2"></p>
-
         </div>
       </div>
 
-      <Link className="viewfarmer w-100" to={"/user/"+ props.user._id}>
+      <Link className="viewfarmer w-100" to={"/user/" + props.user._id}>
         View Farmer
       </Link>
     </div>
@@ -35,7 +34,15 @@ const User = (props) => (
 export default class ExercisesList extends Component {
   constructor(props) {
     super(props);
-    this.state = { users: [], cookie: "" };
+    this.onChangeSearch = this.onChangeSearch.bind(this);
+    this.onChangeRating = this.onChangeRating.bind(this);
+    this.state = {
+      users: [],
+      originalusers: [],
+      cookie: "",
+      rating: "",
+      type: "",
+    };
   }
 
   componentDidMount() {
@@ -49,11 +56,62 @@ export default class ExercisesList extends Component {
     axios
       .get("http://localhost:5000/Users/allusers")
       .then((response) => {
-        this.setState({ users: response.data });
+        this.setState({ users: response.data, originalusers: response.data });
       })
       .catch((error) => {
         console.log(error);
       });
+  }
+
+  onChangeSearch(e) {
+    let users = this.state.originalusers;
+    this.setState({
+      type: e.target.value,
+    });
+    if (e.target.value == "") {
+      this.setState({
+        rating: "",
+        users: this.state.originalusers,
+      });
+    } else {
+      console.log(e.target.value.toLowerCase());
+      this.setState({
+        rating: "",
+        users: users.filter((p) => {
+          return p.username
+            .toLowerCase()
+            .includes(e.target.value.toLowerCase());
+        }),
+      });
+    }
+  }
+
+  onChangeRating(e) {
+    this.setState({
+      rating: e.target.value,
+
+    });
+    if (e.target.value == "") {
+      this.setState({
+        type: "",
+        users: this.state.originalusers,
+      });
+      console.log("EMPtY");
+    } else {
+
+        if (e.target.value == "Lower to higher") {
+          this.setState({
+            users: this.state.originalusers,
+          });
+          this.state.users.sort((a, b) => a.score - b.score);
+        } else {
+          this.setState({
+            users: this.state.originalusers,
+          });
+          this.state.users.sort((a, b) => b.score - a.score);
+        }
+      
+    }
   }
 
   userList() {
@@ -83,14 +141,14 @@ export default class ExercisesList extends Component {
                 type="text"
                 className="form-control search-form ml-4 mr-4"
                 placeholder="Search user..."
-                value={this.state.search}
+                value={this.state.type}
                 onChange={this.onChangeSearch}
               />
               <span>Rating : </span>
 
               <select
-                onChange={this.onChangePrice}
-                value={this.state.price}
+                onChange={this.onChangeRating}
+                value={this.state.rating}
                 className="ml-4 mr-4"
               >
                 <option></option>

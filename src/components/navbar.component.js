@@ -7,7 +7,7 @@ export default class Navbar extends Component {
   constructor(props) {
     super(props);
 
-    this.state = { cookie: null, cartamount: "", cartclass: "hidden" };
+    this.state = { cookie: null, cartamount: "", cartclass: "hidden",msgclass: "hidden", unreadmessages:"" };
   }
 
   componentDidMount() {
@@ -27,6 +27,22 @@ export default class Navbar extends Component {
             this.setState({
               cartclass: "cartnumber",
             });
+          }
+
+          if (cookie.role == "Farmer") {
+            axios
+              .get("http://localhost:5000/Chat/getunread/" + cookie._id)
+              .then((response) => {
+                console.log("UNREAD MESSAGES");
+                console.log(response.data);
+                if (response.data != 0) {
+                  this.setState({
+                    msgclass: "cartnumber",
+                  });
+                  this.setState({unreadmessages:response.data});
+                }
+   
+              });
           }
         })
         .catch((error) => {
@@ -101,6 +117,14 @@ export default class Navbar extends Component {
               <Link to="/myprofile" className="nav-link">
                 My Profile
               </Link>
+              {/* <Link to="/chats" className="myCart">
+                <div className="myCart-logo">
+                  <p className="msg-logo"></p>
+                  <p className={this.state.msgclass}>
+                    {this.state.unreadmessages}
+                  </p>
+                </div>
+              </Link> */}
             </div>
           </div>
         );

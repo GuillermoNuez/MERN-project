@@ -166,7 +166,7 @@ export default class CreateUser extends Component {
               <input
                 type="submit"
                 value="Sign up"
-                className="btn btn-warning registerbutton"
+                className="btn registerbutton"
               />
             </div>
           </form>

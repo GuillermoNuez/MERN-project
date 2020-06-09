@@ -37,8 +37,8 @@ const Order = (props) => (
         </div>
 
         <p>Name: {props.order.name}</p>
-        <p>C/: {props.order.adress}</p>
-        <p> {props.order.phonenumber}</p>
+        <p>Address: {props.order.adress}</p>
+        <p>Phone number: {props.order.phonenumber}</p>
         <p>Zip: {props.order.zipcode}</p>
       </div>
     </div>

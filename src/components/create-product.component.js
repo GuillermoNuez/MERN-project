@@ -2,6 +2,10 @@ import React, { Component } from "react";
 import axios from "axios";
 import Navbar from "../components/navbar.component";
 import { getFromStorage } from "../utils/storage";
+
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faFileImage } from "@fortawesome/free-solid-svg-icons";
+
 export default class CreateProduct extends Component {
   constructor(props) {
     super(props);
@@ -185,18 +189,23 @@ export default class CreateProduct extends Component {
                       <option>Winter</option>
                     </select>
                   </div>
-                  <label>Photo : </label>
+                  <label>Image: </label>
                   <input
                     type="file"
-                    className="ml-2"
+                    className="ml-2 d-none"
+                    name="uploadimage"
+                    id="uploadimage"
                     required
                     accept="image/x-png,image/jpeg"
                     onChange={this.fileSelectedHandler}
                   />
+                  <label htmlFor="uploadimage" className="btn btn-sm btn-primary ml-3 whitelabel">
+                    <FontAwesomeIcon icon={faFileImage} /> Upload image
+                  </label>
                   <div className="form-group">
                     <input
                       type="submit"
-                      value="Create Product"
+                      value="Create product"
                       className="createbutton"
                     />
                   </div>

@@ -43,19 +43,19 @@ export default class SeeProduct extends Component {
       this.setState({
         cookie: obj.cookie._id,
       });
-
-      axios
-        .get("http://localhost:5000/products/" + this.props.match.params.id)
-        .then((response) => {
-          this.setState({
-            product: response.data,
-          });
-          console.log(response.data);
-        })
-        .catch(function (error) {
-          console.log(error);
-        });
     }
+    
+    axios
+    .get("http://localhost:5000/products/" + this.props.match.params.id)
+    .then((response) => {
+      this.setState({
+        product: response.data,
+      });
+      console.log(response.data);
+    })
+    .catch(function (error) {
+      console.log(error);
+    });
   }
 
   onSubmit(e) {

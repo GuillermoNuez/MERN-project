@@ -24,7 +24,7 @@ const Product = (props) => (
       </div>
     </div>
     <Link className="viewproduct" to={"/product/" + props.product._id}>
-      <h5 className="mb-0">View Product</h5>
+      <h5 className="mb-0 Montserrat">View product</h5>
     </Link>
   </div>
 );
@@ -164,6 +164,17 @@ export default class ProductsList extends Component {
         products: this.state.originalproducts,
       });
     } else {
+      if (e.target.value == "Lower to higher") {
+        this.setState({
+          products: this.state.originalproducts,
+        });
+        this.state.products.sort((a, b) => a.price - b.price);
+      } else {
+        this.setState({
+          products: this.state.originalproducts,
+        });
+        this.state.products.sort((a, b) => b.price - a.price);
+      }
     }
   }
 

@@ -69,8 +69,6 @@ router.route("/add").post((req, res) => {
           "| With msg : " +
           msg
       );
-      console.log(newMsg);
-      console.log("TRYING TO SAVE");
       newMsg
         .save()
         .then(() => res.json("Message created"))
@@ -88,9 +86,6 @@ router.route("/addmessage").post((req, res) => {
     iduser: iduser,
     message: message,
   });
-  console.log("_____________ MESSAGE _________________");
-  console.log(newMsg);
-  console.log("trying to save");
   newMsg
     .save()
     .then(() => res.json("Message created"))
@@ -161,38 +156,77 @@ router.route("/getchats/:id").get((req, res) => {
             };
             data2.push(element);
           }
-
           Message.find({ idchat: { $in: chatids } }, function (err, array) {
             if (err) {
               res.json(err);
             } else {
               var dict2 = [];
+              let countarray = [];
+
+              array.forEach((element) => {});
               for (let index = 0; index < array.length; index++) {
                 dict2.push({
                   key: array[index].idchat,
                   message: array[index].message,
+                  createdAt: array[index].createdAt,
+                  userid: array[index].iduser,
+                  read: array[index].read,
                 });
               }
-
               let group = dict2.reduce((r, a) => {
                 r[a.key] = [...(r[a.key] || []), a];
                 return r;
               }, {});
-              let info = [];
               Object.entries(group).forEach(([key, value]) => {
+                let count = 0;
+                value.forEach((element) => {
+                  if (id != element.userid && element.read == false) {
+                    count++;
+                  }
+                });
+                value[value.length - 1].read = count;
                 lastmessages.push(value[value.length - 1]);
               });
               data = [];
+              let date;
+              let month;
+              let dt;
+              let hour;
+              let minutes;
+              let year;
+              let seconds;
+              let miliseconds;
+
               for (let index = 0; index < data2.length; index++) {
+                date = new Date(lastmessages[index].createdAt);
+                month = date.getMonth() + 1;
+                dt = date.getDate();
+                hour = date.getHours();
+                minutes = date.getMinutes();
+                year = date.getFullYear();
+                seconds = date.getSeconds();
+                miliseconds = date.getMilliseconds();
+
+                if (dt < 10) {
+                  dt = "0" + dt;
+                }
+                if (month < 10) {
+                  month = "0" + month;
+                }
+
                 data.push({
                   userid: data2[index].userid,
                   userphoto: data2[index].userphoto,
                   username: data2[index].username,
+                  unread: lastmessages[index].read,
                   lastmessage: lastmessages[index].message,
+                  createdAt: parseInt(
+                    year + month + dt + hour + minutes + seconds + miliseconds
+                  ),
+
                   idchat: chatids[index],
                 });
               }
-              console.log(data);
               res.json(data);
             }
           });
@@ -204,4 +238,34 @@ router.route("/getchats/:id").get((req, res) => {
     }
   });
 });
+
+router.route("/readchat").post((req, res) => {
+  try {
+    Message.updateMany(
+      { idchat: req.body.idchat, iduser: req.body.iduser, read: false },
+      { $set: { read: true } }
+    ).then((users) => {});
+  } catch (err) {
+    console.error(err);
+  }
+});
+
+router.route("/getunread/:id").get((req, res) => {
+  let id = req.params.id;
+  Chat.find({
+    $or: [{ iduser1: id }, { iduser2: id }],
+  }).then((chats) => {
+    let idarray = [];
+    chats.forEach((element) => {
+      idarray.push(element._id);
+    });
+
+    Message.find({
+      idchat: { $in: idarray}, iduser: { $ne: id }, read: false 
+    }).then((messages) => {
+      res.json(messages.length);
+    });
+  });
+});
+
 module.exports = router;

@@ -11,15 +11,16 @@ const User = (props) => (
       <div className="col-md-3 pl-0">
         <img src={"/userpics/" + props.user.photo} class="user-image mr-3" />
       </div>
-      <div className="col-md-6">
+      <div className="col-md-9">
+        <div className="colm-md-12 mr-0 ml-0 d-flex justify-content-between align-items-center">
         <h5 className="card-title mb-0">{props.user.username}</h5>
+        <Link className="viewprofile" to={"/user/" + props.user._id}>
+          View profile
+        </Link>
+        </div>
+
         <p className="card-text descriptionc mt-4">{props.user.bio}</p>
         <p className="localidad">{props.user.location}</p>
-      </div>
-      <div className="col-md-3 pr-0">
-        <Link className="viewprofile" to={"/user/" + props.user._id}>
-          View Profile
-        </Link>
       </div>
     </div>
   </div>
@@ -141,7 +142,7 @@ export default class ExercisesList extends Component {
             <div>
               <h2 className="mb-4">Latest farmers</h2>
               <div className="col-md-12 latest-farmers pl-0 pr-0">
-                <div className="col-md-12 pl-0">{this.userList()}</div>
+                <div className="col-md-12 pl-0 pr-0">{this.userList()}</div>
               </div>
               <button className="viewall" onClick={this.seeAllUsers}>
                 See all users
