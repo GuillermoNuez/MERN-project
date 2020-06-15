@@ -22,6 +22,8 @@ import AllUsers from "./components/allusers.component";
 import ForgotPassword from "./components/forgotpassword.component";
 import Chats from "./components/chats.component";
 import AdminPanel from "./components/adminpanel.component";
+import Notify from "./components/notify.component";
+import Recover from "./components/recover.component";
 
 function App() {
   return (
@@ -45,6 +47,8 @@ function App() {
       <Route path="/forgotpassword" exact component={ForgotPassword} />
       <Route path="/chats" exact component={Chats} />
       <Route path="/adminpanel" exact component={AdminPanel} />
+      <Route path="/notify" exact component={Notify} />
+      <Route path="/recover/:id" component={Recover} />
     </Router>
   );
 }

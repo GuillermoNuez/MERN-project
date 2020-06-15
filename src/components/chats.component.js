@@ -68,6 +68,7 @@ export default class Chats extends Component {
     this.handleclick = this.handleclick.bind(this);
     this.onSubmit = this.onSubmit.bind(this);
     this.onChangeText = this.onChangeText.bind(this);
+    this.closechat = this.closechat.bind(this);
 
     this.state = {
       cookie: "",
@@ -237,6 +238,11 @@ export default class Chats extends Component {
       }
     });
   }
+
+  closechat() {
+    this.setState({ chatclass: "hidden" ,selected:""});
+    
+  }
   render() {
     const { cookie } = this.state;
     if (!cookie) {
@@ -260,6 +266,7 @@ export default class Chats extends Component {
               <div className="col-md-4">{this.chatList()}</div>
               <div className={this.state.chatclass}>
                 <div className="chat-body">
+                  <button className="goback" onClick={this.closechat}>X</button>
                   <h3 className="text-center mt-4">
                     {this.state.selected.username}
                   </h3>

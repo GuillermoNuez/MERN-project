@@ -38,7 +38,6 @@ router.route("/uploadproductphotos/:id").post((req, res) => {
     });
     routes.push(name);
   }
-console.log("MAYBE");
   Product.findById(req.params.id).then((product) => {
     product.images = routes;
     product

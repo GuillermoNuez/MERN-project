@@ -38,6 +38,7 @@ router.route("/getallinfo/").get((req, res) => {
               price: products[index].price,
               season: products[index].season,
               image1: products[index].image1,
+              onsale:products[index].onsale,
             };
             data.push(aux);
           }
@@ -111,7 +112,7 @@ router.route("/update/:id").post((req, res) => {
       product.season = req.body.season;
       product.description = req.body.description;
       product.price = Number(req.body.price);
-
+      product.onsale = req.body.onSale;
       product
         .save()
         .then(() => res.json("Product updated!"))

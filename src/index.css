@@ -289,6 +289,15 @@ h1 {
   align-items: center;
   padding: 15px;
 }
+
+.nav3-links {
+  width: 650px;
+  height: 100%;
+  display: flex;
+  justify-content: space-between;
+  margin-right: 50px;
+}
+
 .nav2-logo {
   width: 270px;
   height: 100%;
@@ -509,7 +518,7 @@ h1 {
   font-size: 0.9em;
 }
 
-.productcard{
+.productcard {
   position: relative;
   width: 200px;
   height: 200px;
@@ -530,7 +539,6 @@ h1 {
 .productcard:hover .middle {
   opacity: 1;
 }
-
 
 .productcard .middle {
   transition: 0.5s ease;
@@ -989,6 +997,7 @@ h1 {
 
 .latest-farmers {
   height: 587px;
+  min-width: 549.39px;
   overflow-y: auto;
 }
 
@@ -1084,7 +1093,7 @@ h1 {
   background-image: url("Fotos/jakub-kapusnak-vnNFWKY7Tj4-unsplash-min.jpg");
   background-size: cover;
   background-position: center;
-  height: 937px;
+  height: 969px;
 }
 
 .related-0 {
@@ -1335,6 +1344,9 @@ button.close {
 }
 
 .product-box {
+  position: relative;
+  min-width: 350px;
+  max-width: 350px;
   width: 350px;
   background-color: white;
   padding: 20px;
@@ -1588,8 +1600,9 @@ canvas {
   font-family: "Montserrat", sans-serif;
 }
 
-
-.Montserrat {  font-family: "Montserrat", sans-serif !important;}
+.Montserrat {
+  font-family: "Montserrat", sans-serif !important;
+}
 
 .whitelabel {
   color: #fff !important;
@@ -1597,4 +1610,91 @@ canvas {
 
 .profileinfo .Montserrat {
   font-size: 1em;
+}
+
+.graphbutton {
+  height: 50px;
+  width: 200px;
+  margin-left: 25px;
+  margin-right: 25px;
+  border: 1px solid black !important;
+  background-color: #f1c34a;
+  font-weight: 600;
+  border-radius: 3px;
+}
+
+.goback {
+  width: 30px;
+  height: 30px;
+  position: absolute;
+  left: 0;
+  background-color: #05728f;
+  border: transparent;
+  margin-top: 24px;
+  margin-left: 24px;
+  border-radius: 50%;
+  color: white;
+  font-weight: bold;
+}
+
+.notify {
+  min-height: 122px;
+}
+
+.ribbon {
+  width: 150px;
+  height: 150px;
+  overflow: hidden;
+  position: absolute;
+}
+
+.ribbon::before,
+.ribbon::after {
+  position: absolute;
+  z-index: -1;
+  content: "";
+  display: block;
+  border: 5px solid #2980b9;
+}
+
+.ribbon span {
+  position: absolute;
+  display: block;
+  width: 225px;
+  padding: 15px 0;
+  background-color: #f2c34c;
+  box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+  color: black;
+  font: 700 1.2em "Lato", sans-serif;
+  text-transform: uppercase;
+  text-align: center;
+}
+
+.ribbon-top-right {
+  top: -10px;
+  right: -10px;
+}
+.ribbon-top-right::before,
+.ribbon-top-right::after {
+  border-top-color: transparent;
+  border-right-color: transparent;
+}
+.ribbon-top-right::before {
+  top: 0;
+  left: 0;
+}
+.ribbon-top-right::after {
+  bottom: 0;
+  right: 0;
+}
+.ribbon-top-right span {
+  left: -25px;
+  top: 30px;
+  transform: rotate(45deg);
+}
+
+.form-control2 {
+  height: 20px !important;
+  width: 20px !important;
+  margin-left: 15px;
 }

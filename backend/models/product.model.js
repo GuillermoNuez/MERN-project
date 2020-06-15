@@ -17,6 +17,12 @@ const productSchema = new Schema(
       required: false,
       unique: false,
       default: [],
+    },
+    onsale: {
+      type: Boolean,
+      required: false,
+      unique: false,
+      default: false,
     }
   },
   {

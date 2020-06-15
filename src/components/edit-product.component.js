@@ -12,6 +12,7 @@ export default class EditExercise extends Component {
     this.onChangeType = this.onChangeType.bind(this);
     this.onChangePrice = this.onChangePrice.bind(this);
     this.onChangeSeason = this.onChangeSeason.bind(this);
+    this.onChangeSale = this.onChangeSale.bind(this);
     this.onSubmit = this.onSubmit.bind(this);
 
     this.state = {
@@ -20,6 +21,7 @@ export default class EditExercise extends Component {
       type: "",
       price: "",
       season: "",
+      onSale: false,
       file: "",
       files: "",
     };
@@ -35,6 +37,7 @@ export default class EditExercise extends Component {
           type: response.data.type,
           price: response.data.price,
           season: response.data.season,
+          onSale: response.data.onsale,
         });
         console.log(response);
       })
@@ -73,6 +76,20 @@ export default class EditExercise extends Component {
     });
   }
 
+  onChangeSale(e) {
+    if(this.state.onSale==true) {
+      this.setState({
+        onSale: false,
+      });
+    }
+    else {
+      this.setState({
+        onSale: true,
+      });
+    }
+
+  }
+
   fileSelectedHandler = (event) => {
     this.setState({
       file: event.target.files[0],
@@ -95,6 +112,7 @@ export default class EditExercise extends Component {
       type: this.state.type,
       price: this.state.price,
       season: this.state.season,
+      onSale: this.state.onSale,
     };
 
     console.log(product);
@@ -182,6 +200,15 @@ export default class EditExercise extends Component {
                   className="form-control"
                   value={this.state.type}
                   onChange={this.onChangeType}
+                />
+              </div>
+              <div className="form-group col-md-12 d-flex p-0 justify-center">
+                <label>On Sale: </label>
+                <input
+                  type="checkbox"
+                  className="form-control2"
+                  checked={this.state.onSale}
+                  onChange={this.onChangeSale}
                 />
               </div>
             </div>

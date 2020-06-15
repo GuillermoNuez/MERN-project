@@ -26,7 +26,9 @@ export default class Login extends Component {
       this.setState({
         cookie: cookie,
       });
+
       // GET PRODUCTS
+      
       axios
         .get("http://localhost:5000/products/getuser/" + cookie._id)
         .then((response) => {

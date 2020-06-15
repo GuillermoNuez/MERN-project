@@ -173,7 +173,18 @@ export default class ProductsList extends Component {
     axios.post("http://localhost:5000/Rating/add/", comment).then((res) => {
       console.log(res.data);
       this.setState({ open: false });
-      window.location = "/user/" + this.props.match.params.id;
+      axios
+      .get(
+        "http://localhost:5000/Rating/getrating/" + this.props.match.params.id
+      )
+      .then((response) => {
+        this.setState({
+          comments: response.data,
+        });
+      })
+      .catch((error) => {
+        console.log(error);
+      });
     });
   }
   commentList() {

@@ -2,7 +2,13 @@ const router = require("express").Router();
 let User = require("../models/user.model");
 let Product = require("../models/product.model");
 let Rating = require("../models/rating.model");
+let FarmerCheckout = require("../models/farmercheckout.model");
+let Checkout = require("../models/checkout.model");
+let Recover = require("../models/recover.model");
+
 const nodemailer = require("nodemailer");
+const hbs = require("nodemailer-express-handlebars");
+const inlineCss = require("nodemailer-juice");
 
 const transporter = nodemailer.createTransport({
   service: "Gmail",
@@ -12,14 +18,32 @@ const transporter = nodemailer.createTransport({
   },
 });
 
+transporter.use("compile", inlineCss());
+
 router.route("/recoverpassword/:email").get((req, res) => {
   User.findOne({ email: req.params.email })
     .then((user) => {
       if (user) {
+        try {
+          const recover = new Recover({ userid: user._id });
+          recover.save();
+        } catch {}
         transporter.sendMail({
           to: user.email,
           subject: "Recover password",
-          html: "<p>Your password is : " + user.password + "</p>",
+          html:
+            '<!DOCTYPE html> <html lang="en"> <head> <meta charset="UTF-8" /> <meta name="viewport" content="width=device-width, initial-scale=1.0" /> <title>Email</title> </head> <body> <div class="head"><img class="logo" src="cid:unique@logo.ee" /></div> <div class="container"> <div class="container-body"><br/><br/> <h1>' +
+            "Recover your password <a href='http://localhost:3000/recover/" +
+            user._id +
+            "'>Here</a></h1><br/><h3>This operation will expire in 5 mins<br/><br/>" +
+            ' <br/></div> </div> </div> <div class="head"></div> <style> body { margin: 0 !important; font-family: Arial, Helvetica, sans-serif; text-align: center; color: black; } .head { background-color: #f1c34a; width: 100%; height: 100px; text-align: center; } .logo { width: 258px; object-fit: cover; height: 80px; text-align: center; margin-top: 13px; } .container { width: 100%; text-align: center; } .container-body { margin-top: 25px; text-align: center; } .minicard { text-align: center; padding-bottom: 25px; margin-top: 25px; } .shop { font-weight: bold; width: 150px; height: 50px; background-color: #f1c34a; text-align: center; text-decoration: none; color: black; padding: 15px; margin-top: 50px; } .productimage { width: 400px; height: 400px; object-fit: cover; text-align: center; } </style> </body> </html>',
+          attachments: [
+            {
+              filename: "Logo-min.png",
+              path: "../src/fotos/Logo-min.png",
+              cid: "unique@logo.ee", //same cid value as in the html img src
+            },
+          ],
         });
         res.json("Email sent");
       } else {
@@ -193,9 +217,19 @@ router.route("/add").post((req, res) => {
         to: email,
         subject: "Confirm Email",
         html:
-          '<p>Click <a href="http://localhost:5000/verify/' +
+          '<!DOCTYPE html> <html lang="en"> <head> <meta charset="UTF-8" /> <meta name="viewport" content="width=device-width, initial-scale=1.0" /> <title>Email</title> </head> <body> <div class="head"><img class="logo" src="cid:unique@logo.ee" /></div> <div class="container"> <div class="container-body"><br/><br/> <h1>' +
+          "Click <a href='http://localhost:5000/verify/" +
           newUser._id +
-          '">here</a> to verify your email</p>',
+          "'>Here</a> to verify your email" +
+          "</h1><br/><br/>" +
+          ' <br/></div> </div> </div> <div class="head"></div> <style> body { margin: 0 !important; font-family: Arial, Helvetica, sans-serif; text-align: center; color: black; } .head { background-color: #f1c34a; width: 100%; height: 100px; text-align: center; } .logo { width: 258px; object-fit: cover; height: 80px; text-align: center; margin-top: 13px; } .container { width: 100%; text-align: center; } .container-body { margin-top: 25px; text-align: center; } .minicard { text-align: center; padding-bottom: 25px; margin-top: 25px; } .shop { font-weight: bold; width: 150px; height: 50px; background-color: #f1c34a; text-align: center; text-decoration: none; color: black; padding: 15px; margin-top: 50px; } .productimage { width: 400px; height: 400px; object-fit: cover; text-align: center; } </style> </body> </html>',
+        attachments: [
+          {
+            filename: "Logo-min.png",
+            path: "../src/fotos/Logo-min.png",
+            cid: "unique@logo.ee", //same cid value as in the html img src
+          },
+        ],
       });
       console.log("User added!");
       res.json("User added!");
@@ -305,6 +339,99 @@ router.route("/getuser/:id").get((req, res) => {
       res.json(user);
     })
     .catch((err) => res.status(400).json("Error:" + err));
+});
+
+router.route("/testemail").post((req, res) => {
+  try {
+    let title = req.body.title;
+    let body = req.body.body;
+    let price = req.body.price;
+    let product = req.body.product;
+    let username = req.body.username;
+    let id = req.body.userid;
+
+    let idclients = [];
+    let checkouts = [];
+    let emailList = [];
+
+    FarmerCheckout.find({ idfarmer: id })
+      .then((checkout) => {
+        checkout.forEach((element) => {
+          checkouts.push(element.idpedido);
+        });
+        Checkout.find({
+          _id: { $in: checkouts },
+        }).then((res) => {
+          let group2 = res.reduce((r, a) => {
+            r[a.idclient] = [...(r[a.idclient] || []), a];
+            return r;
+          }, {});
+
+          Object.entries(group2).forEach(([key, value]) => {
+            idclients.push(key);
+          });
+          User.find({
+            _id: { $in: idclients },
+          }).then((res) => {
+            res.forEach((element) => {
+              emailList.push(element.email);
+            });
+            transporter.sendMail({
+              to: emailList,
+              subject: "News",
+              html:
+                '<!DOCTYPE html> <html lang="en"> <head> <meta charset="UTF-8" /> <meta name="viewport" content="width=device-width, initial-scale=1.0" /> <title>Email</title> </head> <body> <div class="head"><img class="logo" src="cid:unique@logo.ee" /></div> <div class="container"> <div class="container-body"> <h1>' +
+                title +
+                "</h1> <h4>Good news, a new product from " +
+                username +
+                "</h4><h4>" +
+                body +
+                '</h4> <img class="productimage" src="cid:unique@kreata.ee" /> <div class="minicard"> <h1>' +
+                product.product +
+                "</h1> <h3>Price : " +
+                price +
+                '€ </h3> <br/> <a href="http://localhost:3000/product/' +
+                product._id +
+                '" class="shop">Shop now</a> <br/></div> </div> </div> <div class="head"></div> <style> body { margin: 0 !important; font-family: Arial, Helvetica, sans-serif; text-align: center; color: black; } .head { background-color: #f1c34a; width: 100%; height: 100px; text-align: center; } .logo { width: 258px; object-fit: cover; height: 80px; text-align: center; margin-top: 13px; } .container { width: 100%; text-align: center; } .container-body { margin-top: 25px; text-align: center; } .minicard { text-align: center; padding-bottom: 25px; margin-top: 25px; } .shop { font-weight: bold; width: 150px; height: 50px; background-color: #f1c34a; text-align: center; text-decoration: none; color: black; padding: 15px; margin-top: 50px; } .productimage { width: 400px; height: 400px; object-fit: cover; text-align: center; } </style> </body> </html>',
+              attachments: [
+                {
+                  filename: product.image1,
+                  path: "../public/productpics/" + product.image1,
+                  cid: "unique@kreata.ee", //same cid value as in the html img src
+                },
+                {
+                  filename: "Logo-min.png",
+                  path: "../src/fotos/Logo-min.png",
+                  cid: "unique@logo.ee", //same cid value as in the html img src
+                },
+              ],
+              template: "mail.handlebars",
+            });
+            console.log("Email sent");
+          });
+        });
+      })
+      .catch((err) => res.status(400).json("Error:" + err));
+  } catch {
+    res.json("Something went wrong");
+  }
+});
+
+router.route("/updatepassword").post((req, res) => {
+  Recover.findOne({ userid: req.body.userid }).then((users) => {
+    console.log(users);
+    User.findById(users.userid).then((user) => {
+      console.log(user);
+      user.password = req.body.password;
+      user.save().then(() => {
+        res.json({
+          success: true,
+          mes: "User Updated",
+        });
+        console.log("password updated");
+      });
+    });
+  });
 });
 
 module.exports = router;

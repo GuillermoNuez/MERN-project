@@ -178,6 +178,11 @@ export default class Login extends Component {
     this.closedeleteproduct = this.closedeleteproduct.bind(this);
     this.deleteproduct = this.deleteproduct.bind(this);
 
+    this.seeseason = this.seeseason.bind(this);
+    this.seetype = this.seetype.bind(this);
+    this.bestsellingproducts = this.bestsellingproducts.bind(this);
+    this.seemonth = this.seemonth.bind(this);
+
     this.state = {
       cookie: "",
       singUpError: "",
@@ -200,13 +205,16 @@ export default class Login extends Component {
 
       // Graphs
 
-      graphdata: "",
       graphstate: "hidden",
 
       // modal2
 
       opendeleteproduct: false,
       idtoremove: "",
+
+      graphinfo: [],
+      labels: [],
+      data: [],
     };
   }
 
@@ -431,7 +439,6 @@ export default class Login extends Component {
     // GET PRODUCTS
 
     const obj = getFromStorage("the_main_app");
-    console.log(obj);
     if (obj && obj.cookie) {
       const { cookie } = obj;
 
@@ -478,12 +485,12 @@ export default class Login extends Component {
         .then((response) => {
           console.log(response.data);
           if (response.data.length > 0) {
-            this.setState({ graphstate: "" });
+            this.setState({ graphstate: "", graphinfo: response.data });
           }
           let labels = [];
           let data = [];
 
-          response.data.forEach((element) => {
+          this.state.graphinfo.forEach((element) => {
             labels.push(element.Name);
             data.push(element.amount);
           });
@@ -491,7 +498,6 @@ export default class Login extends Component {
           data.push(0);
 
           this.setState({
-            graphdata: response.data,
             chartdata: {
               labels: labels,
               datasets: [
@@ -512,6 +518,7 @@ export default class Login extends Component {
               ],
             },
           });
+          this.setState({ productdata: this.state.chartdata });
         })
         .catch((error) => {
           console.log(error);
@@ -548,7 +555,9 @@ export default class Login extends Component {
         console.log(response.data);
 
         axios
-          .get("http://localhost:5000/products/getuser/" + this.state.cookie._id)
+          .get(
+            "http://localhost:5000/products/getuser/" + this.state.cookie._id
+          )
           .then((response) => {
             this.setState({
               products: response.data,
@@ -562,6 +571,185 @@ export default class Login extends Component {
 
   myorders() {
     window.location = "/myorders";
+  }
+
+  bestsellingproducts() {
+    let labels = [];
+    let data = [];
+
+    this.state.graphinfo.forEach((element) => {
+      labels.push(element.Name);
+      data.push(element.amount);
+    });
+
+    data.push(0);
+
+    this.setState({
+      chartdata: {
+        labels: labels,
+        datasets: [
+          {
+            label: "Purchases",
+            data: data,
+            backgroundColor: [
+              "rgba(255, 99, 132, 1)",
+              "rgba(54, 162, 235,1)",
+              "rgba(255, 206, 86, 1)",
+              "rgba(75, 192, 192, 1)",
+              "rgba(153, 102, 255, 1)",
+              "rgba(255, 159, 64, 1)",
+            ],
+
+            borderWidth: 1,
+          },
+        ],
+      },
+    });
+  }
+
+  seeseason() {
+    let info = [];
+
+    let labels = [];
+    let data = [];
+
+    let group = this.state.graphinfo.reduce((r, a) => {
+      r[a.Season] = [...(r[a.Season] || []), a];
+      return r;
+    }, {});
+    console.log(group);
+    Object.entries(group).forEach(([key, value]) => {
+      let amount = 0;
+      value.forEach((element) => {
+        amount += element.amount;
+      });
+      info.push({ Name: key, amount: amount });
+    });
+
+    info.forEach((element) => {
+      labels.push(element.Name);
+      data.push(element.amount);
+    });
+
+    data.push(0);
+    this.setState({
+      chartdata: {
+        labels: labels,
+        datasets: [
+          {
+            label: "Purchases",
+            data: data,
+            backgroundColor: [
+              "rgba(255, 99, 132, 1)",
+              "rgba(54, 162, 235,1)",
+              "rgba(255, 206, 86, 1)",
+              "rgba(75, 192, 192, 1)",
+              "rgba(153, 102, 255, 1)",
+              "rgba(255, 159, 64, 1)",
+            ],
+
+            borderWidth: 1,
+          },
+        ],
+      },
+    });
+  }
+
+  seetype() {
+    let info = [];
+
+    let labels = [];
+    let data = [];
+
+    let group = this.state.graphinfo.reduce((r, a) => {
+      r[a.type] = [...(r[a.type] || []), a];
+      return r;
+    }, {});
+
+    console.log(group);
+    Object.entries(group).forEach(([key, value]) => {
+      let amount = 0;
+      value.forEach((element) => {
+        amount += element.amount;
+      });
+      info.push({ Name: key, amount: amount });
+    });
+
+    info.forEach((element) => {
+      labels.push(element.Name);
+      data.push(element.amount);
+    });
+
+    data.push(0);
+    this.setState({
+      chartdata: {
+        labels: labels,
+        datasets: [
+          {
+            label: "Purchases",
+            data: data,
+            backgroundColor: [
+              "rgba(255, 99, 132, 1)",
+              "rgba(54, 162, 235,1)",
+              "rgba(255, 206, 86, 1)",
+              "rgba(75, 192, 192, 1)",
+              "rgba(153, 102, 255, 1)",
+              "rgba(255, 159, 64, 1)",
+            ],
+
+            borderWidth: 1,
+          },
+        ],
+      },
+    });
+  }
+
+  seemonth() {
+    let info = [];
+
+    let labels = [];
+    let data = [];
+
+    let group = this.state.graphinfo.reduce((r, a) => {
+      r[a.month] = [...(r[a.month] || []), a];
+      return r;
+    }, {});
+    console.log(group);
+    Object.entries(group).forEach(([key, value]) => {
+      let amount = 0;
+      value.forEach((element) => {
+        amount += element.amount;
+      });
+      info.push({ Name: key, amount: amount });
+    });
+
+    info.forEach((element) => {
+      labels.push(element.Name);
+      data.push(element.amount);
+    });
+
+    data.push(0);
+    this.setState({
+      chartdata: {
+        labels: labels,
+        datasets: [
+          {
+            label: "Purchases",
+            data: data,
+            backgroundColor: [
+              "rgba(255, 99, 132, 1)",
+              "rgba(54, 162, 235,1)",
+              "rgba(255, 206, 86, 1)",
+              "rgba(75, 192, 192, 1)",
+              "rgba(153, 102, 255, 1)",
+              "rgba(255, 159, 64, 1)",
+            ],
+
+            borderWidth: 1,
+          },
+        ],
+      },
+    });
   }
 
   render() {
@@ -589,17 +777,21 @@ export default class Login extends Component {
                     <hr className="profile-hr"></hr>
                     <h5 className="Montserrat">{this.state.cookie.bio}</h5>
                     <hr className="profile-hr"></hr>
-                    <h5 className="mt-3 d-flex align-items-center">
+                    <h5 className="mb-3 d-flex align-items-center">
                       <FontAwesomeIcon className="mr-2" icon={faMapMarkerAlt} />{" "}
                       {this.state.cookie.location}{" "}
                     </h5>
                     {/* <h5 className="mt-3">+34677896912</h5> */}
-                    <button className="contactme mt-4" onClick={this.openmodal}>
+                    <button className="contactme mt-2 mb-2" onClick={this.openmodal}>
                       Edit profile
                     </button>
 
-                    <Link className="contactme mt-4 mb-2" to="/requests">
+                    <Link className="contactme mt-3 mb-2" to="/requests">
                       Requests
+                    </Link>
+
+                    <Link className="contactme mt-3 mb-2" to="/notify">
+                      Notify
                     </Link>
 
                     <button className="logout" onClick={this.logout}>
@@ -652,18 +844,40 @@ export default class Login extends Component {
                   <hr className="profile-hr"></hr>
                 </div>
               </div>
+
               <div className="row profile-content mb-5">
                 {this.commentList()}
               </div>
-              {/* <div className={this.state.graphstate}>
-                <div className="row">
+              <div className={this.state.graphstate}>
+                <div className="row d-flex  align-items-center mb-4">
                   <div className="mt-5 mb-3">
                     <h3>My Charts</h3>
                     <hr className="profile-hr"></hr>
                   </div>
+                  <button
+                    className="graphbutton"
+                    onClick={this.bestsellingproducts}
+                  >
+                    Best selling products
+                  </button>
+                  <button className="graphbutton" onClick={this.seeseason}>
+                    Best selling seasons
+                  </button>
+
+                  <button className="graphbutton" onClick={this.seetype}>
+                    Best selling types
+                  </button>
+
+                  <button className="graphbutton" onClick={this.seemonth}>
+                    Best selling month
+                  </button>
                 </div>
-                <Bar className="chart" data={this.state.chartdata} height="100"/>{" "}
-              </div> */}
+                <Bar
+                  className="chart"
+                  data={this.state.chartdata}
+                  height="100"
+                />{" "}
+              </div>
             </div>
             <Modal
               show={this.state.open}

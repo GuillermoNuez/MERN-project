@@ -29,19 +29,16 @@ export default class Navbar extends Component {
             });
           }
 
-          if (cookie.role == "Farmer") {
+          if (cookie.role == "Farmer" || cookie.role == "Client" ) {
             axios
               .get("http://localhost:5000/Chat/getunread/" + cookie._id)
               .then((response) => {
-                console.log("UNREAD MESSAGES");
-                console.log(response.data);
                 if (response.data != 0) {
                   this.setState({
                     msgclass: "cartnumber",
                   });
                   this.setState({unreadmessages:response.data});
-                }
-   
+                }   
               });
           }
         })
@@ -77,7 +74,7 @@ export default class Navbar extends Component {
             <div className="nav2-logo">
               <Link to="/" className="navbar-brand header-logo"></Link>
             </div>
-            <div className="nav2-links">
+            <div className="nav3-links">
               <Link to="/users" className="nav-link">
                 Farmers
               </Link>
@@ -93,6 +90,15 @@ export default class Navbar extends Component {
                   <p className="basket-logo"></p>
                   <p className={this.state.cartclass}>
                     {this.state.cartamount}
+                  </p>
+                </div>
+              </Link>
+
+                            <Link to="/chats" className="myCart">
+                <div className="myCart-logo">
+                  <p className="msg-logo"></p>
+                  <p className={this.state.msgclass}>
+                    {this.state.unreadmessages}
                   </p>
                 </div>
               </Link>
@@ -117,14 +123,14 @@ export default class Navbar extends Component {
               <Link to="/myprofile" className="nav-link">
                 My Profile
               </Link>
-              {/* <Link to="/chats" className="myCart">
+              <Link to="/chats" className="myCart">
                 <div className="myCart-logo">
                   <p className="msg-logo"></p>
                   <p className={this.state.msgclass}>
                     {this.state.unreadmessages}
                   </p>
                 </div>
-              </Link> */}
+              </Link>
             </div>
           </div>
         );

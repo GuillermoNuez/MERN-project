@@ -26,7 +26,6 @@ router.route("/").post((req, res) => {
             };
             res.json(info);
           } else {
-            console.log("EMpty");
             let data = {
               username: userName,
               messages: null,
@@ -49,26 +48,15 @@ router.route("/:id").get((req, res) => {
 });
 
 router.route("/add").post((req, res) => {
-  console.log("AUI");
-  console.log(req.body.iduser1);
   const iduser1 = req.body.iduser1;
   const iduser2 = req.body.iduser2;
   const msg = req.body.msg;
   const newChat = new Chat({ iduser1: iduser1, iduser2: iduser2 });
-  console.log(newChat);
   newChat
     .save()
     .then((chat) => {
       let id = chat._id;
       const newMsg = new Message({ idchat: id, iduser: iduser1, message: msg });
-      console.log(
-        "Creating Message with chat id : " +
-          id +
-          "| With user id : " +
-          iduser1 +
-          "| With msg : " +
-          msg
-      );
       newMsg
         .save()
         .then(() => res.json("Message created"))
@@ -233,7 +221,6 @@ router.route("/getchats/:id").get((req, res) => {
         })
         .catch((err) => res.status(400).json("Error: " + err));
     } else {
-      console.log("You have no chats");
       res.json("You have no chats");
     }
   });

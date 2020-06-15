@@ -54,8 +54,7 @@ router.route("/ready/:userid").get((req, res) => {
   })
     .then((order) => {
       order.status = "ready";
-      order
-      .save().then(res.json("OK"));
+      order.save().then(res.json("OK"));
     })
     .catch((err) => res.status(400).json("Error:" + err));
 });
@@ -272,7 +271,6 @@ router.route("/request/:userid").get((req, res) => {
             if (err) {
               res.json(err);
             } else {
-              console.log(array);
               let data2 = [];
               for (let index = 0; index < info.length; index++) {
                 data2.push({
@@ -334,13 +332,20 @@ router.route("/getoverallinfo/:userid").get((req, res) => {
             res.json("Server Error");
           }
           try {
-            console.log("______________________");
-            console.log(result);
             let data = [];
+            let date;
+            let s;
             for (let index = 0; index < result.length; index++) {
+              date = new Date(result[index].createdAt);
+              month = date.getMonth() + 1;
+
+             s = date.toUTCString().split(' ');
               data.push({
                 Name: result[index].product,
                 amount: info[index].amount,
+                Season: result[index].season,
+                type: result[index].type,
+                month: s[2]
               });
             }
             res.json(data);
@@ -368,6 +373,5 @@ router.route("/getcheckoutlenght/:userid").get((req, res) => {
     })
     .catch((err) => res.status(400).json("Error:" + err));
 });
-
 
 module.exports = router;
