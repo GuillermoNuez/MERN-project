@@ -13,8 +13,8 @@ const inlineCss = require("nodemailer-juice");
 const transporter = nodemailer.createTransport({
   service: "Gmail",
   auth: {
-    user: "HuertUpProject@gmail.com",
-    pass: "huertup123",
+    user: "youremail@email.com",
+    pass: "yourpassword",
   },
 });
 

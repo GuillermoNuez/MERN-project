@@ -63,19 +63,7 @@ code {
   background-size: cover;
 }
 
-.bolsa {
-  height: 850px;
-  width: 100%;
-  background-color: #e5dabd;
-}
-.bolsa-img {
-  width: 100%;
-  height: 100%;
-  background-image: url("Fotos/grocery-bag-min.png");
-  background-position: center;
-  background-size: contain;
-  background-repeat: no-repeat;
-}
+
 
 .bold {
   font-weight: bold;
@@ -88,111 +76,6 @@ code {
   background-color: #1c1c1c;
   margin-top: 50px;
   margin-bottom: 50px;
-}
-
-.about-Us-Box {
-  height: 850px;
-}
-h1 {
-  font-weight: bold;
-  font-size: 3.2em;
-}
-.about-Us-Box h4 {
-  width: 70%;
-}
-
-.about-Us-Box a {
-  text-decoration: underline;
-  color: black;
-  font-size: 1.5em;
-}
-
-.verduras {
-  height: 700px;
-  width: 80%;
-}
-.verduras-img {
-  width: 100%;
-  height: 100%;
-  background-image: url("Fotos/michael-schmid-scSLqeFX39w-unsplash-min.jpg");
-  background-position: bottom;
-  background-size: cover;
-  background-repeat: no-repeat;
-}
-
-.farmers {
-  background-color: #f9ecd6;
-}
-
-.farmer-img {
-  width: 280px;
-  height: 280px;
-  border-radius: 50%;
-}
-
-.farmer-img-1 {
-  background-image: url("Fotos/yucel-moran-nd0AqhGk5ZI-unsplash-min.jpg");
-  width: 100%;
-  height: 100%;
-  background-size: cover;
-  background-position: center;
-  border-radius: 50%;
-}
-
-.farmer-img-2 {
-  background-image: url("Fotos/jared-sluyter-das6NrjLoM0-unsplash-min.jpg");
-  width: 100%;
-  height: 100%;
-  background-size: cover;
-  background-position: center;
-  border-radius: 50%;
-}
-
-.farmer-img-3 {
-  background-image: url("Fotos/foto-sushi-6anudmpILw4-unsplash-min.jpg");
-
-  width: 100%;
-  height: 100%;
-  background-size: cover;
-  background-position: center;
-  border-radius: 50%;
-}
-.farmers .col-md-3 h3 {
-  font-weight: 400;
-  width: 100%;
-  text-align: center;
-}
-.farmers .col-md-3 h4 {
-  font-weight: 350;
-  text-align: center;
-  color: rgb(34, 34, 34);
-  width: 70%;
-}
-
-.blog-img {
-  width: 100%;
-  height: 300px;
-}
-
-.blog-img-1 {
-  width: 100%;
-  height: 100%;
-  background-image: url("Fotos/peter-wendt--r5KSMkyoSc-unsplash-min.jpg");
-  background-size: cover;
-}
-
-.blog-img-2 {
-  width: 100%;
-  height: 100%;
-  background-image: url("Fotos/jakub-kapusnak-vnNFWKY7Tj4-unsplash-min.jpg");
-  background-size: cover;
-}
-
-.blog-img-3 {
-  width: 100%;
-  height: 100%;
-  background-image: url("Fotos/shelley-pauls-G7WdvR8rDPg-unsplash-min.jpg");
-  background-size: cover;
 }
 
 .readmore-btn {
