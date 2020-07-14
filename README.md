@@ -1,6 +1,8 @@
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
-## Things you must change
+## Things you must do
+
+You need to execute `npm install` in the root so it install so it installs you the packages you need
 
 In backend/.env is my uri connection to mondoDB ATLAS, the database wont work if you dont set this up.
 
