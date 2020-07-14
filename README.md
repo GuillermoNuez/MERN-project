@@ -1,5 +1,11 @@
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
+## Things you must change
+
+In backend/.env is my uri connection to mondoDB ATLAS, the database wont work if you dont set this up.
+
+In backend/routes/users.js there is a nodemailer varaible wich is used to send emails via Gmail, you need to change the user and the password. Users wont be able to log in if they dont get verified if you dont set this up.
+
 ## Available Scripts
 
 In the project directory, you can run:
