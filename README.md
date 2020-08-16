@@ -2,6 +2,8 @@ This project was bootstrapped with [Create React App](https://github.com/faceboo
 
 ## Things you must do
 
+Install Node if you havent. https://nodejs.org/en/
+
 You need to execute `npm install` in the root so it installs the packages you need
 
 In backend/.env is my uri connection to mondoDB ATLAS, the database wont work if you dont set this up.
